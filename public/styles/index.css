@@ -1,0 +1,300 @@
+/* Reset and Base Style*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,body{
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: rgb(255,255,255);
+    color: rgb(0,0,0);
+    font-size: 14px;
+    line-height: 18px;
+    direction: ltr;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    text-size-adjust: 100%;
+    width: 1212px;
+}
+a {
+    text-decoration: none;
+    color: #385185;
+}
+/* Container */
+.container{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px;
+    flex: 1;
+    gap: 32px;
+    margin: 32px 0;
+}
+
+/* Image - Left Side */
+.phone-frame {
+    position: relative;
+    display: block;
+  }
+  
+  .phone-preview img {
+    height: 450px;
+    width: auto;
+    display: block;
+  }
+  @media(max-width: 991px){
+    .phone-preview{
+        display: none !important;
+    }
+    
+  }
+  
+/* Login Section */
+.login-section {
+display: flex;
+flex-direction: column;
+width: 100%;
+max-width: 350px;
+gap: 10px;
+}
+
+/* Login Form Container*/
+.login-form-container {
+    background-color:transparent;
+    border: none;
+    padding: 20px 40px;
+    margin-bottom: 10px;
+}
+
+.logo-container{
+    display: flex;
+    justify-content: center;
+    margin: 22px 0 36px;
+}
+
+.instagram-logo {
+    height: 60px;
+    width: auto;
+    
+
+}
+
+/* Form Elements */
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group{
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.form-input{ 
+    width: 100%;
+    padding: 9px 8px;
+    background-color: #fafafa;
+    border: 1px solid #dbdbdb;
+    font-size: 12px;
+    border-radius: 4px;
+    height: 38px;
+    outline-color: #dbdbdb;
+    transition: border-color 0.2s ease;
+    
+}
+.form-input:focus{
+    outline: none;
+    border: 1px solid #a8a8a8;
+    box-shadow: none;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size:14px;
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+.password-toggle:hover{
+    color: #827e7e;
+}
+
+.login-button {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    width: 100%;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    height: 32px;
+}
+
+.login-button:hover{
+    background-color: #1877f2;
+}
+
+/* Or Separator */
+.separator {
+    display: flex;
+    align-items: center;
+    margin: 18px 0;
+}
+
+.line {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #dbdbdb;
+}
+
+.or-text {
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #8e8e8e;
+}
+
+/* Facebook Login */
+.facebook-login {
+    background: none;
+    border: none;
+    color: #237cf0;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 8px 0;
+    font-size: 14px;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    text-decoration: none;
+}
+
+.facebook-logo{
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+    color: #1877f2;
+    margin-right: none;
+}
+
+.facebook-icon {
+    color: #1877f2;
+}
+
+.forgot-password {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 12px;
+    display: block;
+}
+
+/* Sign Up Container */
+.signup-container {
+    background-color: transparent;
+    border: none;
+    padding: 20px;
+    text-align: center;
+}
+
+.signup-link{
+    color: #0095f6;
+    font-weight: 600;
+}
+
+/* Get App Section */
+.get-app-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.app-dowload-links{
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.app-dowload{
+    height: 40px;
+}
+
+/* Footer */
+
+.footer{
+    padding: 24px 16px;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px 8px;
+    margin-bottom: 16px;
+}
+
+.footer-links a {
+    color: #8e8e8e;
+    font-size: 12px;
+    margin: 4px;
+}
+
+.footer-links a:hover{
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.language-selector {
+    background: transparent;
+    border: none;
+    color: #8e8e8e;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: end;
+    width: auto;
+    outline: none;
+}
+
+.copyright{
+    color: #8e8e8e;
+    font-size: 12px;
+}
