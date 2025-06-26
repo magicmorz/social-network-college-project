@@ -36,7 +36,7 @@ exports.postRegister = async (req, res) => {
         await new User({ username, email, password }).save(); // password is auto-hashed
         res.redirect('/auth/login');
     } catch (err) {
-        console.error("❌ Registration failed:", err);
+        console.error(" Registration failed:", err);
         res.status(500).send("Registration error");
     }
 };
