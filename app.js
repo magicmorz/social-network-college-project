@@ -14,28 +14,42 @@ app.use(express.static("public"));
 app.use(session({
   secret: process.env.SESSION_SECRET || "devsecret",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
 }));
 
 // View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Auth check
+function isAuthenticated(req, res, next) {
+  if (req.session.userId) return next();
+  res.redirect('/auth/login');
+}
+
 // Routes
-app.get("/", (req, res) => {
-  res.render("home"); // You'll create this later
-});
-
-
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
+// Fixed root route
+app.get("/", (req, res) => {
+  if (req.session.userId) {
+    res.redirect("/home");
+  } else {
+    res.redirect("/auth/login");
+  }
+});
 
-// Mongo connection
+// Protected home page
+app.get("/home", isAuthenticated, (req, res) => {
+  res.render("home");
+});
+
+// MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .then(() => console.log(" Connected to MongoDB Atlas"))
+  .catch(err => console.error(" MongoDB connection error:", err));
 
-// Start server
+// Server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(` Server running on http://localhost:${PORT}`));
