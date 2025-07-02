@@ -10,46 +10,51 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-
 app.use(session({
   secret: process.env.SESSION_SECRET || "devsecret",
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
 }));
 
 // View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Auth check
+// Authentication check middleware
 function isAuthenticated(req, res, next) {
   if (req.session.userId) return next();
   res.redirect('/auth/login');
 }
 
+// Root route - ADD THIS
+app.get("/", (req, res) => {
+  if (req.session.userId) {
+    res.redirect('/home');
+  } else {
+    res.redirect('/auth/login');
+  }
+});
+
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
-
-// Fixed root route
-app.get("/", (req, res) => {
-  if (req.session.userId) {
-    res.redirect("/home");
-  } else {
-    res.redirect("/auth/login");
-  }
-});
 
 // Protected home page
 app.get("/home", isAuthenticated, (req, res) => {
   res.render("home");
 });
 
-// MongoDB
+// Mongo connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log(" Connected to MongoDB Atlas"))
-  .catch(err => console.error(" MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Server
+
+// Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(` Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
