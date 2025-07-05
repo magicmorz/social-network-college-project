@@ -46,7 +46,7 @@ app.use('/auth', authRoutes);
 
 // Protected home page
 app.get("/home", isAuthenticated, (req, res) => {
-  res.render("home");
+  res.render("feed_screen/feed");
 });
 
 // Mongo connection

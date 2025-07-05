@@ -1,0 +1,73 @@
+/* responsiveness */
+
+/* ===============================
+    RESPONSIVE BEHAVIOR (Medium Screens)
+    =============================== */
+@media (max-width: 1263px) {
+    .sidebar {
+        width: 70px !important;
+        /* icon-only width */
+        /*padding: 1rem 0.5rem;*/
+    }
+
+    .sidebar .menu-item .text,
+    .sidebar .logo-text,
+    .sidebar .nav-label {
+        display: none !important;
+    }
+
+    .sidebar .top-logo-icon {
+        display: contents !important;
+    }
+
+    .sidebar .logo-full {
+        display: none !important;
+    }
+
+    #scrollToTopBtn {
+        bottom: 10px;
+    }
+}
+
+/* ===============================
+    RESPONSIVE BEHAVIOR (Medium Screens - No right column)
+    =============================== */
+@media (max-width: 1159px) {
+    .right-side-section {
+        display: none !important;
+    }
+     #scrollToTopBtn {
+        bottom: 100px;
+    }
+}
+
+/* ===============================
+    RESPONSIVE BEHAVIOR (Small/Mobile Screens)
+    =============================== */
+@media (max-width: 767px) {
+    .top-mobile-nav {
+        display: flex !important;
+    }
+
+    body {
+        padding-top: 56px;
+    }
+
+    /* Hide sidebar completely on extra small screens */
+    .sidebar {
+        display: none !important;
+    }
+
+    /* Show bottom nav */
+    .bottom-mobile-nav {
+        display: flex !important;
+    }
+
+    .story-wrapper {
+        margin-top: 50px !important;
+    }
+    
+     #scrollToTopBtn {
+        bottom: 210px;
+    }
+}

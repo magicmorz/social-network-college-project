@@ -1,0 +1,59 @@
+.global-options-menu {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 300px;
+  background-color: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.menu-btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  text-align: center;
+ 
+  cursor: pointer;
+  color: var(--text);
+}
+
+.menu-btn:last-child {
+  border-bottom: none;
+}
+[data-them="dark"] .menu-btn {
+  color: var(--text2);
+  background-color: var(--bg);
+}
+
+.menu-btn:hover {
+  background-color: var(--link2);
+}
+
+
+.menu-btn.red {
+  color: #ed4956;
+  font-weight: 600;
+}
+
+.cancel-btn {
+  font-weight: 600;
+}
+
+.menu-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}

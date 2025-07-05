@@ -1,0 +1,135 @@
+.message-dock {
+  position: fixed; /* Keeps the element fixed relative to the viewport (doesn't scroll with page) */
+  bottom: 40px;    /* Positions the element 40px from the bottom of the screen */
+  right: 40px;     /* Positions the element 40px from the right side of the screen */
+
+  width: 251px;    /* Sets a fixed width for the message dock */
+  height: 56px;    /* Sets a fixed height for the message dock */
+
+  background:var(--card);       /* Sets the background color to white */
+  border-radius: 999px;    /* Makes the container pill-shaped (fully rounded sides) */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Adds a soft shadow for depth/elevation */
+
+  padding: 0 16px;          /* Horizontal padding: space between content and left/right edges */
+  display: flex;            /* Enables flexbox layout to arrange child elements in a row */
+  align-items: center;      /* Vertically centers items inside the dock */
+  justify-content: space-between; /* Distributes space between items with max separation */
+  gap: 8px;                 /* Adds spacing between flex items (used when `space-between` doesn't stretch them apart) */
+
+  z-index: 1000;            /* Ensures the dock appears above most elements on the page */
+}
+
+[data-theme="dark"] .message-dock{
+  box-shadow: 0 4px 12px rgba(0,0,0,.35);
+}
+.message-dock:hover {
+  background: var(--hover-pill);      /* Light gray background on hover for interactivity */
+  cursor: pointer;          /* Changes cursor to pointer to indicate clickability */
+}
+
+.message-dock-profile-img {
+  width: 28px;              /* Fixed width for profile images (small avatars) */
+  height: 28px;             /* Fixed height to match width and form a square */
+  object-fit: cover;        /* Ensures image fills the container without distortion or empty space */
+  margin-right: -8px;       /* Creates overlap between images by pulling them left */
+}
+
+/* Responsive behavior for smaller screens (like mobile phones) */
+@media (max-width: 767px) {
+  .message-dock {
+    padding: 12px;           /* Adds uniform padding inside the circular dock */
+    border-radius: 50%;      /* Makes the dock perfectly circular */
+    width: 56px;             /* Reduces width to match height for a circle */
+    height: 56px;            /* Sets height equal to width */
+    justify-content: center; /* Centers content (icon only) inside the dock */
+    bottom: 80px;            /* Moves dock slightly higher on smaller screens for visibility */
+  }
+
+  .message-dock span,
+  .message-dock img {
+    display: none;           /* Hides the message text and profile images on smaller screens */
+  }
+
+  .docked-messages-icon {
+    margin-right: -8px;      /* Optional tweak if the icon needs to be visually balanced */
+  }
+}
+
+/* create-post modal ------------------------------------------*/
+.ig-modal__dialog      { width: 720px; max-width: 90vw; }
+.ig-modal__body        { display:flex; flex-direction:column; align-items:center; }
+.ig-step               { width:100%; text-align:center; }
+
+.ig-canvas             {                /* square preview area   */
+  width:650px; height:650px;
+  max-width:100%; max-height:80vh;      /* responsive safeguard  */
+  display:flex; justify-content:center; align-items:center;
+}
+
+.ig-canvas img         {                /* preview image itself  */
+  max-width:100%; max-height:100%;
+  object-fit:contain;                   /* keep whole picture    */
+}
+
+.ig-nav.back           { position:absolute; left:24px;  top:24px; }
+.ig-nav.next           { position:absolute; right:24px; top:24px; color:#0095f6; }
+
+.ig-caption           { padding:1rem .75rem 0; }
+.ig-caption__field    {
+  width:100%; resize:none;
+  background:transparent; border:none; outline:none;
+  color:var(--text); font:inherit;
+}
+[data-theme="dark"] .ig-caption__field::placeholder { color:#8e8e8e; }
+
+/* pill-style caption input inside the upload modal
+   -------------------------------------------------------------- */
+.ig-caption{
+  width: 100%;
+  padding: .65rem 1rem;
+  border: 1px solid var(--border);   /* reuse your global border colour */
+  border-radius: 12px;              /* full pill */
+  background: var(--input-bg, #f1f1f1);
+  color: var(--text);
+  resize: none;                      /* no corner grip */
+  outline: none;
+  font-size: .9rem;
+  line-height: 1.4;
+  margin-top: 24px;
+}
+
+.ig-caption:focus{
+  border-color: var(--link);         /* blue border on focus */
+}
+
+/* dark-theme variant */
+[data-theme="dark"] .ig-caption{
+  background:#262626;
+  border-color:#333;
+  color:#f5f5f5;
+}
+
+/* footer bar under preview ------------------------------------------------ */
+.ig-step__footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding: 1rem 0 0;
+}
+
+/* generic footer button */
+.ig-footerBtn{
+  background:none;
+  border:0;
+  font-size:1rem;           /* bigger text */
+  font-weight:600;          /* bold */
+  color:var(--text);
+  cursor:pointer;
+}
+
+/* emphasised “Share” button */
+.ig-footerBtn--primary{
+  color:var(--link);        /* same blue you use for links */
+}
+
+/* dark theme keeps same colours */

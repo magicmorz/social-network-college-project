@@ -5,6 +5,23 @@
     box-sizing: border-box;
 }
 
+[data-theme="dark"] .form-input{
+    background: var(--card);
+    border: 1px solid #525252;
+    color: var(--text);
+}
+
+[data-theme="dark"] .form-input:focus ,
+[data-theme="dark"] .form-input:hover {
+    border-color: #525252;
+    box-shadow: none;
+} 
+
+[data-theme="dark"] .form-input::placeholder{
+    color: var(--link);
+    opacity: 1;
+}
+
 html,body{
     max-width: 100%;
     overflow-x: hidden;
@@ -71,9 +88,11 @@ a {
 .login-section {
 display: flex;
 flex-direction: column;
+align-items: center;
 width: 100%;
 max-width: 350px;
 gap: 10px;
+
 }
 
 /* Login Form Container*/
@@ -84,6 +103,12 @@ gap: 10px;
     margin-bottom: 10px;
 }
 
+.login-form-container, .signup-container{
+    width: 100%;
+    max-width: 350px;
+}
+
+
 .logo-container{
     display: flex;
     justify-content: center;
@@ -93,7 +118,8 @@ gap: 10px;
 .instagram-logo {
     height: 60px;
     width: auto;
-    
+    color: var(--text);
+    max-width: 100%;
 
 }
 
@@ -113,8 +139,8 @@ gap: 10px;
 .form-input{ 
     width: 100%;
     padding: 9px 8px;
-    background-color: #fafafa;
-    border: 1px solid #dbdbdb;
+    background: var(--card);
+    border: 1px solid var(--border);
     font-size: 12px;
     border-radius: 4px;
     height: 38px;
@@ -126,6 +152,7 @@ gap: 10px;
     outline: none;
     border: 1px solid #a8a8a8;
     box-shadow: none;
+    color: var(--text);
 }
 
 .password-toggle {
@@ -140,14 +167,21 @@ gap: 10px;
     cursor: pointer;
     border: none;
     background: transparent;
+    display: none;
+    color: var(--link);
+    
 }
+
+[data-theme="dark"] .password-toggle { color: var(--text) }
+
 .password-toggle:hover{
-    color: #827e7e;
+    cursor: pointer;
+    opacity: .8;
 }
 
 .login-button {
-    background-color: #0095f6;
-    color: white;
+    background-color: var(--btn-active);
+    color: #fff;
     border: none;
     width: 100%;
     border-radius: 8px;
@@ -157,9 +191,16 @@ gap: 10px;
     margin-top: 8px;
     height: 32px;
 }
-
-.login-button:hover{
+/* Different CSS options - if not Disabled hover visible if Disabled - CSS below without hover*/
+.login-button:not(:disabled):hover{
     background-color: #1877f2;
+    cursor: pointer;
+}
+
+.login-button:disabled{
+    background-color: #b2dffc;
+    cursor: default;
+    opacity: 0.6;
 }
 
 /* Or Separator */
@@ -297,4 +338,15 @@ gap: 10px;
 .copyright{
     color: #8e8e8e;
     font-size: 12px;
+}
+
+/* error */
+
+#error {
+    color: #ed4956;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+    line-height: 18px;
+    
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../Controllers/authController');
 
 // GET login page
 router.get('/login', authController.getLogin);
@@ -15,7 +15,7 @@ router.post('/register', authController.postRegister);
 // Optional: logout
 router.get('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.redirect('/auth/login');
+    res.redirect('/login_screen/login');
   });
 });
 

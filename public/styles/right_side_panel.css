@@ -1,0 +1,94 @@
+/* right-side-section */
+.right-side-section {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #262626;
+    margin-top: 20px;
+}
+
+.profile-img {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-img:hover {
+   cursor: pointer;
+}
+
+.right_side_panel_username, .switch-btn, .see-all-btn {
+    font-weight: 600;
+    color: var(--text);
+}
+.see-all-btn:hover, .switch-btn:hover{
+    color: var(--link);
+}
+
+.follow-text {
+    font-size: 12px;
+    color: #8e8e8e;
+}
+
+.right_side_panel_username:hover {
+   cursor: pointer;
+}
+
+.follow-btn {
+    font-weight: 600;
+    font-size: 13px;
+    color: #0095f6;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.see-all-btn{
+    font-size: 12px; 
+    color: var(--text);
+}
+
+.see-all-btn:hover{
+   color: #8e8e8e;
+}
+
+.follow-btn:hover{
+    color: rgb(0, 55, 107);
+}
+
+.switch-btn:hover{
+    color: rgb(0, 55, 107) !important;
+}
+
+.footer-links {
+    font-size: 12px;
+    color:var(--border);
+    margin-top: 28px;
+}
+
+.footer-links a {
+    color:var(--border);
+    text-decoration: none;
+    margin-right: 4px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.right-side-content {
+    width: 319px;
+}
+
+.copyright-line {
+    font-size: 12px;
+    color: var(--border);
+    margin-top: 10px;
+}
+.dot {
+    color: #c7c7c7;
+    margin: 0 4px;
+    font-size: 11px;
+    line-height: 1;
+}
+
