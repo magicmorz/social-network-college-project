@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../Controllers/authController');
 
 // GET login page
 router.get('/login', authController.getLogin);
