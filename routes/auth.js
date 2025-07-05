@@ -15,7 +15,7 @@ router.post('/register', authController.postRegister);
 // Optional: logout
 router.get('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.redirect('/auth/login');
+    res.redirect('/login_screen/login');
   });
 });
 
