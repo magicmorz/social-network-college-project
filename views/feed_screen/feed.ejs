@@ -485,7 +485,7 @@
             <div class="d-flex align-items-center">
               <div class="profile-picture-container">
                 <a href="/u/<%= post.user.username %>">
-                  <img src="<%= post.user.profilePicture || './user/default_profile.jpg' %>"
+                  <img src="<%= post.user.avatar || '/avatars/default.jpg' %>"
                     alt="<%= post.user.username %>" class="profile-img">
                 </a>
               </div>

@@ -48,7 +48,7 @@ async function toggleComments(postId) {
           commentElement.className = "comment mb-2 p-2";
           commentElement.innerHTML = `
             <div class="d-flex align-items-start">
-              <img src="${comment.user.profilePicture || './user/default_profile.jpg'}" 
+                              <img src="${comment.user.avatar || '/avatars/default.jpg'}" 
                    alt="${comment.user.username}" 
                    class="rounded-circle me-2" 
                    style="width: 28px; height: 28px; object-fit: cover;">

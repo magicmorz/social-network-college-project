@@ -25,7 +25,7 @@ exports.getUserProfile = async (req, res) => {
     const posts = await Post.find({ user: targetUser._id })
       .sort({ createdAt: -1 })
       .limit(12)
-      .populate('user', 'username profilePicture');
+      .populate('user', 'username profilePicture avatar');
     
     const postsCount = await Post.countDocuments({ user: targetUser._id });
     

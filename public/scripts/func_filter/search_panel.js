@@ -244,7 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const html = users.map(user => `
       <div class="search-result-item">
         <div class="search-result-user">
-          <img src="${user.profilePicture || '/user/default_profile.jpg'}" alt="${user.username}" class="profile-pic">
+          <a href="/u/${user.username}" class="avatar-link">
+            <img src="${user.avatar || '/avatars/default.jpg'}" alt="${user.username}" class="user-avatar">
+          </a>
           <div class="user-info">
             <div class="username">
               <a href="/u/${user.username}" class="username-link">${user.username}</a>
@@ -265,7 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const html = users.map(user => `
       <div class="search-result-item">
         <div class="search-result-user">
-          <img src="${user.profilePicture || '/user/default_profile.jpg'}" alt="${user.username}" class="profile-pic">
+          <a href="/u/${user.username}" class="avatar-link">
+            <img src="${user.avatar || '/avatars/default.jpg'}" alt="${user.username}" class="user-avatar">
+          </a>
           <div class="user-info">
             <div class="username">
               <a href="/u/${user.username}" class="username-link">${user.username}</a>

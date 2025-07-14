@@ -462,6 +462,24 @@
   object-fit: cover;
 }
 
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid var(--border, #dbdbdb);
+  transition: opacity 0.2s ease;
+}
+
+.avatar-link {
+  text-decoration: none;
+}
+
+.avatar-link:hover .user-avatar {
+  opacity: 0.8;
+}
+
 .search-result-user .user-info {
   flex: 1;
 }

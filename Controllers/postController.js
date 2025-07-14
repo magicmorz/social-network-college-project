@@ -39,8 +39,8 @@ const upload = multer({
 exports.getFeed = async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture')
+      .populate('user', 'username profilePicture avatar')
+      .populate('comments.user', 'username profilePicture avatar')
       .sort({ createdAt: -1 })
       .limit(20);
     

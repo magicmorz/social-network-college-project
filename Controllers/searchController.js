@@ -43,7 +43,7 @@ exports.searchUsers = async (req, res, next) => {
 
         // Execute search
         const users = await User.find(filter)
-            .select('username email createdAt isVerified groups profilePicture')
+            .select('username email createdAt isVerified groups profilePicture avatar')
             .sort({ username: 1 })
             .skip(skip)
             .limit(limitNum)

@@ -111,8 +111,8 @@ app.get("/home", isAuthenticated, async (req, res) => {
     console.log('Loading feed for user:', req.user.username);
     
     const posts = await Post.find()
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture') // This populates comment users
+      .populate('user', 'username profilePicture avatar isVerified')
+      .populate('comments.user', 'username profilePicture avatar') // This populates comment users
       .sort({ createdAt: -1 });
     
     // Filter out posts with missing users
