@@ -24,6 +24,58 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  avatar: {
+    type: String,
+    default: '/avatars/default.jpg',
+    trim: true,
+    validate: {
+      validator: function(v) {
+        // Must be a relative URL starting with /avatars/ or /user/ for compatibility
+        return !v || v.startsWith('/avatars/') || v.startsWith('/user/');
+      },
+      message: 'Avatar must be a relative URL starting with /avatars/ or /user/'
+    }
+  },
+  groups: [{
+    type: String,
+    trim: true
+  }],
+  bio: {
+    type: String,
+    maxlength: [150, 'Bio cannot exceed 150 characters'],
+    default: ''
+  },
+  country: {
+    type: String,
+    maxlength: [50, 'Country cannot exceed 50 characters'],
+    default: ''
+  },
+  followers: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    followedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  following: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    followedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now
@@ -46,6 +98,20 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+// Virtual to get follower count
+userSchema.virtual('followerCount').get(function() {
+  return this.followers ? this.followers.length : 0;
+});
+
+// Virtual to get following count
+userSchema.virtual('followingCount').get(function() {
+  return this.following ? this.following.length : 0;
+});
+
+// Ensure virtual fields are serialized
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
 
 // Create the model
 const User = mongoose.model('User', userSchema);

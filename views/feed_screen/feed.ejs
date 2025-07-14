@@ -276,35 +276,104 @@
         <h6 class="m-0 flex-grow-1 fw-semibold">Search</h6>
         <button id="searchCloseBtn" class="icon-btn">&times;</button>
       </div>
-      <!-- body -->
-      <div class="search-body p-3">
 
-        <!-- input group with embedded filter buttons -->
-        <div class="input-group align-items-stretch">
-          <!-- Search icon -->
-          <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <!-- Search Tabs -->
+      <div class="search-tabs">
+        <button class="search-tab active" data-tab="users">Users</button>
+        <button class="search-tab" data-tab="posts">Posts</button>
+      </div>
 
-          <!-- Search input field -->
-          <input id="searchField" type="text" class="form-control" placeholder="Search" autocomplete="off">
+      <!-- Users Search Tab -->
+      <div id="usersTab" class="search-tab-content active">
+        <div class="search-body p-3">
+          <!-- Basic search input -->
+          <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input id="userSearchField" type="text" class="form-control" placeholder="Search users..." autocomplete="off">
+          </div>
 
-          <!-- Clear button (still hidden by default) -->
-          <button class="icon-btn d-none" id="clearBtn"><i class="bi bi-x"></i></button>
+          <!-- Advanced Search Button -->
+          <button id="userAdvancedBtn" class="btn btn-outline-primary btn-sm mb-3 w-100">Advanced Search</button>
+
+          <!-- Advanced Search Form (hidden by default) -->
+          <div id="userAdvancedForm" class="advanced-search-form" style="display: none;">
+            <div class="mb-3">
+              <label class="form-label small">Joined After</label>
+              <input type="date" id="userJoinedAfter" class="form-control">
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="userIsVerified">
+                <label class="form-check-label small" for="userIsVerified">
+                  Verified users only
+                </label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Group</label>
+              <input type="text" id="userGroup" class="form-control" placeholder="Enter group name">
+            </div>
+          </div>
+
+          <!-- Search Results -->
+          <div id="userResults" class="search-results mt-3"></div>
+
+          <!-- Loading indicator -->
+          <div id="userLoading" class="text-center mt-3" style="display: none;">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+            <span class="ms-2">Searching...</span>
+          </div>
         </div>
-        <!-- Empty line for a little space -->
-        <br>
-        <!-- Filter buttons group -->
-        <div class="btn-group content-filter-buttons" role="group" aria-label="Content Type Filter">
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="picture">📷</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="reel">🎬</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="album">📚</button>
+      </div>
+
+      <!-- Posts Search Tab -->
+      <div id="postsTab" class="search-tab-content">
+        <div class="search-body p-3">
+          <!-- Basic search input -->
+          <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input id="postSearchField" type="text" class="form-control" placeholder="Search posts..." autocomplete="off">
+          </div>
+
+          <!-- Advanced Search Button -->
+          <button id="postAdvancedBtn" class="btn btn-outline-primary btn-sm mb-3 w-100">Advanced Search</button>
+
+          <!-- Advanced Search Form (hidden by default) -->
+          <div id="postAdvancedForm" class="advanced-search-form" style="display: none;">
+            <div class="mb-3">
+              <label class="form-label small">Post Type</label>
+              <select id="postType" class="form-select">
+                <option value="">All Types</option>
+                <option value="text">Text</option>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+            <div class="row mb-3">
+              <div class="col-6">
+                <label class="form-label small">Date From</label>
+                <input type="date" id="postDateFrom" class="form-control">
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Date To</label>
+                <input type="date" id="postDateTo" class="form-control">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Tags (comma-separated)</label>
+              <input type="text" id="postTags" class="form-control" placeholder="tag1, tag2, tag3">
+            </div>
+          </div>
+
+          <!-- Search Results -->
+          <div id="postResults" class="search-results mt-3"></div>
+
+          <!-- Loading indicator -->
+          <div id="postLoading" class="text-center mt-3" style="display: none;">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+            <span class="ms-2">Searching...</span>
+          </div>
         </div>
-
-        <!-- recent list -->
-        <h6 class="recent-title text-muted fw-semibold mt-4 mb-2">Recent</h6>
-        <ul class="recent-list list-unstyled small text-muted">
-          <li>No recent searches.</li>
-        </ul>
-
       </div>
 
     </div>
@@ -415,13 +484,20 @@
           <div class="d-flex align-items-center justify-content-between p-3">
             <div class="d-flex align-items-center">
               <div class="profile-picture-container">
-                <img src="<%= post.user.profilePicture || './user/default_profile.jpg' %>"
-                  alt="<%= post.user.username %>" class="profile-img">
+                <a href="/u/<%= post.user.username %>">
+                  <img src="<%= post.user.avatar || '/avatars/default.jpg' %>"
+                    alt="<%= post.user.username %>" class="profile-img">
+                </a>
               </div>
               <div class="ms-2">
                 <div class="d-flex align-items-center">
                   <div class="username-top-header fw-bold">
-                    <%= post.user.username %>
+                    <a href="/u/<%= post.user.username %>" class="username-link">
+                      <%= post.user.username %>
+                    </a>
+                    <% if (post.user.isVerified) { %>
+                      <span class="verified-badge"></span>
+                    <% } %>
                   </div>
                   <span class="text-muted mx-1">•</span>
                   <div class="time-since-posted-header text-muted small">
@@ -480,7 +556,9 @@
             <% if (post.caption) { %>
               <div class="caption mb-2">
                 <span class="caption-username fw-bold">
-                  <%= post.user.username %>
+                  <a href="/u/<%= post.user.username %>" class="username-link">
+                    <%= post.user.username %>
+                  </a>
                 </span>
                 <span class="caption-text"> <%= post.caption %></span>
               </div>
@@ -695,12 +773,6 @@
         <label>
           <input type="text" class="search-input" placeholder="Search" />
         </label>
-        <!-- Filter buttons group -->
-        <div class="btn-group content-filter-buttons" role="group" aria-label="Content Type Filter">
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="picture">📷</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="reel">🎬</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-type="album">📚</button>
-        </div>
       </div>
 
       <div class="mobile-notifications">
@@ -1008,11 +1080,11 @@
     <script src="/scripts/func_like/like.js"></script>
     <script src="/scripts/func_like/like-toggle.js"></script>
     <script src="/scripts/func_filter/search_panel.js"></script>
-    <script src="/scripts/func_filter/filter_posts.js"></script>
+
 
     <script src="/scripts/func_post/enhanced_modal.js"></script>
     <script src="/scripts/func_share/share.js"></script>
-    <script src="/scripts/func_new/filter_new_posts.js"></script>
+
     <script src="/scripts/func_comment/comment_system.js"></script>
 
 </body>
