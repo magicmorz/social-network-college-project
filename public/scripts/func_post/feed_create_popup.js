@@ -8,7 +8,7 @@ function createPostHTML(post) {
   return `
     <div class="post mb-4" data-post-id="${post._id}">
       <div class="post-header d-flex align-items-center p-3">
-        <img src="${post.user.profilePicture || './user/default_profile.jpg'}" 
+                    <img src="${post.user.avatar || '/avatars/default.jpg'}" 
              alt="${post.user.username}" 
              class="rounded-circle me-3" 
              style="width: 40px; height: 40px; object-fit: cover;">
