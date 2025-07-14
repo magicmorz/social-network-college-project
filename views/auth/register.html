@@ -37,13 +37,6 @@
         <form class="register_form" action="/auth/register" method="POST">
           <input
             class="register_form_input"
-            type="text"
-            name="username"
-            placeholder="Username"
-            required
-          />
-          <input
-            class="register_form_input"
             type="email"
             name="email"
             placeholder="Email"
@@ -56,7 +49,13 @@
             placeholder="Password"
             required
           />
-          <button class="register_form_button" type="submit">Sign up</button>
+          <input
+            class="register_form_input"
+            type="text"
+            name="username"
+            placeholder="username"
+            required
+          />
 
           <p class="register_form_text">
             People who use our service may have uploaded your contact
@@ -71,13 +70,30 @@
             <a href="/cookies" class="register_form_link">Cookies Policy</a>.
           </p>
         </form>
+        <button class="register_form_button" type="submit">Sign up</button>
+
       </div>
-        <div class="register_page_box" id="register_page_box_login">
-            <p class="register_page_text">
-            Have an account?
-            <a href="/auth/login" class="register_page_link">Log in</a>
-            </p>
+      <div class="register_page_box" id="register_page_box_login">
+        <p class="register_page_text">
+          Have an account? <br>
+          <a href="/auth/login" class="register_page_link">Log in</a>
+        </p>
+      </div>
+      <div id="register_page_box_get_app">
+        <p class="register_page_text">Get the app.</p>
+        <div class="register_page_app_links">
+          <img
+            class="register_page_app_link"
+            src="./utils/Google_Play.png"
+            alt="Google Play"
+          />
+          <img
+            class="register_page_app_link"
+            src="./utils/Microsoft.png"
+            alt="Google Play"
+          />
         </div>
+      </div>
     </section>
   </body>
 </html>
