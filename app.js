@@ -101,6 +101,10 @@ app.use('/posts', postRoutes);
 const searchRoutes = require('./routes/search');
 app.use('/search', searchRoutes);
 
+// Profile routes for user profiles
+const profileRoutes = require('./routes/profile');
+app.use('/u', profileRoutes);
+
 // Protected home route - loads posts from DB and passes to feed.ejs
 app.get("/home", isAuthenticated, async (req, res) => {
   try {

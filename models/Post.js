@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema({
   },
   language: {
     type: String,
-    default: "und", // ISO 639-1 code like 'en', 'es', or 'und' for undetermined
+    default: "en", // ISO 639-1 code like 'en', 'es' - using 'en' as default instead of 'und'
   },
   image: {
     type: String,
@@ -109,9 +109,9 @@ postSchema.pre("save", function (next) {
     const langCode = franc(this.caption);
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
-      this.language = lang && lang["1"] ? lang["1"] : "und"; // 2-letter code like 'en'
+      this.language = lang && lang["1"] ? lang["1"] : "en"; // 2-letter code like 'en', fallback to 'en'
     } else {
-      this.language = "und";
+      this.language = "en"; // Use 'en' as fallback instead of 'und'
     }
   }
 

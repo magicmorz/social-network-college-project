@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${user.profilePicture || '/user/default_profile.jpg'}" alt="${user.username}" class="profile-pic">
           <div class="user-info">
             <div class="username">
-              ${user.username}
+              <a href="/u/${user.username}" class="username-link">${user.username}</a>
               ${user.isVerified ? '<span class="verified-badge"></span>' : ''}
             </div>
             <div class="user-details">
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${user.profilePicture || '/user/default_profile.jpg'}" alt="${user.username}" class="profile-pic">
           <div class="user-info">
             <div class="username">
-              ${user.username}
+              <a href="/u/${user.username}" class="username-link">${user.username}</a>
               ${user.isVerified ? '<span class="verified-badge"></span>' : ''}
             </div>
             <div class="user-details">

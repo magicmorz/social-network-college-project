@@ -31,3 +31,42 @@ body {
   scrollbar-color: transparent transparent;
 }
 
+/* Username link styles for feed */
+.username-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.username-link:hover {
+  color: #0095f6;
+  text-decoration: none;
+}
+
+.username-link:visited {
+  color: inherit;
+}
+
+/* Ensure username links in feed maintain their bold styling */
+.username-top-header .username-link,
+.caption-username .username-link {
+  color: #262626;
+  font-weight: 600;
+}
+
+.username-top-header .username-link:hover,
+.caption-username .username-link:hover {
+  color: #0095f6;
+}
+
+/* Dark theme support for username links */
+[data-theme="dark"] .username-top-header .username-link,
+[data-theme="dark"] .caption-username .username-link {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .username-top-header .username-link:hover,
+[data-theme="dark"] .caption-username .username-link:hover {
+  color: #0095f6;
+}
+

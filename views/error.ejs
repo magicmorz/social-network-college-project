@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error • Instagram</title>
+    <link rel="stylesheet" href="/styles/feed.css">
+    <link rel="stylesheet" href="/styles/theme.css">
+    <link rel="icon" href="/utils/tab_instagram_icon.png" type="image/png">
+    <style>
+        .error-container {
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .error-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary, #262626);
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            color: var(--text-secondary, #8e8e8e);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        
+        .back-home-btn {
+            background: var(--primary-blue, #0095f6);
+            color: white;
+            text-decoration: none;
+            padding: 8px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+        
+        .back-home-btn:hover {
+            background: var(--primary-blue-dark, #007bb8);
+            text-decoration: none;
+            color: white;
+        }
+        
+        [data-theme="dark"] {
+            --text-primary: #fff;
+            --text-secondary: #8e8e8e;
+            --primary-blue: #0095f6;
+            --primary-blue-dark: #007bb8;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Sorry, something went wrong</h1>
+        <p class="error-message"><%= message || 'The page you requested could not be found.' %></p>
+        <a href="/home" class="back-home-btn">Go back to Instagram</a>
+    </div>
+</body>
+</html> 

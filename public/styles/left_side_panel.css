@@ -473,6 +473,17 @@
   font-size: 14px;
 }
 
+.username-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.username-link:hover {
+  color: var(--primary-blue, #0095f6);
+  text-decoration: none;
+}
+
 .search-result-user .user-details {
   color: var(--link);
   font-size: 12px;

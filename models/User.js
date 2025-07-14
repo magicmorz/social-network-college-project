@@ -36,6 +36,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   }],
+  bio: {
+    type: String,
+    maxlength: [150, 'Bio cannot exceed 150 characters'],
+    default: ''
+  },
+  country: {
+    type: String,
+    maxlength: [50, 'Country cannot exceed 50 characters'],
+    default: ''
+  },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
