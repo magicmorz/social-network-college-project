@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
-const Post = require('./models/post');
+const Post = require('./models/Post');
 const User = require('./models/User'); // Make sure you have this model
 require("dotenv").config();
 
@@ -96,6 +96,10 @@ app.use('/auth', authRoutes);
 // Post routes for API endpoints
 const postRoutes = require('./routes/post');
 app.use('/posts', postRoutes);
+
+// Search routes for API endpoints
+const searchRoutes = require('./routes/search');
+app.use('/search', searchRoutes);
 
 // Protected home route - loads posts from DB and passes to feed.ejs
 app.get("/home", isAuthenticated, async (req, res) => {

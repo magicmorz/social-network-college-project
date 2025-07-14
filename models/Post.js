@@ -20,6 +20,11 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    enum: ['text', 'image', 'video'],
+    default: 'image'
+  },
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -77,6 +82,9 @@ const postSchema = new mongoose.Schema({
 // Indexes
 postSchema.index({ createdAt: -1 }); // Index for sorting by creation date
 postSchema.index({ user: 1 }); // Index for user lookups
+postSchema.index({ caption: 'text' }); // Text index for caption search
+postSchema.index({ type: 1 }); // Index for post type filtering
+postSchema.index({ hashtags: 1 }); // Index for hashtag search
 
 // Smart extraction middleware - extracts hashtags and mentions from the caption
 // and detects the language of the caption

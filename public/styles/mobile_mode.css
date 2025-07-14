@@ -165,10 +165,5 @@ margin: 0;  }
   gap: 8px;
 }
 
-/* Align content filter button group to the right */
-.content-filter-buttons {
-  margin-left: auto;
-  display: flex;
-  gap: 4px;
-}
+
 
