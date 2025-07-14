@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram</title>
+    <link rel="icon" type="image/x-icon" href="/utils/tab_instagram_icon.png" />
+    <link href="register.css" rel="stylesheet" />
+    <link href="/styles/index.css" rel="stylesheet" />
+    <link href="/styles/theme.css" rel="stylesheet" />
+  </head>
+  <body>
+    <section class="register_page">
+      <div class="register_page_box">
+        <div class="instagram_full_logo"></div>
+        <h4 class="register_page_title">
+          Sign up to see photos and videos from your friends.
+        </h4>
+        <form class="register_form" action="/auth/register" method="POST">
+          <input
+            class="register_form_input"
+            type="text"
+            name="username"
+            placeholder="Username"
+            required
+          />
+          <input
+            class="register_form_input"
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+          />
+          <input
+            class="register_form_input"
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <button class="register_form_button" type="submit">Sign up</button>
+
+          <p class="register_form_text">
+            People who use our service may have uploaded your contact
+            information to Instagram.
+            <a href="/learnmore" class="register_form_link">Learn More</a>
+          </p>
+          <p class="register_form_text">
+            By signing up, you agree to our
+            <a href="/terms" class="register_form_link">Terms</a>,
+            <a href="/privacy" class="register_form_link">Privacy Policy</a>,
+            and
+            <a href="/cookies" class="register_form_link">Cookies Policy</a>.
+          </p>
+        </form>
+      </div>
+      <div class="register_page_box">
+        <p class="register_page_text">
+          Have an account?
+          <a href="/auth/login" class="register_page_link">Log in</a>
+        </p>
+      </div>
+      <p class="register_page_text">
+        <a href="/auth/forgot-password" class="register_page_link"
+          >Forgot password?</a
+        >
+      </p>
+      <p class="register_page_text"></p>
+    </section>
+  </body>
+</html>
