@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= targetUser.username %> Insights • Instagram</title>
+    <link rel="stylesheet" href="/styles/feed.css">
+    <link rel="stylesheet" href="/styles/theme.css">
+    <link rel="stylesheet" href="/styles/profile.css">
+    <link rel="icon" href="/utils/tab_instagram_icon.png" type="image/png">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .insights-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 0 20px;
+        }
+
+        .insights-header {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 300px;
+            display: block;
+        }
+
+        .line {
+            fill: none;
+            stroke: var(--primary-blue);
+            stroke-width: 2;
+        }
+
+        .dot {
+            fill: var(--primary-blue);
+            stroke: var(--background);
+            stroke-width: 2;
+        }
+
+        .axis {
+            color: var(--text-secondary);
+        }
+
+        .axis-label {
+            font-size: 12px;
+            fill: var(--text-secondary);
+        }
+
+        .grid-line {
+            stroke: var(--border);
+            stroke-dasharray: 3,3;
+            opacity: 0.7;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .stats-summary {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 16px;
+            background: var(--hover-overlay);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .back-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/home">
+                        <img src="/utils/Instagram_Image_2x.png" alt="Instagram">
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <a href="/home" class="back-to-feed">← Back to Feed</a>
+                    <span class="current-user">@<%= currentUser.username %></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Insights Content -->
+        <main class="insights-container">
+            <a href="/u/<%= targetUser.username %>" class="back-link">← Back to Profile</a>
+            
+            <div class="insights-header">
+                <h1>📊 Profile Insights</h1>
+                <p>Your activity and growth over the last 30 days</p>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="stats-summary" id="statsSummary">
+                <!-- Stats will be populated by JavaScript -->
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="insights-grid">
+                <!-- Posts Per Day Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title">📝 Posts Per Day</h3>
+                    <svg class="chart-svg" id="postsChart"></svg>
+                </div>
+
+                <!-- Followers Per Day Chart -->
+                <div class="chart-container">
+                    <h3 class="chart-title">👥 New Followers Per Day</h3>
+                    <svg class="chart-svg" id="followersChart"></svg>
+                </div>
+            </div>
+        </main>
+
+        <!-- Tooltip -->
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <script>
+        // Data from server
+        const postsPerDay = <%- postsPerDay %>;
+        const followersPerDay = <%- followersPerDay %>;
+
+        // Chart configuration
+        const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+        const width = 500 - margin.left - margin.right;
+        const height = 300 - margin.top - margin.bottom;
+
+        // Create tooltip
+        const tooltip = d3.select("#tooltip");
+
+        // Generate complete date range for last 30 days
+        function generateDateRange() {
+            const dates = [];
+            const today = new Date();
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                dates.push(date.toISOString().split('T')[0]);
+            }
+            return dates;
+        }
+
+        // Fill missing dates with zero values
+        function fillMissingDates(data, valueKey) {
+            const dateRange = generateDateRange();
+            const dataMap = new Map();
+            
+            data.forEach(d => {
+                dataMap.set(d._id, d[valueKey]);
+            });
+
+            return dateRange.map(date => ({
+                date: date,
+                value: dataMap.get(date) || 0
+            }));
+        }
+
+        // Create line chart
+        function createChart(containerId, data, title, color = '#0095f6') {
+            const svg = d3.select(`#${containerId}`)
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom);
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Parse dates and prepare data
+            const parseDate = d3.timeParse("%Y-%m-%d");
+            const processedData = data.map(d => ({
+                date: parseDate(d.date),
+                value: d.value
+            }));
+
+            // Set scales
+            const xScale = d3.scaleTime()
+                .domain(d3.extent(processedData, d => d.date))
+                .range([0, width]);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(processedData, d => d.value) || 1])
+                .nice()
+                .range([height, 0]);
+
+            // Create line generator
+            const line = d3.line()
+                .x(d => xScale(d.date))
+                .y(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+
+            // Add grid lines
+            g.selectAll(".grid-line-y")
+                .data(yScale.ticks())
+                .enter().append("line")
+                .attr("class", "grid-line")
+                .attr("x1", 0)
+                .attr("x2", width)
+                .attr("y1", d => yScale(d))
+                .attr("y2", d => yScale(d));
+
+            // Add axes
+            g.append("g")
+                .attr("class", "axis")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(xScale)
+                    .tickFormat(d3.timeFormat("%m/%d"))
+                    .ticks(5));
+
+            g.append("g")
+                .attr("class", "axis")
+                .call(d3.axisLeft(yScale)
+                    .ticks(5));
+
+            // Add line
+            g.append("path")
+                .datum(processedData)
+                .attr("class", "line")
+                .style("stroke", color)
+                .attr("d", line);
+
+            // Add dots
+            g.selectAll(".dot")
+                .data(processedData)
+                .enter().append("circle")
+                .attr("class", "dot")
+                .attr("cx", d => xScale(d.date))
+                .attr("cy", d => yScale(d.value))
+                .attr("r", 4)
+                .style("fill", color)
+                .on("mouseover", function(event, d) {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    tooltip.html(`
+                        <strong>${d3.timeFormat("%Y-%m-%d")(d.date)}</strong><br/>
+                        ${title}: ${d.value}
+                    `)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                    tooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
+            // Add axis labels
+            g.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text(title);
+
+            g.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", `translate(${width / 2}, ${height + margin.bottom})`)
+                .style("text-anchor", "middle")
+                .text("Date");
+        }
+
+        // Calculate and display summary stats
+        function displaySummaryStats() {
+            const postsData = fillMissingDates(postsPerDay, 'count');
+            const followersData = fillMissingDates(followersPerDay, 'gained');
+
+            const totalPosts = postsData.reduce((sum, d) => sum + d.value, 0);
+            const totalNewFollowers = followersData.reduce((sum, d) => sum + d.value, 0);
+            const avgPostsPerDay = (totalPosts / 30).toFixed(1);
+            const avgFollowersPerDay = (totalNewFollowers / 30).toFixed(1);
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <span class="stat-number">${totalPosts}</span>
+                    <div class="stat-label">Total Posts (30 days)</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${totalNewFollowers}</span>
+                    <div class="stat-label">New Followers (30 days)</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${avgPostsPerDay}</span>
+                    <div class="stat-label">Avg Posts/Day</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${avgFollowersPerDay}</span>
+                    <div class="stat-label">Avg Followers/Day</div>
+                </div>
+            `;
+
+            document.getElementById('statsSummary').innerHTML = statsHtml;
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Posts data:', postsPerDay);
+            console.log('Followers data:', followersPerDay);
+
+            // Fill missing dates and create charts
+            const postsData = fillMissingDates(postsPerDay, 'count');
+            const followersData = fillMissingDates(followersPerDay, 'gained');
+
+            createChart('postsChart', postsData, 'Posts', '#0095f6');
+            createChart('followersChart', followersData, 'New Followers', '#42d392');
+
+            displaySummaryStats();
+        });
+    </script>
+</body>
+</html> 
