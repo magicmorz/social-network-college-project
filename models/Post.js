@@ -14,11 +14,16 @@ const postSchema = new mongoose.Schema({
   },
   language: {
     type: String,
-    default: "und", // ISO 639-1 code like 'en', 'es', or 'und' for undetermined
+    default: "en", // ISO 639-1 code like 'en', 'es' - using 'en' as default instead of 'und'
   },
   image: {
     type: String,
     required: true,
+  },
+  type: {
+    type: String,
+    enum: ['text', 'image', 'video'],
+    default: 'image'
   },
   likes: [
     {
@@ -77,6 +82,9 @@ const postSchema = new mongoose.Schema({
 // Indexes
 postSchema.index({ createdAt: -1 }); // Index for sorting by creation date
 postSchema.index({ user: 1 }); // Index for user lookups
+postSchema.index({ caption: 'text' }); // Text index for caption search
+postSchema.index({ type: 1 }); // Index for post type filtering
+postSchema.index({ hashtags: 1 }); // Index for hashtag search
 
 // Smart extraction middleware - extracts hashtags and mentions from the caption
 // and detects the language of the caption
@@ -101,9 +109,9 @@ postSchema.pre("save", function (next) {
     const langCode = franc(this.caption);
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
-      this.language = lang && lang["1"] ? lang["1"] : "und"; // 2-letter code like 'en'
+      this.language = lang && lang["1"] ? lang["1"] : "en"; // 2-letter code like 'en', fallback to 'en'
     } else {
-      this.language = "und";
+      this.language = "en"; // Use 'en' as fallback instead of 'und'
     }
   }
 

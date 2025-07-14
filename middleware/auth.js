@@ -1,7 +1,18 @@
+const User = require('../models/User');
+
 // Authentication middleware
-const isLoggedIn = (req, res, next) => {
+const isLoggedIn = async (req, res, next) => {
     if (req.session.userId) {
-        return next();
+        try {
+            // Get full user object from database
+            const user = await User.findById(req.session.userId);
+            if (user) {
+                req.user = user;
+                return next();
+            }
+        } catch (error) {
+            console.error('Error fetching user:', error);
+        }
     }
     res.redirect('/auth/login');
 };

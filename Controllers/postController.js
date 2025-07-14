@@ -1,4 +1,4 @@
-const Post = require('../models/post');
+const Post = require('../models/Post');
 const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
@@ -39,8 +39,8 @@ const upload = multer({
 exports.getFeed = async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture')
+      .populate('user', 'username avatar')
+      .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
     
@@ -55,8 +55,8 @@ exports.getFeed = async (req, res) => {
 exports.getPostsJson = async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture')
+      .populate('user', 'username avatar')
+      .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
     
@@ -122,7 +122,7 @@ exports.getPostComments = async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await Post.findById(postId)
-      .populate('comments.user', 'username profilePicture')
+      .populate('comments.user', 'username avatar')
       .select('comments');
 
     if (!post) {
@@ -200,7 +200,7 @@ exports.addComment = async (req, res) => {
     await post.save();
 
     // Populate the user info for the response
-    await post.populate('comments.user', 'username profilePicture');
+    await post.populate('comments.user', 'username avatar');
     
     const newComment = post.comments[post.comments.length - 1];
     
@@ -249,8 +249,8 @@ exports.deletePost = async (req, res) => {
 exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture');
+      .populate('user', 'username avatar')
+      .populate('comments.user', 'username avatar');
 
     if (!post) {
       return res.status(404).render('error', { message: 'Post not found' });
@@ -268,7 +268,7 @@ exports.getUserPosts = async (req, res) => {
   try {
     const userId = req.params.userId || req.user._id;
     const posts = await Post.find({ user: userId })
-      .populate('user', 'username profilePicture')
+      .populate('user', 'username avatar')
       .sort({ createdAt: -1 });
 
     res.json({ posts });
