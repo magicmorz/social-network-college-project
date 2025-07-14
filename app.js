@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
-const Post = require('./models/post');
+const Post = require('./models/Post');
 const User = require('./models/User'); // Make sure you have this model
 require("dotenv").config();
 
@@ -97,14 +97,22 @@ app.use('/auth', authRoutes);
 const postRoutes = require('./routes/post');
 app.use('/posts', postRoutes);
 
+// Search routes for API endpoints
+const searchRoutes = require('./routes/search');
+app.use('/search', searchRoutes);
+
+// Profile routes for user profiles
+const profileRoutes = require('./routes/profile');
+app.use('/u', profileRoutes);
+
 // Protected home route - loads posts from DB and passes to feed.ejs
 app.get("/home", isAuthenticated, async (req, res) => {
   try {
     console.log('Loading feed for user:', req.user.username);
     
     const posts = await Post.find()
-      .populate('user', 'username profilePicture')
-      .populate('comments.user', 'username profilePicture') // This populates comment users
+      .populate('user', 'username avatar isVerified')
+      .populate('comments.user', 'username avatar') // This populates comment users
       .sort({ createdAt: -1 });
     
     // Filter out posts with missing users
