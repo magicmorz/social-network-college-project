@@ -58,10 +58,23 @@
             class="register_form_input"
             type="text"
             name="username"
-            placeholder="username"
+            placeholder="Username"
             required
           />
-
+          <select class="register_form_input" name="country" required>
+            <option value="" disabled selected>Select your country</option>
+            <option value="US">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="IN">India</option>
+            <option value="IL">Israel</option>
+            <option value="FR">France</option>
+            <option value="DE">Germany</option>
+            <option value="JP">Japan</option>
+            <option value="BR">Brazil</option>
+            <option value="ZA">South Africa</option>
+          </select>
           <p class="register_form_text">
             People who use our service may have uploaded your contact
             information to Instagram.
@@ -75,6 +88,10 @@
             <a href="/cookies" class="register_form_link">Cookies Policy</a>.
           </p>
         </form>
+        <h4 class="register_page_title">
+          Please sign below to confirm that you agree to the terms and conditions.
+        </h4>
+        <canvas id="signatureCanvas" width="300" height="100"></canvas>
         <button class="register_form_button" type="submit">Sign up</button>
       </div>
       <div class="register_page_box" id="register_page_box_login">
