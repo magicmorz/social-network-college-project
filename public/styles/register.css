@@ -21,20 +21,58 @@
 .register_page_title {
   width: 75%;
   color: gray;
+  text-align: center; /* Explicitly center the text */
 }
 
 .register_form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 40px;
-  padding-top: 20px;
-  padding-bottom: 0;
+  align-items: center;
+  gap: 10px; /* Consistent spacing between form elements */
+  padding: 20px; /* Reduced padding for better fit */
+  width: 100%; /* Ensure it respects the parent box width */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .register_form_text {
   margin-top: 8px;
   color: gray;
+  font-size: 12px; /* Smaller text for better readability */
+  line-height: 1.4; /* Improve text spacing */
+}
+
+.register_form_input {
+  width: 100%;
+  height: 36px;
+  padding: 8px 12px;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  background-color: #fafafa;
+  font-size: 14px;
+  color: #262626;
+  box-sizing: border-box;
+}
+
+#signatureCanvas {
+  border: 1px solid #ccc;
+  cursor: crosshair;
+  margin-bottom: 20px;
+  width: 100%; /* Full width within form */
+  max-width: 300px; /* Limit canvas width for better fit */
+  margin-left: auto;
+  margin-right: auto; /* Center the canvas */
+}
+
+.register_form_button {
+  width: 75%;
+  height: 30px;
+  background-color: rgb(65, 80, 247);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 0; /* Remove extra bottom margin */
+  align-self: center; /* Center the button horizontally */
 }
 
 @media (max-width: 450px) {
@@ -106,17 +144,6 @@
   width: 40%;
 }
 
-.register_form_button {
-  width: 75%;
-  height: 30px;
-  background-color: rgb(65, 80, 247);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 30px;
-}
-
 #register_page_footer {
   display: flex;
   flex-direction: column;
@@ -163,24 +190,6 @@
   white-space: nowrap;
 }
 
-#signatureCanvas {
-  border: 1px solid #ccc;
-  cursor: crosshair;
-  margin-bottom: 20px;
-}
-
 .register_form_link {
   text-decoration: none;
-}
-
-.register_form_input {
-  width: 100%;
-  height: 36px;
-  padding: 8px 12px;
-  border: 1px solid #dbdbdb;
-  border-radius: 4px;
-  background-color: #fafafa;
-  font-size: 14px;
-  color: #262626;
-  box-sizing: border-box;
 }
