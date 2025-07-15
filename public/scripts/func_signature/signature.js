@@ -18,7 +18,7 @@ canvas.addEventListener("mousedown", () => {
   ctx.moveTo(event.offsetX, event.offsetY);
 });
 
-// Clear canvas button (optional, you can add a button in HTML to trigger this)
+// Clear canvas button 
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
