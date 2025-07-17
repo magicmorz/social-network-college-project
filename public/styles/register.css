@@ -56,11 +56,22 @@
 #signatureCanvas {
   border: 1px solid #ccc;
   cursor: crosshair;
-  margin-bottom: 20px;
   width: 100%; /* Full width within form */
   max-width: 300px; /* Limit canvas width for better fit */
   margin-left: auto;
   margin-right: auto; /* Center the canvas */
+}
+
+#clear_canvas_button {
+  width: 50%;
+  height: 30px;
+  background-color: grey;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px; /* Space above the button */
+  margin-bottom: 10px; /* Space below the button */
 }
 
 .register_form_button {
