@@ -195,61 +195,84 @@
   text-decoration: none;
 }
 
+/* Styles for the testimonial aside container */
 .testimonial-aside {
-  max-width: 300px;
-  min-width: 250px;
-  margin: 20px auto;
-  padding: 15px;
-  background-color: #fafafa; 
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  max-width: 300px; /* Limits the maximum width of the aside to 300px */
+  min-width: 250px; /* Ensures the aside is at least 250px wide */
+  margin: 20px auto; /* Centers the aside horizontally with 20px top/bottom margin */
+  padding: 15px; /* Adds internal spacing for content */
+  background-color: #fafafa; /* Light gray background for a clean look */
+  border-radius: 8px; /* Rounds corners for a card-like appearance */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  text-align: center; /* Centers text content within the aside */
 }
 
+/* Styles for the heading inside the testimonial aside */
 .testimonial-aside h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #262626; 
-  margin-bottom: 10px;
-
-  text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 12px rgba(100, 100, 255, 0.4);
+  font-size: 16px; /* Sets font size for the heading */
+  font-weight: 600; /* Makes the heading bold for emphasis */
+  color: #262626; /* Dark gray color for text */
+  margin-bottom: 10px; /* Adds space below the heading */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+    /* Adds a dark shadow for depth */ 0 0 12px rgba(100, 100, 255, 0.4); /* Adds a subtle blue glow effect */
 }
 
+/* General styles for paragraph elements within the aside */
 .testimonial-aside p {
-  font-size: 14px;
-  color: #8e8e8e; 
-  line-height: 1.5;
+  font-size: 14px; /* Sets a smaller font size for testimonials */
+  color: #8e8e8e; /* Light gray color for a softer appearance */
+  line-height: 1.5; /* Increases line spacing for readability */
 }
 
+/* Styles for the container holding the testimonials */
 .testimonial-container {
-  position: relative;
-  width: 100%; /* Ensure container spans the full width of the aside */
-  height: 60px; /* Adjust based on tallest testimonial */
-  overflow: hidden;
+  position: relative; /* Allows absolute positioning of child testimonials */
+  width: 100%; /* Makes the container span the full width of the aside */
+  height: 60px; /* Fixed height to match the tallest testimonial */
+  overflow: hidden; /* Hides any content outside the container's bounds */
 }
 
+/* Styles for individual testimonial elements */
 .testimonial {
-  position: absolute; /* Stack testimonials in the same position */
-  width: 100%; /* Match the container's width */
-  font-size: 14px;
-  color: #8e8e8e;
-  line-height: 1.5;
-  margin: 0;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
+  position: absolute; /* Stacks all testimonials in the same position */
+  width: 100%; /* Ensures testimonials match the container's width */
+  font-size: 14px; /* Matches the font size of other paragraphs */
+  color: #8e8e8e; /* Matches the color of other paragraphs */
+  line-height: 1.5; /* Matches the line height for consistency */
+  margin: 0; /* Removes default margins to prevent misalignment */
+  opacity: 0; /* Makes testimonials initially invisible */
+  transition: opacity 1s ease-in-out; /* Smoothly animates opacity changes over 1 second with ease-in-out timing */
 }
 
-.testimonial:nth-child(1) { animation: cycle 20s infinite; }
-.testimonial:nth-child(2) { animation: cycle 20s infinite 5s; }
-.testimonial:nth-child(3) { animation: cycle 20s infinite 10s; }
-.testimonial:nth-child(4) { animation: cycle 20s infinite 15s; }
+/* Applies the animation to each testimonial with staggered delays */
+.testimonial:nth-child(1) {
+  animation: cycle 20s infinite; /* Runs the 'cycle' animation, 20s duration, loops indefinitely */
+}
+.testimonial:nth-child(2) {
+  animation: cycle 20s infinite 5s; /* Same animation, starts after a 5s delay */
+}
+.testimonial:nth-child(3) {
+  animation: cycle 20s infinite 10s; /* Same animation, starts after a 10s delay */
+}
+.testimonial:nth-child(4) {
+  animation: cycle 20s infinite 15s; /* Same animation, starts after a 15s delay */
+}
 
+/* Defines the animation keyframes for the fade-in/fade-out cycle */
 @keyframes cycle {
-  0% { opacity: 0; }
-  5% { opacity: 1; } /* Fade in: 1s / 20s */
-  20% { opacity: 1; } /* Stay visible: 4s / 20s */
-  25% { opacity: 0; } /* Fade out: 1s / 20s */
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  } /* Starts invisible at the beginning of the cycle */
+  5% {
+    opacity: 1;
+  } /* Fades in to fully visible over 1s (5% of 20s) */
+  20% {
+    opacity: 1;
+  } /* Stays fully visible for 3s (from 5% to 20%) */
+  25% {
+    opacity: 0;
+  } /* Fades out to invisible over 1s (from 20% to 25%) */
+  100% {
+    opacity: 0;
+  } /* Remains invisible for the rest of the cycle (15s) */
 }
