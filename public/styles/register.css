@@ -197,6 +197,7 @@
 
 .testimonial-aside {
   max-width: 300px;
+  min-width: 250px;
   margin: 20px auto;
   padding: 15px;
   background-color: #fafafa; 
@@ -220,4 +221,35 @@
   font-size: 14px;
   color: #8e8e8e; 
   line-height: 1.5;
+}
+
+.testimonial-container {
+  position: relative;
+  width: 100%; /* Ensure container spans the full width of the aside */
+  height: 60px; /* Adjust based on tallest testimonial */
+  overflow: hidden;
+}
+
+.testimonial {
+  position: absolute; /* Stack testimonials in the same position */
+  width: 100%; /* Match the container's width */
+  font-size: 14px;
+  color: #8e8e8e;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.testimonial:nth-child(1) { animation: cycle 20s infinite; }
+.testimonial:nth-child(2) { animation: cycle 20s infinite 5s; }
+.testimonial:nth-child(3) { animation: cycle 20s infinite 10s; }
+.testimonial:nth-child(4) { animation: cycle 20s infinite 15s; }
+
+@keyframes cycle {
+  0% { opacity: 0; }
+  5% { opacity: 1; } /* Fade in: 1s / 20s */
+  20% { opacity: 1; } /* Stay visible: 4s / 20s */
+  25% { opacity: 0; } /* Fade out: 1s / 20s */
+  100% { opacity: 0; }
 }
