@@ -4,12 +4,12 @@ const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
 const Post = require('./models/Post');
-const User = require('./models/User'); // Make sure you have this model
+const User = require('./models/User');
 require("dotenv").config();
 
 const app = express();
 
-// Middleware (moved before routes)
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
@@ -35,39 +35,25 @@ function timeAgo(date) {
   const postDate = new Date(date);
   const diffInSeconds = Math.floor((now - postDate) / 1000);
   
-  if (diffInSeconds < 60) {
-    return 'now';
-  } else if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return `${minutes}m`;
-  } else if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours}h`;
-  } else if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days}d`;
-  } else if (diffInSeconds < 1209600) { // 2 weeks
-    return '1w';
-  } else if (diffInSeconds < 2419200) { // 4 weeks
-    const weeks = Math.floor(diffInSeconds / 604800);
-    return `${weeks}w`;
-  } else {
-    // More than 4 weeks, show date
-    return postDate.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  }
+  if (diffInSeconds < 60) return 'now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d`;
+  if (diffInSeconds < 2419200) return `${Math.floor(diffInSeconds / 604800)}w`;
+  
+  return postDate.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric' 
+  });
 }
 
 // Make timeAgo available in EJS templates
 app.locals.timeAgo = timeAgo;
 
-// Authentication check middleware
+// Authentication check middleware (MOVED HERE - BEFORE IT'S USED)
 async function isAuthenticated(req, res, next) {
   if (req.session.userId) {
     try {
-      // Get full user object from database for post functionality
       const user = await User.findById(req.session.userId);
       if (user) {
         req.user = user;
@@ -89,19 +75,23 @@ app.get("/", (req, res) => {
   }
 });
 
-// Auth routes
+// Auth routes (no auth needed)
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
-// Post routes for API endpoints
+// API routes (with authentication)
+const groupRouter = require('./routes/group');  // Fixed naming
+const usersRouter = require('./routes/users');
+app.use('/api/users', isAuthenticated, usersRouter);
+app.use('/api/group', isAuthenticated, groupRouter);
+
+// Other protected routes
 const postRoutes = require('./routes/post');
 app.use('/posts', postRoutes);
 
-// Search routes for API endpoints
 const searchRoutes = require('./routes/search');
 app.use('/search', searchRoutes);
 
-// Profile routes for user profiles
 const profileRoutes = require('./routes/profile');
 app.use('/u', profileRoutes);
 
@@ -112,7 +102,7 @@ app.get("/home", isAuthenticated, async (req, res) => {
     
     const posts = await Post.find()
       .populate('user', 'username avatar isVerified')
-      .populate('comments.user', 'username avatar') // This populates comment users
+      .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 });
     
     // Filter out posts with missing users
@@ -132,7 +122,7 @@ app.get("/home", isAuthenticated, async (req, res) => {
         user: p.user.username, 
         caption: p.caption?.substring(0, 50) || 'No caption',
         image: p.image,
-        commentsCount: p.comments ? p.comments.length : 0 // Add this debug line
+        commentsCount: p.comments ? p.comments.length : 0
       })));
     } else {
       console.log('❌ No valid posts found');
@@ -145,7 +135,7 @@ app.get("/home", isAuthenticated, async (req, res) => {
   }
 });
 
-// Add this temporary debug route
+// Debug route
 app.get("/debug-database", isAuthenticated, async (req, res) => {
   try {
     const posts = await Post.find().limit(10);
