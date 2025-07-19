@@ -89,28 +89,35 @@ module.exports = {
     }
   },
 
-  // Get posts for a specific group
-  async getGroupPosts(req, res) {
-    try {
-      const group = await Group.findById(req.params.id);
-      if (!group) return res.status(404).json({ error: 'Group not found' });
-      
-      // Check if user is a member
-      if (!group.members.includes(req.session.userId)) {
-        return res.status(403).json({ error: 'Not a member of this group' });
-      }
-      
-      // Assuming you have a Post model with a 'group' field
-      const posts = await Post.find({ group: req.params.id })
-        .populate('user', 'username avatar isVerified')
-        .populate('comments.user', 'username avatar')
-        .sort({ createdAt: -1 });
-      
-      res.json(posts);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+
+// Get posts for a specific group
+async getGroupPosts(req, res) {
+  try {
+    const groupId = req.params.id;
+    
+    // Verify group exists and user has access
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
     }
-  },
+    
+    // Check if user is a member
+    if (!group.members.includes(req.session.userId)) {
+      return res.status(403).json({ error: 'Not authorized to view this group' });
+    }
+    
+    // Get posts for this group
+    const Post = require('../models/Post');
+    const posts = await Post.find({ group: groupId })
+      .populate('user', 'username avatar isVerified')
+      .populate('comments.user', 'username avatar')
+      .sort({ createdAt: -1 });
+    
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+},
 
   // Get all public groups for discovery
   async getPublicGroups(req, res) {

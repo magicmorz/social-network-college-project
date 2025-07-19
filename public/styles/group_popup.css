@@ -73,3 +73,211 @@
 .member-list .form-check {
   margin-bottom: 0.5rem;
 }
+/* overlay for both popups */
+#popupOverlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 1000;
+}
+
+/* Dark mode overlay */
+[data-theme="dark"] #popupOverlay {
+  background: rgba(0,0,0,0.7);
+}
+
+/* base styles for any fixed popup */
+#groupsPopup,
+#createGroupModal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  display: none;
+  z-index: 1001;
+}
+
+/* Dark mode popups */
+[data-theme="dark"] #groupsPopup,
+[data-theme="dark"] #createGroupModal {
+  background: #262626;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  color: #ffffff;
+}
+
+/* show when active */
+#popupOverlay.active,
+#groupsPopup.active,
+#createGroupModal.active {
+  display: block;
+}
+
+/* Headers */
+.popup-header,
+.create-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Dark mode headers */
+[data-theme="dark"] .popup-header,
+[data-theme="dark"] .create-header {
+  border-bottom: 1px solid #404040;
+}
+
+.popup-header h5,
+.create-header h5 {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* Dark mode header text */
+[data-theme="dark"] .popup-header h5,
+[data-theme="dark"] .create-header h5 {
+  color: #ffffff;
+}
+
+/* Group list */
+#groupsList .list-group-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+/* Dark mode group list items */
+[data-theme="dark"] #groupsList .list-group-item {
+  border-bottom: 1px solid #404040;
+  background: transparent;
+  color: #ffffff;
+}
+
+#groupsList .list-group-item:last-child {
+  border-bottom: none;
+}
+
+#createGroupBtn:hover {
+  background: #f8f9fa;
+}
+
+/* Dark mode create group button hover */
+[data-theme="dark"] #createGroupBtn:hover {
+  background: #3a3a3a;
+}
+
+/* Dark mode group item hover */
+[data-theme="dark"] #groupsList .list-group-item:hover {
+  background: #3a3a3a;
+}
+
+/* Create Group form */
+.create-body {
+  padding: 1rem;
+}
+
+/* Dark mode create body */
+[data-theme="dark"] .create-body {
+  background: #262626;
+}
+
+.member-list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+/* Dark mode member list */
+[data-theme="dark"] .member-list {
+  border: 1px solid #404040;
+  background: #1a1a1a;
+}
+
+.member-list .form-check {
+  margin-bottom: 0.5rem;
+}
+
+/* Dark mode form elements */
+[data-theme="dark"] .form-control {
+  background: #1a1a1a;
+  border: 1px solid #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background: #1a1a1a;
+  border-color: #0d6efd;
+  color: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: #6c757d;
+}
+
+/* Dark mode form labels */
+[data-theme="dark"] .form-label {
+  color: #ffffff;
+}
+
+/* Dark mode form check labels */
+[data-theme="dark"] .form-check-label {
+  color: #ffffff;
+}
+
+/* Dark mode buttons */
+[data-theme="dark"] .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Dark mode button links */
+[data-theme="dark"] .btn-link {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-link:hover {
+  color: #cccccc;
+}
+
+/* Dark mode icons */
+[data-theme="dark"] .text-primary {
+  color: #4dabf7 !important;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: #6c757d !important;
+}
+
+/* Dark mode scrollbar for member list */
+[data-theme="dark"] .member-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

@@ -21,4 +21,6 @@ router.get("/:id/posts",  groupController.getGroupPosts);
 router.get("/public",     groupController.getPublicGroups);
 router.get("/search",     groupController.searchGroups);
 
+router.get("/:id/posts", groupController.getGroupPosts);
+
 module.exports = router;
