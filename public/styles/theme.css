@@ -28,6 +28,8 @@
 
 body {
   font-family: 'Heebo', sans-serif !important;
+  font-weight: 900;
+  letter-spacing: 2px;
 }
 
 [data-theme="dark"]{
