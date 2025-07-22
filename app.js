@@ -81,7 +81,7 @@ const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
 // API routes (with authentication)
-const groupRouter = require('./routes/group');  // Fixed naming
+const groupRouter = require('./routes/group');  
 const usersRouter = require('./routes/users');
 app.use('/api/users', isAuthenticated, usersRouter);
 app.use('/api/group', isAuthenticated, groupRouter);

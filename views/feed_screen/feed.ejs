@@ -208,7 +208,7 @@
 <a href="#" id="groupsBtn" class="nav-link">
   <span class="nav-icon">
     <svg aria-label="Groups" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
-      <title>groups</title>
+      <title>Groups</title>
       <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
         d="M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/>
       <circle fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -219,7 +219,7 @@
         d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>
   </span>
-  <span class="d-none d-lg-inline nav-label">groups</span>
+  <span class="d-none d-lg-inline nav-label">Groups</span>
 </a>
 
         <a href="#" class="nav-link">
@@ -483,19 +483,22 @@
           </button>
         </div>
       </div>
-
+<script>
+  window.currentUserId = '<%= user._id %>';
+</script>
 <!---------------------------------- POST CONTAINER-------------------------- -->
 <div class="w-100 text-center position-relative">
   <div class="d-flex flex-column align-items-center">
     <!-- Dynamic Posts from Database -->
     <% if (posts && posts.length > 0) { %>
       <% posts.forEach(post => { %>
-        <div
-          class="instagram-post posts-container mb-4"
-          id="post-<%= post._id %>"
-          data-type="picture"
-          data-group="<%= post.group %>"
-        >
+      <div
+        class="instagram-post posts-container mb-4"
+        id="post-<%= post._id %>"
+        data-type="picture"
+        data-group="<%= post.group %>"
+        data-owner-id="<%= post.user._id %>"
+      >
           <!-- Post Header -->
           <div class="d-flex align-items-center justify-content-between p-3">
             <div class="d-flex align-items-center">
@@ -663,6 +666,9 @@
     <% } %>
   </div>
 </div>
+
+
+
 
 
       <!-- Return to top button -->
@@ -1034,15 +1040,16 @@
 
 
 
-    <!-- Global Options Menu -->
-    <div id="global-options-menu" class="global-options-menu">
-      <button class="menu-btn red">Hide Post</button>
-      <button class="menu-btn">Report</button>
-      <button class="menu-btn">Go to Post</button>
-      <button class="menu-btn">Share to...</button>
-      <button class="menu-btn">About this account</button>
-      <button class="menu-btn cancel-btn">Cancel</button>
-    </div>
+<!-- Global Options Menu -->
+<div id="global-options-menu" class="global-options-menu">
+  <button class="menu-btn red">Hide Post</button>
+  <button class="menu-btn">Report</button>
+  <button class="menu-btn">Go to Post</button>
+  <button class="menu-btn">Share to...</button>
+  <button class="menu-btn">About this account</button>
+  <button class="menu-btn cancel-btn">Cancel</button>
+  <button class="menu-btn red delete-post-btn" style="display: none;">Delete Post</button>
+</div>
 
     <!-- Backdrop -->
     <div id="menu-backdrop" class="menu-backdrop"></div>
@@ -1199,8 +1206,9 @@
     
     <script src="/scripts/func_post/enhanced_modal.js"></script>
     <script src="/scripts/func_share/share.js"></script>
-    
-    <script src="/scripts/func_comment/comment_system.js"></script>
+
+    <script src="/scripts/func_post_delete/func_post_delete.js"></script>
+
     <script src="/scripts/func_groups/groups_popout.js"></script>
 
 </body>
