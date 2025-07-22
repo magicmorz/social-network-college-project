@@ -3,16 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('Enhanced modal script with groups loading...');
 
   const fileInput = document.getElementById('fileInput');
-  const cropNext = document.getElementById('cropNext');
+  const sharePost = document.getElementById('sharePost'); // Updated to match your HTML
   const uploadModal = document.getElementById('uploadModal');
   const uploadClose = document.getElementById('uploadClose');
   const createBtn = document.getElementById('createBtn');
+  const fileSelectArea = document.getElementById('fileSelectArea');
+  const cropCanvas = document.getElementById('cropCanvas');
+  const previewImage = document.getElementById('previewImage');
+  const changeImage = document.getElementById('changeImage');
 
   let isUploading = false; // Prevent double submission
   let userGroups = []; // Store user's groups
-
-  // Add CSS for proper image sizing in modal
-  addModalImageCSS();
   
   // Load user's groups when modal loads
   loadUserGroups();
@@ -57,9 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Share button functionality with group support
-  if (cropNext) {
-    cropNext.removeEventListener('click', handleShareClick);
-    cropNext.addEventListener('click', handleShareClick);
+  if (sharePost) {
+    sharePost.removeEventListener('click', handleShareClick);
+    sharePost.addEventListener('click', handleShareClick);
   }
 
   async function handleShareClick(e) {
@@ -88,8 +89,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set uploading state immediately
     isUploading = true;
-    cropNext.disabled = true;
-    cropNext.textContent = 'Sharing...';
+    sharePost.disabled = true;
+    sharePost.textContent = 'Sharing...';
 
     try {
       const formData = new FormData();
@@ -140,8 +141,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } finally {
       // Reset uploading state
       isUploading = false;
-      cropNext.disabled = false;
-      cropNext.textContent = 'Share';
+      sharePost.disabled = false;
+      sharePost.textContent = 'Share';
     }
   }
 
@@ -163,12 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (locationInput) locationInput.value = '';
     if (groupSelector) groupSelector.value = '';
     
-    const steps = document.querySelectorAll('.ig-step');
-    steps.forEach((step, index) => {
-      step.style.display = index === 0 ? 'block' : 'none';
-    });
-    
-    const previewImage = document.getElementById('previewImage');
+    // Reset to file selection view
+    if (fileSelectArea) fileSelectArea.style.display = 'block';
+    if (cropCanvas) cropCanvas.style.display = 'none';
     if (previewImage) {
       previewImage.style.display = 'none';
       previewImage.src = '';
@@ -182,29 +180,35 @@ document.addEventListener('DOMContentLoaded', function() {
     fileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
+        console.log('File selected:', file.name);
         const reader = new FileReader();
         reader.onload = function(e) {
-          const previewImage = document.getElementById('previewImage');
+          console.log('File loaded, showing preview');
+          
           if (previewImage) {
             previewImage.src = e.target.result;
             previewImage.style.display = 'block';
-            
-            // Apply proper sizing constraints to preview image
-            previewImage.style.width = '100%';
-            previewImage.style.height = 'auto';
-            previewImage.style.maxWidth = '500px';
-            previewImage.style.maxHeight = '500px';
-            previewImage.style.objectFit = 'cover';
-            previewImage.style.borderRadius = '8px';
           }
           
-          const steps = document.querySelectorAll('.ig-step');
-          if (steps.length > 1) {
-            steps[0].style.display = 'none';
-            steps[1].style.display = 'block';
-          }
+          // Switch to preview mode
+          if (fileSelectArea) fileSelectArea.style.display = 'none';
+          if (cropCanvas) cropCanvas.style.display = 'flex';
         };
         reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  // Change image button handler
+  if (changeImage) {
+    changeImage.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Change image clicked');
+      
+      // Reset file input and switch back to file selection
+      if (fileInput) {
+        fileInput.value = '';
+        fileInput.click(); // Trigger file picker
       }
     });
   }
@@ -222,117 +226,47 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Back button
-  const cropBack = document.getElementById('cropBack');
-  if (cropBack) {
-    cropBack.addEventListener('click', function() {
-      const steps = document.querySelectorAll('.ig-step');
-      if (steps.length > 1) {
-        steps[1].style.display = 'none';
-        steps[0].style.display = 'block';
-      }
+  // Keyboard handler for ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && uploadModal && uploadModal.classList.contains('open')) {
+      closeModal();
+    }
+  });
+
+  // Character count for caption
+  const captionInput = document.getElementById('postCaption');
+  const charCount = document.getElementById('captionCharCount');
+  
+  if (captionInput && charCount) {
+    captionInput.addEventListener('input', function() {
+      charCount.textContent = this.value.length;
     });
   }
 
-  // Function to add CSS for proper modal image sizing
-  function addModalImageCSS() {
-    const style = document.createElement('style');
-    style.textContent = `
-      /* Modal Image Sizing Fixes */
-      #uploadModal {
-        z-index: 9999;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-      }
+  // Drag and drop functionality
+  const dropzone = document.querySelector('.ig-dropzone');
+  if (dropzone) {
+    dropzone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropzone.style.background = '#f0f8ff';
+    });
+
+    dropzone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      dropzone.style.background = '';
+    });
+
+    dropzone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropzone.style.background = '';
       
-      #uploadModal .ig-modal__content {
-        max-width: 90vw;
-        max-height: 90vh;
-        margin: 2rem auto;
-        overflow: hidden;
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        fileInput.files = files;
+        // Trigger the change event manually
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
       }
-      
-      #previewImage {
-        width: 100% !important;
-        height: auto !important;
-        max-width: 500px !important;
-        max-height: 500px !important;
-        object-fit: cover !important;
-        display: block !important;
-        margin: 0 auto !important;
-        border-radius: 8px;
-      }
-      
-      /* Group selector styling */
-      #postGroupSelector {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
-      }
-      
-      /* Image preview container */
-      .image-preview-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 1rem;
-        max-width: 100%;
-        overflow: hidden;
-      }
-      
-      /* Modal step containers */
-      .ig-step {
-        max-width: 100%;
-        overflow: hidden;
-      }
-      
-      /* Responsive adjustments for modal */
-      @media (max-width: 768px) {
-        #uploadModal .ig-modal__content {
-          max-width: 95vw;
-          margin: 1rem auto;
-        }
-        
-        #previewImage {
-          max-width: 100% !important;
-          max-height: 400px !important;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        #previewImage {
-          max-height: 300px !important;
-        }
-      }
-      
-      /* Ensure modal doesn't overflow */
-      .ig-modal__backdrop {
-        overflow-y: auto;
-      }
-      
-      /* Fix for any existing post images in feed */
-      .instagram-post img,
-      .post img,
-      .feed-post img {
-        width: 100%;
-        height: auto;
-        max-width: 600px;
-        max-height: 600px;
-        object-fit: cover;
-        display: block;
-      }
-    `;
-    
-    if (!document.querySelector('#modal-image-styles')) {
-      style.id = 'modal-image-styles';
-      document.head.appendChild(style);
-    }
+    });
   }
 });
