@@ -208,10 +208,42 @@ app.use((req, res) => {
   res.status(404).send('Page not found');
 });
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+// MongoDB connection with improved configuration
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/social-network';
+
+const mongoOptions = {
+  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  maxPoolSize: 10, // Maintain up to 10 socket connections
+  minPoolSize: 5, // Maintain a minimum of 5 socket connections
+  maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
+};
+
+// Disable mongoose buffering
+mongoose.set('bufferCommands', false);
+
+mongoose.connect(mongoUri, mongoOptions)
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+    console.log("📊 Database:", mongoose.connection.db.databaseName);
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1); // Exit if can't connect to database
+  });
+
+// Handle connection events
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('🔌 MongoDB disconnected');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('🔄 MongoDB reconnected');
+});
 
 // Start server
 const PORT = process.env.PORT || 3000;
