@@ -160,7 +160,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const groupSelector = document.getElementById('postGroupSelector');
     
     if (captionInput) captionInput.value = '';
-    if (locationInput) locationInput.value = '';
+    if (locationInput) {
+      locationInput.value = '';
+      // Reset location autocomplete if available
+      if (window.locationAutocomplete) {
+        window.locationAutocomplete.reset();
+      }
+    }
     if (groupSelector) groupSelector.value = '';
     
     const steps = document.querySelectorAll('.ig-step');

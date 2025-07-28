@@ -138,7 +138,11 @@ app.get("/home", isAuthenticated, async (req, res) => {
       console.log('❌ No valid posts found');
     }
     
-    res.render("feed_screen/feed", { posts: validPosts, user: req.user });
+    res.render("feed_screen/feed", { 
+      posts: validPosts, 
+      user: req.user,
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY 
+    });
   } catch (err) {
     console.error("❌ Error loading posts:", err);
     res.status(500).send("Internal server error while loading feed.");

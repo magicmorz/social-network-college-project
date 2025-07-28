@@ -4,7 +4,11 @@ const Post = require('../models/Post');
 exports.showFeed = async (req, res, next) => {
     try {
         const posts = await Post.find({}).sort({ createdAt: -1 }).lean();
-        res.render('feed', { posts });
+        res.render('feed_screen/feed', { 
+            posts,
+            user: null, // No user context for this route
+            googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+        });
     } catch (err) {
         next(err);
     }
