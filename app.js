@@ -172,11 +172,12 @@ app.get("/home", isAuthenticated, async (req, res) => {
       }
     }
     
-    res.render("feed_screen/feed", { 
-      posts: validPosts, 
-      user: req.user,
-      currentGroup: currentGroup // Pass current group to template
-    });
+res.render("feed_screen/feed", { 
+  posts: validPosts, 
+  user: req.user,
+  currentGroup: currentGroup, // Pass current group to template
+  googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+});
     
   } catch (err) {
     console.error("❌ Error loading posts:", err);
