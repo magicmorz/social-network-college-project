@@ -1,5 +1,6 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
+const Group = require('../models/Group'); // Add this import
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -35,11 +36,21 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// Get all posts for feed
+// Get all posts for feed (updated to include group posts)
 exports.getFeed = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate('user', 'username avatar')
+    // Get user's groups to show group posts they have access to
+    const userGroups = await Group.find({ members: req.user._id });
+    const groupIds = userGroups.map(g => g._id);
+    
+    const posts = await Post.find({
+      $or: [
+        { group: null }, // Public posts
+        { group: { $in: groupIds } } // Group posts user has access to
+      ]
+    })
+      .populate('user', 'username avatar isVerified')
+      .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
@@ -51,11 +62,21 @@ exports.getFeed = async (req, res) => {
   }
 };
 
-// Get posts as JSON for AJAX requests
+// Get posts as JSON for AJAX requests (updated to include group posts)
 exports.getPostsJson = async (req, res) => {
   try {
-    const posts = await Post.find()
-      .populate('user', 'username avatar')
+    // Get user's groups to show group posts they have access to
+    const userGroups = await Group.find({ members: req.user._id });
+    const groupIds = userGroups.map(g => g._id);
+    
+    const posts = await Post.find({
+      $or: [
+        { group: null }, // Public posts
+        { group: { $in: groupIds } } // Group posts user has access to
+      ]
+    })
+      .populate('user', 'username avatar isVerified')
+      .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
@@ -67,7 +88,7 @@ exports.getPostsJson = async (req, res) => {
   }
 };
 
-// Create new post
+// Create new post (UPDATED with group support)
 exports.createPost = async (req, res) => {
   console.log('\n=== 📝 CREATE POST DEBUG ===');
   console.log('User:', req.user?.username, req.user?._id);
@@ -75,7 +96,7 @@ exports.createPost = async (req, res) => {
   console.log('File:', req.file ? `${req.file.filename} (${req.file.size} bytes)` : 'No file');
   
   try {
-    const { caption, location } = req.body;
+    const { caption, location, group } = req.body; // Add 'group' here
     
     if (!req.file) {
       console.log('❌ No file provided');
@@ -85,6 +106,24 @@ exports.createPost = async (req, res) => {
     if (!req.user || !req.user._id) {
       console.log('❌ No user in request');
       return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    // If posting to a group, verify user is a member
+    if (group) {
+      console.log('🔍 Checking group membership for group:', group);
+      const groupDoc = await Group.findById(group);
+      if (!groupDoc) {
+        console.log('❌ Group not found:', group);
+        return res.status(404).json({ error: 'Group not found' });
+      }
+      
+      // Check if user is a member of the group
+      if (!groupDoc.members.includes(req.user._id)) {
+        console.log('❌ User not authorized to post to group:', group);
+        return res.status(403).json({ error: 'Not authorized to post to this group' });
+      }
+      
+      console.log('✅ User is member of group:', groupDoc.name);
     }
 
     console.log('✅ Creating post for user:', req.user.username);
@@ -97,6 +136,7 @@ exports.createPost = async (req, res) => {
       caption: caption || '',
       image: '/uploads/posts/' + req.file.filename,
       location: location || '',
+      group: group || null, // Add this line - null means public feed
       hashtags: hashtags.map(tag => tag.toLowerCase())
     });
 
@@ -104,7 +144,22 @@ exports.createPost = async (req, res) => {
     const savedPost = await newPost.save();
     console.log('✅ Post saved successfully with ID:', savedPost._id);
     
-    res.json({ success: true, post: savedPost });
+    // Populate group info in response
+    await savedPost.populate('group', 'name');
+    
+    // Log where the post was created
+    if (savedPost.group) {
+      console.log('📍 Post created in group:', savedPost.group.name);
+    } else {
+      console.log('📍 Post created on public feed');
+    }
+    
+    res.json({ 
+      success: true, 
+      post: savedPost,
+      // Add redirect info for frontend
+      redirectTo: savedPost.group ? `/group/${savedPost.group._id}` : '/home'
+    });
     
   } catch (error) {
     console.error('❌ Error creating post:', error.message);
@@ -150,6 +205,14 @@ exports.toggleLike = async (req, res) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
+    // Check if post is in a group and user has access
+    if (post.group) {
+      const group = await Group.findById(post.group);
+      if (!group || !group.members.includes(userId)) {
+        return res.status(403).json({ error: 'Not authorized to interact with this post' });
+      }
+    }
+
     const likeIndex = post.likes.indexOf(userId);
     let liked = false;
 
@@ -188,6 +251,14 @@ exports.addComment = async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Check if post is in a group and user has access
+    if (post.group) {
+      const group = await Group.findById(post.group);
+      if (!group || !group.members.includes(req.user._id)) {
+        return res.status(403).json({ error: 'Not authorized to comment on this post' });
+      }
     }
 
     const comment = {
@@ -249,11 +320,20 @@ exports.deletePost = async (req, res) => {
 exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('user', 'username avatar')
+      .populate('user', 'username avatar isVerified')
+      .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar');
 
     if (!post) {
       return res.status(404).render('error', { message: 'Post not found' });
+    }
+
+    // Check if post is in a group and user has access
+    if (post.group) {
+      const group = await Group.findById(post.group);
+      if (!group || !group.members.includes(req.user._id)) {
+        return res.status(403).render('error', { message: 'Not authorized to view this post' });
+      }
     }
 
     res.render('post', { post, user: req.user });
@@ -267,8 +347,20 @@ exports.getPost = async (req, res) => {
 exports.getUserPosts = async (req, res) => {
   try {
     const userId = req.params.userId || req.user._id;
-    const posts = await Post.find({ user: userId })
-      .populate('user', 'username avatar')
+    
+    // Get user's groups to filter posts appropriately
+    const userGroups = await Group.find({ members: req.user._id });
+    const groupIds = userGroups.map(g => g._id);
+    
+    const posts = await Post.find({ 
+      user: userId,
+      $or: [
+        { group: null }, // Public posts
+        { group: { $in: groupIds } } // Group posts user has access to
+      ]
+    })
+      .populate('user', 'username avatar isVerified')
+      .populate('group', 'name')
       .sort({ createdAt: -1 });
 
     res.json({ posts });

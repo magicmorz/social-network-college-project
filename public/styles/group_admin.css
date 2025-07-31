@@ -1,0 +1,410 @@
+/* public/styles/group_admin.css */
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* GROUP ADMIN MENU */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+#group-admin-menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  min-width: 250px;
+  max-width: 300px;
+  display: none;
+}
+
+.group-admin-menu button {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.group-admin-menu button:hover {
+  background-color: #f8f9fa;
+}
+
+.group-admin-menu button:last-child {
+  border-bottom: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.group-admin-menu button:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.group-admin-menu button.red {
+  color: #ed4956;
+  font-weight: 600;
+}
+
+.group-admin-menu button.red:hover {
+  background-color: #fef7f7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* GROUP OPTIONS BUTTON */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.group-options-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-options-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.group-options-btn i {
+  font-size: 18px;
+  color: #262626;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* ADMIN MODALS */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.admin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1002;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #dbdbdb;
+  background: #fafafa;
+}
+
+.admin-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.close-admin-modal,
+.close-member-modal,
+.close-edit-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #8e8e8e;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-admin-modal:hover,
+.close-member-modal:hover,
+.close-edit-modal:hover {
+  color: #262626;
+}
+
+.admin-modal-body {
+  padding: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* USER LISTS */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.user-list {
+  margin-bottom: 24px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  flex: 1;
+  font-weight: 500;
+  color: #262626;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #8e8e8e;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.creator-badge {
+  font-size: 12px;
+  color: #0095f6;
+  background: rgba(0, 149, 246, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.add-admin-btn,
+.remove-admin-btn,
+.remove-member-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.add-admin-btn {
+  background: #0095f6;
+  color: white;
+}
+
+.add-admin-btn:hover {
+  background: #1877f2;
+}
+
+.remove-admin-btn,
+.remove-member-btn {
+  background: #ed4956;
+  color: white;
+}
+
+.remove-admin-btn:hover,
+.remove-member-btn:hover {
+  background: #c13584;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* EDIT FORM */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.1s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #0095f6;
+  box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.1);
+}
+
+.form-control textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group label input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.btn-primary {
+  background: #0095f6;
+  color: white;
+  flex: 1;
+}
+
+.btn-primary:hover {
+  background: #1877f2;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #262626;
+  flex: 1;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* RESPONSIVE DESIGN */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .admin-modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .admin-modal-header,
+  .admin-modal-body {
+    padding: 16px;
+  }
+  
+  .user-item {
+    padding: 10px 0;
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* DARK THEME SUPPORT */
+/* ═══════════════════════════════════════════════════════════════════ */
+
+[data-theme="dark"] #group-admin-menu,
+[data-theme="dark"] .admin-modal-content {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .admin-modal-header {
+  background: #262626;
+  border-bottom-color: #363636;
+}
+
+[data-theme="dark"] .group-admin-menu button:hover {
+  background-color: #262626;
+}
+
+[data-theme="dark"] .form-control {
+  background: #262626;
+  border-color: #363636;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .form-control:focus {
+  border-color: #0095f6;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: #363636;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: #404040;
+}
+
+[data-theme="dark"] .user-role {
+  background: #363636;
+  color: #ffffff;
+}
+
+/* Dark theme support for group popup elements */
+[data-theme="dark"] .group-info-clickable:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .group-admin-btn {
+  border-color: #363636;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .group-admin-btn:hover {
+  background-color: #262626;
+  border-color: #ffffff;
+}
+
+[data-theme="dark"] .list-group-item {
+  border-bottom-color: #363636;
+}
+
+/* Menu backdrop dark theme */
+[data-theme="dark"] #menu-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}

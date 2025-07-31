@@ -20,15 +20,22 @@
   <link rel="stylesheet" href="/styles/mobile_mode.css" />
   <link rel="stylesheet" href="/styles/left_side_panel.css" />
   <link rel="stylesheet" href="/styles/feed.css" />
+  
   <link rel="stylesheet" href="/styles/post.css" />
   <link rel="stylesheet" href="/styles/message_dock.css" />
+  
   <link rel="stylesheet" href="/styles/story.css" />
   <link rel="stylesheet" href="/styles/theme.css">
+  
   <link rel="stylesheet" href="/styles/return_to_top.css" />
   <link rel="stylesheet" href="/styles/feed_responsivness.css" />
   <link rel="stylesheet" href="/styles/post_options_menu.css" />
   <link rel="stylesheet" href="/styles/share.css" />
-  <link rel="stylesheet" href="/styles/location_autocomplete.css" />
+  <link rel="stylesheet" href="/styles/group_popup.css" />
+  <link rel="stylesheet" href="/styles/group_admin.css">
+ 
+    <link rel="stylesheet" href="/styles/upload_post.css"> 
+      <link rel="stylesheet" href="/styles/location_autocomplete.css" />
 </head>
 
 <body>
@@ -95,24 +102,18 @@
         <!-- 
           flex-grow-1: Allows the element to expand and fill available space within a flex container
           -->
-        <a href="#" class="nav-link">
-          <span class="nav-icon">
-            <!-- Nav Item -->
-            <svg aria-label="Home" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
-              <title>Home</title>
-              <path
-                d="M22 23h-6.001a1 1 0 0 1-1-1v-5.455a2.997 2.997 0 1 0-5.993 0V22a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V11.543a1.002 1.002 0 0 1 .31-.724l10-9.543a1.001 1.001 0 0 1 1.38 0l10 9.543a1.002 1.002 0 0 1 .31.724V22a1 1 0 0 1-1 1Z">
-              </path>
-            </svg>
-          </span>
-          <span class="d-none d-lg-inline nav-label fw-bold">Home</span>
-          <!-- 
-          d-none:            Hide element on all screen sizes
-          d-lg-inline:       Show element as inline on large (lg) screens and above
-          nav-label:         Custom class, likely styles navigation label text
-          fw-bold:           Apply bold font weight
-          -->
-        </a>
+<a href="/home" class="nav-link">
+  <span class="nav-icon">
+    <!-- Nav Item -->
+    <svg aria-label="Home" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+      <title>Home</title>
+      <path
+        d="M22 23h-6.001a1 1 0 0 1-1-1v-5.455a2.997 2.997 0 1 0-5.993 0V22a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V11.543a1.002 1.002 0 0 1 .31-.724l10-9.543a1.001 1.001 0 0 1 1.38 0l10 9.543a1.002 1.002 0 0 1 .31.724V22a1 1 0 0 1-1 1Z">
+      </path>
+    </svg>
+  </span>
+  <span class="d-none d-lg-inline nav-label fw-bold">Home</span>
+</a>
         <!--  LEFT-SIDEBAR  —  Search nav item  -->
         <a href="#" id="openSearchBtn" class="nav-link">
           <span class="nav-icon">
@@ -210,6 +211,24 @@
           </span>
           <span class="d-none d-lg-inline nav-label">Create</span>
         </a>
+        <!-- group Icon -->
+<a href="#" id="groupsBtn" class="nav-link">
+  <span class="nav-icon">
+    <svg aria-label="Groups" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+      <title>Groups</title>
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        d="M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1"/>
+      <circle fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        cx="9" cy="7" r="4"/>
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        d="M23 20v-1a4 4 0 0 0-3-3.87"/>
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  </span>
+  <span class="d-none d-lg-inline nav-label">Groups</span>
+</a>
+
         <a href="#" class="nav-link">
           <span class="nav-icon">
             <!-- Profile Picture -->
@@ -471,23 +490,32 @@
           </button>
         </div>
       </div>
-
-      <!---------------------------------- POST CONTAINER-------------------------- -->
-<!-- Row 2: Posts -->
+<script>
+  window.currentUserId = '<%= user._id %>';
+</script>
+<!---------------------------------- POST CONTAINER-------------------------- -->
 <div class="w-100 text-center position-relative">
   <div class="d-flex flex-column align-items-center">
     <!-- Dynamic Posts from Database -->
     <% if (posts && posts.length > 0) { %>
       <% posts.forEach(post => { %>
-        <div class="instagram-post posts-container mb-4" id="post-<%= post._id %>" data-type="picture">
-
+      <div
+        class="instagram-post posts-container mb-4"
+        id="post-<%= post._id %>"
+        data-type="picture"
+        data-group="<%= post.group %>"
+        data-owner-id="<%= post.user._id %>"
+      >
           <!-- Post Header -->
           <div class="d-flex align-items-center justify-content-between p-3">
             <div class="d-flex align-items-center">
               <div class="profile-picture-container">
                 <a href="/u/<%= post.user.username %>">
-                  <img src="<%= post.user.avatar || '/avatars/default.jpg' %>"
-                    alt="<%= post.user.username %>" class="profile-img">
+                  <img
+                    src="<%= post.user.avatar || '/avatars/default.jpg' %>"
+                    alt="<%= post.user.username %>"
+                    class="profile-img"
+                  />
                 </a>
               </div>
               <div class="ms-2">
@@ -512,32 +540,62 @@
                 <% } %>
               </div>
             </div>
-            <button class="btn btn-link text-dark more-options-btn" data-post-id="<%= post._id %>">
+            <button
+              class="btn btn-link text-dark more-options-btn"
+              data-post-id="<%= post._id %>"
+            >
               <i class="bi bi-three-dots"></i>
             </button>
           </div>
 
           <!-- Post Image -->
           <div class="post-image">
-            <img src="<%= post.image %>" alt="Post image" class="w-100"
-              style="max-height: 600px; object-fit: cover;">
+            <img
+              src="<%= post.image %>"
+              alt="Post image"
+              class="w-100"
+              style="max-height: 600px; object-fit: cover;"
+            />
           </div>
 
           <!-- Post Actions -->
           <div class="post-actions p-3">
             <div class="d-flex align-items-center mb-2">
               <button class="btn btn-link text-dark p-0 me-3" aria-label="Like post">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                  ></path>
                 </svg>
               </button>
               <button class="btn btn-link text-dark p-0 me-3" aria-label="Comment on post">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
               </button>
               <button class="btn btn-link text-dark p-0 me-3" aria-label="Share">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
                   <polyline points="16,6 12,2 8,6"></polyline>
                   <line x1="12" y1="2" x2="12" y2="15"></line>
@@ -580,12 +638,17 @@
               </div>
             <% } %>
 
-            <!-- Comments Section - This is where inline comments will appear -->
+            <!-- Comments Section -->
             <div class="comments-section" style="display: none;"></div>
 
             <!-- Add Comment -->
             <div class="add-comment d-flex align-items-center">
-              <input type="text" class="form-control border-0" placeholder="Add a comment..." style="background: transparent;">
+              <input
+                type="text"
+                class="form-control border-0"
+                placeholder="Add a comment..."
+                style="background: transparent;"
+              />
               <button class="btn btn-link text-muted p-0 ms-2 emoji-btn">
                 <i class="bi bi-emoji-smile"></i>
               </button>
@@ -594,7 +657,7 @@
               </button>
             </div>
 
-            <!-- Typing indicator (hidden by default) -->
+            <!-- Typing indicator -->
             <div class="typing-indicator text-muted small" style="display: none;">
               Typing...
             </div>
@@ -608,9 +671,13 @@
         <p class="text-muted">Start following people or create your first post!</p>
       </div>
     <% } %>
-
   </div>
 </div>
+
+
+
+
+
       <!-- Return to top button -->
       <button id="scrollToTopBtn" class="btn btn-primary position-sticky">
         ↑ Top
@@ -862,6 +929,10 @@
           </svg>
         </span>
       </a>
+      
+
+
+
       <a href="#">
         <span class="bottom-mobile-nav-icon">
           <!-- Profile Picture -->
@@ -871,21 +942,27 @@
     </div>
 
     <!-- ── “Create new post” ──────────────────────────────────────── -->
-    <!-- Enhanced Create Post Modal - Replace your existing uploadModal -->
-    <div id="uploadModal" class="ig-modal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
-      <!-- darkened backdrop -->
-      <div class="ig-modal__backdrop"></div>
+<div id="uploadModal" class="ig-modal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+  <!-- darkened backdrop -->
+  <div class="ig-modal__backdrop"></div>
 
-      <!-- centred card -->
-      <div class="ig-modal__dialog">
-        <!-- universal close × (Esc does the same) -->
-        <button id="uploadClose" class="ig-modal__close" aria-label="Close">&times;</button>
+  <!-- centred card -->
+  <div class="ig-modal__dialog">
+    <!-- universal close × (Esc does the same) -->
+    <button id="uploadClose" class="ig-modal__close" aria-label="Close">&times;</button>
 
-        <!-- Step 0: File picker -->
-        <div class="ig-step" data-step="0">
-          <h6 id="uploadTitle" class="ig-modal__title">Create new post</h6>
+    <!-- Single Step: Create new post with integrated file selection -->
+    <div class="ig-step" data-step="0">
+      <header class="ig-step__bar">
+        <span class="ig-step__title">Create new post</span>
+        <button id="sharePost" class="ig-navBtn" aria-label="Share">Share</button>
+      </header>
 
-          <div class="ig-dropzone">
+      <div class="ig-step__content d-flex">
+        <!-- Preview/Upload area -->
+        <div class="ig-preview-section">
+          <!-- File selection area (shown when no image selected) -->
+          <div id="fileSelectArea" class="ig-dropzone">
             <!-- media icon -->
             <svg viewBox="0 0 96 96" aria-hidden="true">
               <rect x="24" y="24" width="48" height="48" rx="8" fill="none" stroke="currentColor" stroke-width="6" />
@@ -900,86 +977,87 @@
               Select from computer
             </label>
           </div>
+
+          <!-- Preview area (shown when image selected) -->
+          <div id="cropCanvas" class="ig-cropZone" style="display:none;">
+            <img id="previewImage" class="ig-preview-img" style="display:none;" alt="Preview">
+            <button id="changeImage" class="ig-change-image-btn">Change Image</button>
+          </div>
         </div>
 
-        <!-- Step 1: Preview and caption -->
-        <div class="ig-step" data-step="1" style="display:none">
-          <header class="ig-step__bar">
-            <button id="cropBack" class="ig-navBtn" aria-label="Back">←</button>
-            <span class="ig-step__title">Create new post</span>
-            <button id="cropNext" class="ig-navBtn" aria-label="Share">Share</button>
-          </header>
+        <!-- Caption section -->
+        <div class="ig-caption-section">
+          <div class="ig-caption-header d-flex align-items-center p-3 border-bottom">
+            <img src="./user/user_profile_picture.jpg" alt="Your profile" class="rounded-circle me-3"
+              style="width: 32px; height: 32px;">
+            <span class="fw-bold">the_miichael</span>
+          </div>
 
-          <div class="ig-step__content d-flex">
-            <!-- Preview area -->
-            <div class="ig-preview-section">
-              <div id="cropCanvas" class="ig-cropZone">
-                <img id="previewImage" class="ig-preview-img" style="display:none;" alt="Preview">
-              </div>
+          <div class="ig-caption-body p-3">
+            <textarea id="postCaption" class="form-control border-0 resize-none" placeholder="Write a caption..."
+              maxlength="2200" rows="8" style="box-shadow: none; outline: none;"></textarea>
+
+            <div class="character-count text-muted small text-end mt-2">
+              <span id="captionCharCount">0</span>/2,200
             </div>
 
-            <!-- Caption section -->
-            <div class="ig-caption-section">
-              <div class="ig-caption-header d-flex align-items-center p-3 border-bottom">
-                <img src="./user/user_profile_picture.jpg" alt="Your profile" class="rounded-circle me-3"
-                  style="width: 32px; height: 32px;">
-                <span class="fw-bold">the_miichael</span>
-              </div>
-
-              <div class="ig-caption-body p-3">
-                <textarea id="postCaption" class="form-control border-0 resize-none" placeholder="Write a caption..."
-                  maxlength="2200" rows="8" style="box-shadow: none; outline: none;"></textarea>
-
-                <div class="character-count text-muted small text-end mt-2">
-                  <span id="captionCharCount">0</span>/2,200
-                </div>
-
-                <div class="mt-3">
-                  <div class="position-relative">
+            <div class="mt-3">
+             <div class="position-relative">
                     <input id="postLocation" type="text" class="form-control border-0 border-bottom ps-4"
                       placeholder="Add location" style="box-shadow: none; outline: none; border-radius: 0;">
                     <i class="bi bi-geo-alt position-absolute" 
                        style="left: 0; top: 50%; transform: translateY(-50%); color: #8e8e8e; font-size: 14px;"></i>
                   </div>
-                </div>
+            </div>
 
-                <div class="mt-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="hideStats">
-                    <label class="form-check-label small text-muted" for="hideStats">
-                      Hide like and view counts on this post
-                    </label>
-                  </div>
-                </div>
+            <div class="mt-3">
+              <label class="form-label small text-muted">Post to:</label>
+              <select id="postGroupSelector" class="form-control border-0 border-bottom" 
+                      style="box-shadow: none; outline: none; border-radius: 0; background: transparent;">
+                <option value="">Post to your feed</option>
+                <!-- Groups will be loaded by JavaScript -->
+              </select>
+            </div>
 
-                <div class="mt-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="turnOffComments">
-                    <label class="form-check-label small text-muted" for="turnOffComments">
-                      Turn off commenting
-                    </label>
-                  </div>
-                </div>
+            <div class="mt-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="hideStats">
+                <label class="form-check-label small text-muted" for="hideStats">
+                  Hide like and view counts on this post
+                </label>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="turnOffComments">
+                <label class="form-check-label small text-muted" for="turnOffComments">
+                  Turn off commenting
+                </label>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>/
+    </div>
+  </div>
+</div>
+
     <!-- ─────────────────────#uploadModal ───────────────────────────────────────── -->
 
 
 
 
-    <!-- Global Options Menu -->
-    <div id="global-options-menu" class="global-options-menu">
-      <button class="menu-btn red">Hide Post</button>
-      <button class="menu-btn">Report</button>
-      <button class="menu-btn">Go to Post</button>
-      <button class="menu-btn">Share to...</button>
-      <button class="menu-btn">About this account</button>
-      <button class="menu-btn cancel-btn">Cancel</button>
-    </div>
+<!-- Global Options Menu -->
+<div id="global-options-menu" class="global-options-menu">
+  <button class="menu-btn red">Hide Post</button>
+  <button class="menu-btn">Report</button>
+  <button class="menu-btn">Go to Post</button>
+  <button class="menu-btn">Share to...</button>
+  <button class="menu-btn">About this account</button>
+  <button class="menu-btn cancel-btn">Cancel</button>
+  <button class="menu-btn red delete-post-btn" style="display: none;">Delete Post</button>
+</div>
 
     <!-- Backdrop -->
     <div id="menu-backdrop" class="menu-backdrop"></div>
@@ -1070,31 +1148,104 @@
         <button id="sharePostcloseModal" class="share-post-close-btn">Close</button>
       </div>
     </div>
+    
+<        <!-- ────────── Groups Overlay & Popup ────────── -->
+    <div id="popupOverlay"></div>
+
+    <div id="groupsPopup" class="shadow">
+      <div class="popup-header d-flex align-items-center px-3 py-2 border-bottom">
+        <button id="closeGroupsPopup" class="btn btn-link p-0 me-2">
+          <i class="bi bi-arrow-left fs-4"></i>
+        </button>
+        <h5 class="m-0 flex-grow-1 text-center">Groups</h5>
+      </div>
+      <div class="popup-body p-0">
+        <ul id="groupsList" class="list-group mb-0">
+          <!-- Create Group button -->
+          <li id="createGroupBtn" class="list-group-item create-group d-flex align-items-center">
+            <i class="bi bi-plus-lg text-primary fs-5 me-3"></i>
+            <span class="text-primary">Create Group</span>
+          </li>
+          <!-- existing groups get injected here -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- ────────── Create Group Modal ────────── -->
+    <div id="createGroupModal" class="shadow">
+      <div class="create-header d-flex align-items-center px-3 py-2 border-bottom">
+        <button id="cancelCreateGroup" class="btn btn-link p-0 me-2">
+          <i class="bi bi-x fs-4"></i>
+        </button>
+        <h5 class="m-0 flex-grow-1 text-center">New Group</h5>
+      </div>
+      <div class="create-body p-3">
+        <div class="mb-3">
+          <label for="newGroupName" class="form-label">Group Name</label>
+          <input type="text" id="newGroupName" class="form-control" placeholder="Enter group name">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Add Members</label>
+          <div id="memberList" class="member-list">
+            <!-- checkboxes injected by JS -->
+          </div>
+        </div>
+        <button id="submitCreateGroup" class="btn btn-primary w-100">Create</button>
+      </div>
+    </div> 
+    <!-- Group Admin Menu -->
+<div id="group-admin-menu" class="group-admin-menu">
+  <button class="menu-btn">Report Group</button>
+  <button class="menu-btn">Share Group</button>
+  <button class="menu-btn">Copy Group Link</button>
+  <button class="menu-btn edit-group-btn" style="display: none;">Edit Group</button>
+  <button class="menu-btn manage-members-btn" style="display: none;">Manage Members</button>
+  <button class="menu-btn manage-admins-btn" style="display: none;">Manage Admins</button>
+  <button class="menu-btn red delete-group-btn" style="display: none;">Delete Group</button>
+  <button class="menu-btn cancel-group-btn">Cancel</button>
+</div>
+
+<div id="menu-backdrop" class="menu-backdrop"></div>
+
+    
+
+
 
     <!-- Google Maps Places API -->
+
+
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&libraries=places" async defer></script>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="/scripts/func_return_to_top/return_to_top.js"></script>
     <script src="/scripts/func_comment_writing_indicator/comment_writing_indicator.js"></script>
-    <script src="/scripts/func_post_options_menu/post_options_menu.js"></script>
-
+    
     <script src="/scripts/func_dark/login_theme.js"></script>
     <script src="/scripts/func_dark/feed_more_menu.js"></script>
+    
     <script src="/scripts/func_dark/feed_theme_popup.js"></script>
-    <script src="/scripts/func_filter/search_head.js"></script>
     <script src="/scripts/func_like/like.js"></script>
     <script src="/scripts/func_like/like-toggle.js"></script>
+    <script src="/scripts/func_filter/search_head.js"></script>
     <script src="/scripts/func_filter/search_panel.js"></script>
-
-
-    <script src="/scripts/func_post/enhanced_modal.js"></script>
-    <script src="/scripts/func_post/location_autocomplete.js"></script>
+    
     <script src="/scripts/func_share/share.js"></script>
-
     <script src="/scripts/func_comment/comment_system.js"></script>
+    
+    <script src="/scripts/func_post_options_menu/post_options_menu.js"></script>
+    
+    <script src="/scripts/func_post/enhanced_modal.js"></script>
+
+    <script src="/scripts/func_post_delete/func_post_delete.js"></script>
+    
+    <script src="/scripts/func_groups/group_popout.js"></script>
+    <script src="/scripts/func_groups/group_feed.js"></script>
+    <script src="/scripts/func_groups/group_admin.js"></script>
+
+    <script src="/scripts/func_post/location_autocomplete.js"></script>
+    
 
 </body>
 

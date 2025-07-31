@@ -1,3 +1,4 @@
+// models/Post.js
 const mongoose = require("mongoose");
 const { franc } = require("franc-min");
 const langs = require("langs");
@@ -8,13 +9,20 @@ const postSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+
+  // ← NEW: reference to a Group
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Group",
+  },
+
   caption: {
     type: String,
     maxLength: 2200,
   },
   language: {
     type: String,
-    default: "en", // ISO 639-1 code like 'en', 'es' - using 'en' as default instead of 'und'
+    default: "en",
   },
   image: {
     type: String,
@@ -22,8 +30,8 @@ const postSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['text', 'image', 'video'],
-    default: 'image'
+    enum: ["text", "image", "video"],
+    default: "image",
   },
   likes: [
     {
@@ -80,21 +88,17 @@ const postSchema = new mongoose.Schema({
 });
 
 // Indexes
-postSchema.index({ createdAt: -1 }); // Index for sorting by creation date
-postSchema.index({ user: 1 }); // Index for user lookups
-postSchema.index({ caption: 'text' }); // Text index for caption search
-postSchema.index({ type: 1 }); // Index for post type filtering
-postSchema.index({ hashtags: 1 }); // Index for hashtag search
+postSchema.index({ createdAt: -1 });
+postSchema.index({ user: 1 });
+postSchema.index({ caption: "text" });
+postSchema.index({ type: 1 });
+postSchema.index({ hashtags: 1 });
 
-// Smart extraction middleware - extracts hashtags and mentions from the caption
-// and detects the language of the caption
-
+// Smart extraction middleware
 postSchema.pre("save", function (next) {
   if (this.caption) {
-    // --- Hashtag & Mention Extraction ---
     const hashtagRegex = /#\w+/g;
     const mentionRegex = /@\w+/g;
-
     const hashtags = this.caption.match(hashtagRegex) || [];
     const mentions = this.caption.match(mentionRegex) || [];
 
@@ -105,16 +109,14 @@ postSchema.pre("save", function (next) {
       ...new Set(mentions.map((user) => user.slice(1).toLowerCase())),
     ];
 
-    // --- Language Detection ---
     const langCode = franc(this.caption);
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
-      this.language = lang && lang["1"] ? lang["1"] : "en"; // 2-letter code like 'en', fallback to 'en'
+      this.language = lang && lang["1"] ? lang["1"] : "en";
     } else {
-      this.language = "en"; // Use 'en' as fallback instead of 'und'
+      this.language = "en";
     }
   }
-
   next();
 });
 
