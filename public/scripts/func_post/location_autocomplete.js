@@ -120,7 +120,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Also initialize when the modal is shown (in case the script loads after DOM)
 document.addEventListener('click', function(e) {
-  if (e.target && e.target.closest('[data-bs-toggle="modal"]')) {
+  // Handle custom post creation modal
+  if (e.target && e.target.id === 'createBtn') {
+    setTimeout(() => {
+      if (!window.locationAutocomplete && document.getElementById('postLocation')) {
+        window.locationAutocomplete = new LocationAutocomplete('postLocation');
+      }
+    }, 100);
+  }
+  // Handle Bootstrap modals
+  else if (e.target && e.target.closest('[data-bs-toggle="modal"]')) {
     setTimeout(() => {
       if (!window.locationAutocomplete && document.getElementById('postLocation')) {
         window.locationAutocomplete = new LocationAutocomplete('postLocation');

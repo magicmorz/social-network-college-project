@@ -1,130 +1,97 @@
-// Location Autocomplete functionality using Google Places API
-class LocationAutocomplete {
-  constructor(inputId) {
-    this.inputElement = document.getElementById(inputId);
-    this.autocomplete = null;
-    this.selectedPlace = null;
-    
-    // Wait for Google Maps API to load
-    this.initializeWhenReady();
-  }
+/* Location Autocomplete Styles */
 
-  initializeWhenReady() {
-    // Check if Google Maps API is loaded
-    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-      this.initialize();
-    } else {
-      // Wait a bit and try again
-      setTimeout(() => this.initializeWhenReady(), 100);
-    }
-  }
-
-  initialize() {
-    if (!this.inputElement) {
-      console.error('Location input element not found');
-      return;
-    }
-
-    // Create autocomplete instance
-    this.autocomplete = new google.maps.places.Autocomplete(this.inputElement, {
-      types: ['establishment', 'geocode'], // Allow both places and addresses
-      fields: ['place_id', 'name', 'formatted_address', 'geometry', 'types']
-    });
-
-    // Add place changed listener
-    this.autocomplete.addListener('place_changed', () => {
-      this.handlePlaceSelect();
-    });
-
-    // Style the autocomplete dropdown to match Instagram's design
-    this.styleAutocomplete();
-  }
-
-  handlePlaceSelect() {
-    const place = this.autocomplete.getPlace();
-    
-    if (!place || !place.place_id) {
-      console.warn('No place details available');
-      return;
-    }
-
-    this.selectedPlace = place;
-    
-    // Use the formatted address or name as the display value
-    const displayValue = place.name || place.formatted_address;
-    this.inputElement.value = displayValue;
-
-    // Store additional place data if needed (for future use)
-    this.inputElement.setAttribute('data-place-id', place.place_id);
-    if (place.geometry && place.geometry.location) {
-      this.inputElement.setAttribute('data-lat', place.geometry.location.lat());
-      this.inputElement.setAttribute('data-lng', place.geometry.location.lng());
-    }
-
-    // Trigger a custom event for other components to listen to
-    const locationSelectedEvent = new CustomEvent('locationSelected', {
-      detail: {
-        place: place,
-        displayValue: displayValue
-      }
-    });
-    this.inputElement.dispatchEvent(locationSelectedEvent);
-  }
-
-  styleAutocomplete() {
-    // Add custom CSS classes to the input for styling
-    this.inputElement.classList.add('location-autocomplete');
-    
-    // Listen for Google's dropdown creation to style it
-    const observer = new MutationObserver(() => {
-      const dropdown = document.querySelector('.pac-container');
-      if (dropdown && !dropdown.classList.contains('styled')) {
-        dropdown.classList.add('styled', 'instagram-autocomplete-dropdown');
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  }
-
-  // Method to get the current selected place data
-  getSelectedPlace() {
-    return this.selectedPlace;
-  }
-
-  // Method to clear the current selection
-  clearSelection() {
-    this.selectedPlace = null;
-    this.inputElement.removeAttribute('data-place-id');
-    this.inputElement.removeAttribute('data-lat');
-    this.inputElement.removeAttribute('data-lng');
-  }
-
-  // Method to reset the input
-  reset() {
-    this.inputElement.value = '';
-    this.clearSelection();
-  }
+/* Input field styling */
+.location-autocomplete {
+  position: relative;
 }
 
-// Initialize autocomplete when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize for the post creation modal
-  const locationAutocomplete = new LocationAutocomplete('postLocation');
-  
-  // Make it globally accessible
-  window.locationAutocomplete = locationAutocomplete;
-});
+/* Google Places Autocomplete dropdown container */
+.pac-container {
+  background: var(--card, #ffffff);
+  border: 1px solid var(--border, #dbdbdb);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  z-index: 1060 !important; /* Ensure it appears above modals */
+  max-width: 100% !important;
+  margin-top: 4px;
+}
 
-// Also initialize when the modal is shown (in case the script loads after DOM)
-document.addEventListener('click', function(e) {
-  if (e.target && e.target.closest('[data-bs-toggle="modal"]')) {
-    setTimeout(() => {
-      if (!window.locationAutocomplete && document.getElementById('postLocation')) {
-        window.locationAutocomplete = new LocationAutocomplete('postLocation');
-      }
-    }, 100);
+/* Dark theme support */
+[data-theme="dark"] .pac-container {
+  background: var(--card, #262626);
+  border-color: var(--border, #363636);
+  color: var(--text, #ffffff);
+}
+
+/* Individual autocomplete items */
+.pac-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border, #efefef);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: background-color 0.2s ease;
+}
+
+[data-theme="dark"] .pac-item {
+  border-bottom-color: var(--border, #363636);
+  color: var(--text, #ffffff);
+}
+
+/* Remove border from last item */
+.pac-item:last-child {
+  border-bottom: none;
+}
+
+/* Hover state */
+.pac-item:hover,
+.pac-item-selected {
+  background-color: var(--hover, #e0e0e0);
+}
+
+[data-theme="dark"] .pac-item:hover,
+[data-theme="dark"] .pac-item-selected {
+  background-color: var(--hover, #1a1a1a);
+}
+
+/* Main text (place name) */
+.pac-item-query {
+  font-weight: 500;
+  color: var(--text, #262626);
+}
+
+[data-theme="dark"] .pac-item-query {
+  color: var(--text, #ffffff);
+}
+
+/* Secondary text (address) */
+.pac-item span:not(.pac-item-query) {
+  color: var(--secondary-text, #8e8e8e);
+  font-size: 13px;
+}
+
+[data-theme="dark"] .pac-item span:not(.pac-item-query) {
+  color: var(--secondary-text, #a8a8a8);
+}
+
+/* Google's powered by logo */
+.pac-logo::after {
+  background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white.png);
+}
+
+[data-theme="dark"] .pac-logo::after {
+  background-image: url(//maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-non-white.png);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pac-container {
+    font-size: 16px; /* Prevent zoom on iOS */
+    max-width: calc(100vw - 32px) !important;
   }
-}); 
+  
+  .pac-item {
+    padding: 14px 16px;
+  }
+} 
