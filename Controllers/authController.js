@@ -33,16 +33,22 @@ exports.postRegister = async (req, res) => {
       return res.status(400).send("Username already exists");
     }
 
-    await new User({
+    const user = new User({
       username,
       email,
       password,
       country,
       signature,
-    }).save(); // password is auto-hashed
-    res.redirect("/auth/login");
+    });
+    await user.save(); // password is auto-hashed
+
+    // Log the user in by setting session
+    req.session.userId = user._id;
+
+    // Redirect to profile creation page
+    res.redirect("/auth/profile_creation");
   } catch (err) {
-    console.error(" Registration failed:", err);
+    console.error("Registration failed:", err);
     res.status(500).send("Registration error");
   }
 };
@@ -52,4 +58,10 @@ exports.logout = (req, res) => {
   req.session.destroy(() => {
     res.redirect("/auth/login");
   });
+};
+
+
+// GET profile creation page
+exports.getProfileCreation = (req, res) => {
+  res.render("auth/profile_creation_page", { user: req.user });
 };

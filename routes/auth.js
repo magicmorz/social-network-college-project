@@ -1,21 +1,23 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../Controllers/authController');
+const authController = require("../Controllers/authController");
 
 // GET login page
-router.get('/login', authController.getLogin);
+router.get("/login", authController.getLogin);
 
 // POST login form
-router.post('/login', authController.postLogin);
+router.post("/login", authController.postLogin);
 
-// Optional: register routes if needed
-router.get('/register', authController.getRegister);
-router.post('/register', authController.postRegister);
+// register routes
+router.get("/register", authController.getRegister);
+router.post("/register", authController.postRegister);
 
-// Optional: logout
-router.get('/logout', (req, res) => {
+// profile creation route
+router.get("/profile_creation", authController.getProfileCreation);
+// logout
+router.get("/logout", (req, res) => {
   req.session.destroy(() => {
-    res.redirect('/login_screen/login');
+    res.redirect("/login_screen/login");
   });
 });
 
