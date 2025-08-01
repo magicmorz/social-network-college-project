@@ -5,7 +5,10 @@ const User = require('../models/User'); // Add this import
 
 // Enhanced middleware to ensure user is authenticated
 const requireAuth = async (req, res, next) => {
+  console.log('🔐 Auth middleware - Session:', req.session?.userId);
+  
   if (!req.session || !req.session.userId) {
+    console.log('❌ No session or userId');
     return res.status(401).json({ error: 'Authentication required' });
   }
   
@@ -13,13 +16,15 @@ const requireAuth = async (req, res, next) => {
     // Get the full user object from database
     const user = await User.findById(req.session.userId);
     if (!user) {
+      console.log('❌ User not found in database');
       return res.status(401).json({ error: 'User not found' });
     }
     
+    console.log('✅ User authenticated:', user.username);
     req.user = user; // Attach full user object
     next();
   } catch (error) {
-    console.error('❌ Auth error:', error.message);
+    console.error('❌ Auth middleware error:', error);
     return res.status(500).json({ error: 'Authentication error' });
   }
 };
