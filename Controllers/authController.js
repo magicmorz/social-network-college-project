@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const fs = require("fs");
+const path = require("path");
 
 // GET login page
 exports.getLogin = (req, res) => {
@@ -7,17 +9,32 @@ exports.getLogin = (req, res) => {
 
 // POST login form
 exports.postLogin = async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  try {
+    const { username, password } = req.body;
 
-  if (!user || !(await user.comparePassword(password))) {
-    return res.render("auth/login", {
-      errors: [{ msg: "Invalid username or password" }],
+    // Validate input
+    if (!username || !password) {
+      return res.render("auth/login", {
+        errors: [{ msg: "Username and password are required" }],
+      });
+    }
+
+    const user = await User.findOne({ username });
+
+    if (!user || !(await user.comparePassword(password))) {
+      return res.render("auth/login", {
+        errors: [{ msg: "Invalid username or password" }],
+      });
+    }
+
+    req.session.userId = user._id;
+    res.redirect("/home");
+  } catch (error) {
+    console.error("Login error:", error);
+    res.render("auth/login", {
+      errors: [{ msg: "Internal server error during login" }],
     });
   }
-
-  req.session.userId = user._id;
-  res.redirect("/home");
 };
 
 // GET register page
@@ -30,15 +47,12 @@ exports.getRegister = (req, res) => {
   });
 };
 
-const fs = require("fs");
-const path = require("path");
-
 // POST register form
 exports.postRegister = async (req, res) => {
   const { username, email, password, country, signature } = req.body;
   const errors = [];
 
-  // Manual validation
+  // Input validation
   if (!username) {
     errors.push({ msg: "Username is required" });
   } else if (username.length < 3 || username.length > 30) {
@@ -117,15 +131,25 @@ exports.postRegister = async (req, res) => {
     // Save signature image
     const signatureFilePath = path.join(signaturePath, "signature.png");
     fs.writeFileSync(signatureFilePath, buffer);
-    
+
     // Continue with login session
     req.session.userId = user._id;
     res.redirect("/auth/profile_creation");
   } catch (err) {
     console.error("Registration failed:", err);
-    errors.push({ msg: "Registration error. Please try again." });
+    if (err.name === "ValidationError") {
+      const validationErrors = Object.values(err.errors).map((e) => ({
+        msg: e.message,
+      }));
+      return res.render("auth/register", {
+        errors: validationErrors,
+        username,
+        email,
+        country,
+      });
+    }
     res.render("auth/register", {
-      errors,
+      errors: [{ msg: "Registration error. Please try again." }],
       username,
       email,
       country,
