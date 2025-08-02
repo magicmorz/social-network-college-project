@@ -87,16 +87,6 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-    signature: {
-      type: String,
-      required: [true, "Signature is required"],
-      validate: {
-        validator: function (v) {
-          return /^data:image\/[a-zA-Z]+;base64,/.test(v);
-        },
-        message: "Signature must be a valid base64-encoded image",
-      },
-    },
     createdAt: {
       type: Date,
       default: Date.now,
