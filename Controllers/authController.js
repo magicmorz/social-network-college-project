@@ -104,10 +104,20 @@ exports.postRegister = async (req, res) => {
     );
     const profilePicPath = path.join(baseUploadPath, "profile_picture");
     const postsPath = path.join(baseUploadPath, "posts");
+    const signaturePath = path.join(baseUploadPath, "signature");
 
     fs.mkdirSync(profilePicPath, { recursive: true });
     fs.mkdirSync(postsPath, { recursive: true });
+    fs.mkdirSync(signaturePath, { recursive: true });
 
+    // Extract base64 content from data URI
+    const base64Data = signature.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+
+    // Save signature image
+    const signatureFilePath = path.join(signaturePath, "signature.png");
+    fs.writeFileSync(signatureFilePath, buffer);
+    
     // Continue with login session
     req.session.userId = user._id;
     res.redirect("/auth/profile_creation");
