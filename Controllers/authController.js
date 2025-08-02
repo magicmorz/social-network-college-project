@@ -35,6 +35,7 @@ exports.postLogin = async (req, res) => {
       errors: [{ msg: "Internal server error during login" }],
     });
   }
+
 };
 
 // GET register page

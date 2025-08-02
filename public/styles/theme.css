@@ -1,3 +1,6 @@
+/* ===== THEME.CSS - CSS Variables and Theme Styles ===== */
+
+/* CSS Custom Properties - Light Theme (Default) */
 :root {
     --bg: #fafafa;
     --card: #fff;
@@ -10,14 +13,14 @@
     --icon-hover: #000;
     --link: #737373;
     --sidebar-icon: 22px;
-    --hover-pill:rgba(0,0,0,.06);
+    --hover-pill: rgba(0,0,0,.06);
     --link2: #e8e8e8;
-   --heart:#ed4956;
-   --pill-bg: #f2f2f2;
-
+    --heart: #ed4956;
+    --pill-bg: #f2f2f2;
 }
 
-[data-theme="dark"]{
+/* Dark Theme */
+[data-theme="dark"] {
     --bg: #000;
     --card: #121212;
     --text: #e9e9e9;
@@ -27,40 +30,65 @@
     --btn-disabled: #384972;
     --icon: #e9e9e9;
     --icon-hover: #ffffff;
-    --link: #a8a8a8 ;
-    --link2:#262626;
-    --hover-pill:rgba(255,255,255,.12);
-   --heart:#ed4956;
-   --pill-bg:#262626;
+    --link: #a8a8a8;
+    --link2: #262626;
+    --hover-pill: rgba(255,255,255,.12);
+    --heart: #ed4956;
+    --pill-bg: #262626;
 }
 
-.password-toggle{
+/* Base Theme Application */
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+input, .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+}
+
+.login-button {
+    background: var(--blue-btn);
+}
+
+/* Password Toggle */
+.password-toggle {
     background-color: none;
     border: none;
     font-weight: 600;
     cursor: pointer;
     color: var(--text);
 }
-.password-toggle:focus{outline: none;}
 
-.forgot-password{
-    color: var(--text-link)
+.password-toggle:focus {
+    outline: none;
 }
-.forgot-password:hover{text-decoration: underline;}
 
-.separator.line{
-    flex:1;
+/* Links */
+.forgot-password {
+    color: var(--text-link);
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Separators */
+.separator.line {
+    flex: 1;
     height: 1px;
     background: var(--sep);
     opacity: .4;
 }
 
-.suggested-for-you-container  {
+/* Suggested For You */
+.suggested-for-you-container {
     position: relative;
 }
 
 .suggested-for-you-container * {
-    color:var(--text);
+    color: var(--text);
     font-size: 14px;
     margin-bottom: 4px;
 }
@@ -68,51 +96,68 @@
 .suggested-for-you-container .bi-x-lg {
     font-size: 14px;
     line-height: 1;
-    position:absolute;
+    position: absolute;
     right: 0;
     top: 50%;
-    transform:translateY(-50%);
+    transform: translateY(-50%);
     cursor: pointer;
 }
 
-
-body {background: var(--bg); color:var(--text);}
-input, .card{background: var(--card); border: 1px solid var(--border);}
-.login-button {background: var(--blue-btn);}
-
+/* Navigation */
 .nav-link,
-.more-btn{
-  display:flex; align-items:center; gap:14px;
-  height:48px; padding:0 12px;
-  background:none; border:none; cursor:pointer;
-  color:var(--text); border-radius:8px;
-  width: 100%;
+.more-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 48px;
+    padding: 0 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+    border-radius: 8px;
+    width: 100%;
 }
 
-.more-btn svg{ width:24px; height:24px; }
+.more-btn svg {
+    width: 24px;
+    height: 24px;
+}
 
 .more-btn:hover,
-.nav-link:hover{ background:rgba(0,0,0,.03); }
-[data-theme="dark"] .more-btn:hover,
-[data-theme="dark"] .nav-link:hover{ background:rgba(255,255,255,.08); }
-
-
-.more-btn:focus{outline:none;}
-
-.more-menu{
-    position:fixed;
-    width:240px; padding:8px 0;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    box-shadow:0 8px 24px rgba(0,0,0,.15);
-    padding: 6px;
-    display:none; z-index:9999;
- 
+.nav-link:hover {
+    background: rgba(0,0,0,.03);
 }
-.menu-item i{ font-size:22px}
 
-.menu-item{
+/* Dark mode hover states */
+[data-theme="dark"] .more-btn:hover,
+[data-theme="dark"] .nav-link:hover {
+    background: rgba(255,255,255,.08);
+}
+
+.more-btn:focus {
+    outline: none;
+}
+
+.nav-label {
+    font-weight: 600;
+}
+
+/* More Menu */
+.more-menu {
+    position: fixed;
+    width: 240px;
+    padding: 8px 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    padding: 6px;
+    display: none;
+    z-index: 9999;
+}
+
+.menu-item {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -122,137 +167,137 @@ input, .card{background: var(--card); border: 1px solid var(--border);}
     background: none;
     margin: 0;
     text-decoration: none;
-
     color: var(--text);
     cursor: pointer;
     border-radius: 0;
     font-size: bold;
-    
-    
-}
-/* --- comment-box must stay transparent in every state --- */
-.add-comment input.form-control {
-    background: transparent !important;     /* ← removes the grey */
-    box-shadow: none !important;            /* ← kills Bootstrap focus ring */
 }
 
+.menu-item i {
+    font-size: 22px;
+}
 
-/* ── unified hover / focus tint for the “More” drop-down ───────────── */
 .menu-item:hover,
-.menu-item:focus-within          { background: var(--hover-pill); }
+.menu-item:focus-within {
+    background: var(--hover-pill);
+}
 
 [data-theme="dark"] .menu-item:hover,
 [data-theme="dark"] .menu-item:focus-within {
-  background: rgba(255,255,255,.06);       /* same soft grey IG uses */
+    background: rgba(255,255,255,.06);
 }
 
+/* Comment Box */
+.add-comment input.form-control {
+    background: transparent !important;
+    box-shadow: none !important;
+}
 
-
-hr.menu-split{
-    border:0;
+/* Menu Separators */
+hr.menu-split {
+    border: 0;
     height: 6px;
     background: rgba(0,0,0,.15);
     box-shadow: inset 0 1px 0 var(--border), inset 0 -1px var(--border);
     margin: 16px 0;
-    width: calc(100%+6px);
+    width: calc(100% + 6px);
     margin: 6px -6px;
 }
 
-hr.light-line{
-border-top: 2px solid rgba(0,0,0,.15);
-margin: 6px -6px 0;
-border-color: rgba(0,0,0,.15);
-box-shadow: inset 0 1px 0 var(--border), inset 0 -1px var(--border);
-margin-bottom: 3px;
+hr.light-line {
+    border-top: 2px solid rgba(0,0,0,.15);
+    margin: 6px -6px 0;
+    border-color: rgba(0,0,0,.15);
+    box-shadow: inset 0 1px 0 var(--border), inset 0 -1px var(--border);
+    margin-bottom: 3px;
 }
 
-.nav-label{font-weight:600}
-
-.logout{border-top:1px solid var(--border); color:var(--text);}
-
-/* Header Title */
-.menu-header{
-  display:flex; align-items:center; gap:8px;
-  padding:10px 16px; font-size:15px; font-weight:600;
-  border-bottom:1px solid var(--border);
-}
-.icon-btn{background:none;border:none;padding:4px;cursor:pointer;color:var(--text);}
-.icon-btn:hover{background:rgba(0,0,0,.06);}
-[data-theme="dark"] .icon-btn:hover{background:rgba(255,255,255,.08);}
-
-/*  Dark-mode */
-.theme-row{
-  display:flex; justify-content:space-between; align-items:center;
-  padding:16px; font-size:14px; cursor:pointer;
-}
-.theme-row:hover{background:rgba(0,0,0,.03);}
-[data-theme="dark"] .theme-row:hover{background:rgba(255,255,255,.06);}
-
-/* Toggle (Pure-CSS) */
-.theme-row input{display:none;}
-.slider{
-  width:40px; height:22px; background:#ccc; border-radius:11px;
-  position:relative; transition:.2s;
-}
-.slider::before{
-  content:""; position:absolute; left:3px; top:3px;
-  width:16px; height:16px; background:#fff; border-radius:50%;
-  transition:.2s;
-}
-.theme-row input:checked + .slider{background:#4ade80;}      /* as IG */
-.theme-row input:checked + .slider::before{transform:translateX(18px);}
-
-/* hide a post when it doesn’t match the current query */
-.is-hidden{display:none!important;}
-
-/* ─────────── “Create new post” modal ─────────── */
-.ig-modal        { display:none; position:fixed; inset:0; z-index:1060; }
-.ig-modal.open   { display:block; }
-
-.ig-modal__backdrop{
-  position:absolute; inset:0;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(2px);
+/* Logout */
+.logout {
+    border-top: 1px solid var(--border);
+    color: var(--text);
 }
 
-.ig-modal__dialog{
-  position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  width: min(90vw, 650px);
-  background:var(--card); color:var(--text);
-  border-radius:12px; padding:32px 24px 40px;
-  text-align:center;
+/* Menu Header */
+.menu-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
 }
 
-.ig-modal__title{ font-weight:600; margin-bottom:28px; }
-
-.ig-modal__close{
-  position:absolute; top:18px; right:18px;
-  background:none; border:0; font-size:28px;
-  cursor:pointer; line-height:1; color:var(--text);
+/* Icon Buttons */
+.icon-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--text);
 }
 
-.ig-dropzone{
-  display:flex; flex-direction:column; align-items:center; gap:18px;
-}
-.ig-dropzone svg{ width:72px; height:72px; color:var(--icon); }
-.ig-dropzone p{ margin:0; font-size:14px; }
-
-.ig-fileBtn{
-  background:var(--blue-btn); color:#fff;
-  padding:8px 16px; border-radius:8px;
-  font-weight:600; cursor:pointer; font-size:14px;
+.icon-btn:hover {
+    background: rgba(0,0,0,.06);
 }
 
-[data-theme="dark"] .ig-fileBtn{ background:#1877f2; }
-
-/* tiny helper styles */
-.ig-step__bar{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:.5rem .75rem; font-weight:600;
+[data-theme="dark"] .icon-btn:hover {
+    background: rgba(255,255,255,.08);
 }
-.ig-navBtn{
-  background:none; border:0; color:#0095f6; cursor:pointer; font-size:.9rem;
-}
-.ig-navBtn:disabled{ opacity:.3; cursor:default }
 
+/* Theme Toggle */
+.theme-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.theme-row:hover {
+    background: rgba(0,0,0,.03);
+}
+
+[data-theme="dark"] .theme-row:hover {
+    background: rgba(255,255,255,.06);
+}
+
+.theme-row input {
+    display: none;
+}
+
+.slider {
+    width: 40px;
+    height: 22px;
+    background: #ccc;
+    border-radius: 11px;
+    position: relative;
+    transition: .2s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: .2s;
+}
+
+.theme-row input:checked + .slider {
+    background: #4ade80;
+}
+
+.theme-row input:checked + .slider::before {
+    transform: translateX(18px);
+}
+
+/* Utility Classes */
+.is-hidden {
+    display: none !important;
+}
