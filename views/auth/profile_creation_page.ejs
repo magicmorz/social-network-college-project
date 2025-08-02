@@ -108,6 +108,12 @@
         const dot2 = document.getElementById('dot2');
         const profilePicInput = document.getElementById('profile-pic-input');
         const profilePicPreview = document.getElementById('profile-pic-preview');
+        const defaultProfilePic = '/avatars/default_profile_picture.png';
+
+        // Set default profile picture on page load
+        profilePicPreview.src = defaultProfilePic;
+        profilePicPreview.style.display = 'block';
+        profilePicInput.dataset.default = 'true'; // Flag to indicate default image
 
         profilePicInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -116,6 +122,7 @@
                 reader.onload = (e) => {
                     profilePicPreview.src = e.target.result;
                     profilePicPreview.style.display = 'block';
+                    profilePicInput.dataset.default = 'false'; // User uploaded an image
                 };
                 reader.readAsDataURL(file);
             }
@@ -130,7 +137,7 @@
 
         function skipStep() {
             if (step1.classList.contains('active')) {
-                nextStep();
+                nextStep(); // Default image is already set on load
             } else {
                 completeSetup();
             }
@@ -138,9 +145,13 @@
 
         function completeSetup() {
             const bio = document.getElementById('bio-input').value;
+            const profilePicData = profilePicInput.dataset.default === 'true' 
+                ? { default: true, url: defaultProfilePic } 
+                : { default: false, file: profilePicInput.files[0]?.name || 'No photo uploaded' };
+            
             // Here you would typically save the profile photo and bio to a server
             console.log('Profile setup complete:', {
-                profilePic: profilePicInput.files[0]?.name || 'No photo uploaded',
+                profilePic: profilePicData,
                 bio: bio || 'No bio provided'
             });
             // Redirect to the next page (e.g., home page)
