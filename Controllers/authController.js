@@ -2,7 +2,7 @@ const User = require("../models/User");
 
 // GET login page
 exports.getLogin = (req, res) => {
-  res.render("auth/login");
+  res.render("auth/login", { errors: [] });
 };
 
 // POST login form
@@ -11,7 +11,9 @@ exports.postLogin = async (req, res) => {
   const user = await User.findOne({ username });
 
   if (!user || !(await user.comparePassword(password))) {
-    return res.status(401).send("Invalid login");
+    return res.render("auth/login", {
+      errors: [{ msg: "Invalid username or password" }],
+    });
   }
 
   req.session.userId = user._id;
@@ -20,19 +22,68 @@ exports.postLogin = async (req, res) => {
 
 // GET register page
 exports.getRegister = (req, res) => {
-  res.render("auth/register");
+  res.render("auth/register", {
+    errors: [],
+    username: "",
+    email: "",
+    country: "",
+  });
 };
 
 // POST register form
 exports.postRegister = async (req, res) => {
   const { username, email, password, country, signature } = req.body;
+  const errors = [];
+
+  // Manual validation
+  if (!username) {
+    errors.push({ msg: "Username is required" });
+  } else if (username.length < 3 || username.length > 30) {
+    errors.push({ msg: "Username must be 3-30 characters long" });
+  }
+
+  if (!email) {
+    errors.push({ msg: "Email is required" });
+  } else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+    errors.push({ msg: "Please enter a valid email" });
+  }
+
+  if (!password) {
+    errors.push({ msg: "Password is required" });
+  } else if (password.length < 6) {
+    errors.push({ msg: "Password must be at least 6 characters long" });
+  }
+
+  if (!country) {
+    errors.push({ msg: "Please select a country" });
+  }
+
+  if (!signature || !/^data:image\/[a-zA-Z]+;base64,/.test(signature)) {
+    errors.push({ msg: "Please provide a valid signature" });
+  }
+
+  // Check for existing user
+  const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+  if (existingUser) {
+    if (existingUser.username === username) {
+      errors.push({ msg: "Username already exists" });
+    }
+    if (existingUser.email === email) {
+      errors.push({ msg: "Email already exists" });
+    }
+  }
+
+  // If errors, re-render form with preserved inputs
+  if (errors.length > 0) {
+    return res.render("auth/register", {
+      errors,
+      username,
+      email,
+      country,
+    });
+  }
 
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).send("Username already exists");
-    }
-
     const user = new User({
       username,
       email,
@@ -40,16 +91,19 @@ exports.postRegister = async (req, res) => {
       country,
       signature,
     });
-    await user.save(); // password is auto-hashed
+    await user.save(); // Password is auto-hashed by Mongoose middleware
 
-    // Log the user in by setting session
     req.session.userId = user._id;
-
-    // Redirect to profile creation page
     res.redirect("/auth/profile_creation");
   } catch (err) {
     console.error("Registration failed:", err);
-    res.status(500).send("Registration error");
+    errors.push({ msg: "Registration error. Please try again." });
+    res.render("auth/register", {
+      errors,
+      username,
+      email,
+      country,
+    });
   }
 };
 
@@ -60,8 +114,7 @@ exports.logout = (req, res) => {
   });
 };
 
-
 // GET profile creation page
 exports.getProfileCreation = (req, res) => {
-  res.render("auth/profile_creation_page", { user: req.user });
+  res.render("auth/profile_creation_page", { user: req.user, errors: [] });
 };
