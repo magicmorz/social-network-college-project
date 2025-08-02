@@ -25,7 +25,7 @@ router.post("/register", authController.postRegister);
 // GET profile creation page
 router.get("/profile_creation", isLoggedIn, authController.getProfileCreation);
 
-// ✅ POST complete profile setup (profile pic + bio)
+// POST complete profile setup (profile pic + bio)
 router.post(
   "/complete-profile",
   isLoggedIn,
