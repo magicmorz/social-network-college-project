@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../Controllers/postController');
-const User = require('../models/User'); // Add this import
+const User = require('../models/User'); 
 
 // Enhanced middleware to ensure user is authenticated
 const requireAuth = async (req, res, next) => {
