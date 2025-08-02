@@ -30,6 +30,9 @@ exports.getRegister = (req, res) => {
   });
 };
 
+const fs = require("fs");
+const path = require("path");
+
 // POST register form
 exports.postRegister = async (req, res) => {
   const { username, email, password, country, signature } = req.body;
@@ -73,7 +76,6 @@ exports.postRegister = async (req, res) => {
     }
   }
 
-  // If errors, re-render form with preserved inputs
   if (errors.length > 0) {
     return res.render("auth/register", {
       errors,
@@ -93,6 +95,20 @@ exports.postRegister = async (req, res) => {
     });
     await user.save(); // Password is auto-hashed by Mongoose middleware
 
+    // Create upload directory for the user
+    const baseUploadPath = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      `user_${user._id}`
+    );
+    const profilePicPath = path.join(baseUploadPath, "profile_picture");
+    const postsPath = path.join(baseUploadPath, "posts");
+
+    fs.mkdirSync(profilePicPath, { recursive: true });
+    fs.mkdirSync(postsPath, { recursive: true });
+
+    // Continue with login session
     req.session.userId = user._id;
     res.redirect("/auth/profile_creation");
   } catch (err) {
