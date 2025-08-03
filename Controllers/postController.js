@@ -335,21 +335,41 @@ exports.deletePost = async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to delete this post' });
     }
 
-    // Delete image file
-    const imagePath = path.join(__dirname, '../public', post.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+    // Log post.image to understand what it contains
+    console.log('Post image:', post.image);
+
+    // Construct full path based on image
+    let imagePath;
+
+    if (path.isAbsolute(post.image)) {
+      imagePath = post.image; // already absolute
+    } else if (post.image.includes(req.user._id.toString())) {
+      // If post.image already includes user directory
+      imagePath = path.join(__dirname, '..', post.image);
+    } else {
+      // Otherwise, assume image is just filename
+      imagePath = path.join(__dirname, '../uploads', req.user._id.toString(), path.basename(post.image));
     }
 
+    console.log('Resolved image path:', imagePath);
+
+    // Delete image file
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+      console.log('Image deleted successfully');
+    } else {
+      console.warn('Image file not found at path:', imagePath);
+    }
+
+    // Delete post from DB
     await Post.findByIdAndDelete(postId);
-    
+
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting post:', error);
     res.status(500).json({ error: 'Failed to delete post' });
   }
 };
-
 // Get single post
 exports.getPost = async (req, res) => {
   try {
