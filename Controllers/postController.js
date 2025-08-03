@@ -9,17 +9,27 @@ const fs = require('fs');
 // Configure multer for image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'public/uploads/posts';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const userId = req.user._id.toString();
+    const uploadDir = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      `user_${userId}`,
+      "posts"
+    );
+
+    fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
 });
+
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
@@ -154,7 +164,7 @@ exports.createPost = async (req, res) => {
     const newPost = new Post({
       user: req.user._id,
       caption: caption || '',
-      image: '/uploads/posts/' + req.file.filename,
+      image: `uploads/user_${req.user._id}/posts/${req.file.filename}`,
       place: placeRef, // Use place reference instead of location string
       group: group || null, // null means public feed
       hashtags: hashtags.map(tag => tag.toLowerCase())
