@@ -1,119 +1,132 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // Define the User Schema
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, 'Username is required'],
-    unique: true,
-    trim: true,
-    minlength: [3, 'Username must be at least 3 characters long'],
-    maxlength: [30, 'Username cannot exceed 30 characters']
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
-  },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters long']
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
-  },
-  avatar: {
-    type: String,
-    default: '/avatars/default.jpg',
-    trim: true,
-    validate: {
-      validator: function(v) {
-        // Must be a relative URL starting with /avatars/ or /user/ for compatibility
-        return !v || v.startsWith('/avatars/') || v.startsWith('/user/');
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
+      trim: true,
+      minlength: [3, "Username must be at least 3 characters long"],
+      maxlength: [30, "Username cannot exceed 30 characters"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please enter a valid email",
+      ],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters long"],
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    avatar: {
+      type: String,
+      default: "/avatars/default.jpg",
+      trim: true,
+      validate: {
+        validator: function (v) {
+          // Must be a relative URL starting with /avatars/ or /user/ for compatibility
+          return !v || v.startsWith("/avatars/") || v.startsWith("/user/");
+        },
+        message:
+          "Avatar must be a relative URL starting with /avatars/ or /user/",
       },
-      message: 'Avatar must be a relative URL starting with /avatars/ or /user/'
-    }
-  },
-  groups: [{
-    type: String,
-    trim: true
-  }],
-  bio: {
-    type: String,
-    maxlength: [150, 'Bio cannot exceed 150 characters'],
-    default: ''
-  },
-  country: {
-    type: String,
-    maxlength: [50, 'Country cannot exceed 50 characters'],
-    default: ''
-  },
-  followers: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
     },
-    followedAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-  following: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
+    groups: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    bio: {
+      type: String,
+      maxlength: [150, "Bio cannot exceed 150 characters"],
+      default: "",
     },
-    followedAt: {
+    country: {
+      type: String,
+      maxlength: [50, "Country cannot exceed 50 characters"],
+      default: "",
+    },
+    followers: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        followedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    following: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        followedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    createdAt: {
       type: Date,
-      default: Date.now
-    }
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now
+      default: Date.now,
+    },
+  },
+  {
+    timestamps: true, // This adds createdAt and updatedAt automatically
   }
-}, {
-  timestamps: true // This adds createdAt and updatedAt automatically
-});
+);
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre("save", async function (next) {
   // Only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) return next();
-  
+  if (!this.isModified("password")) return next();
+
   // Hash password with salt of 12
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
 // Instance method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Virtual to get follower count
-userSchema.virtual('followerCount').get(function() {
+userSchema.virtual("followerCount").get(function () {
   return this.followers ? this.followers.length : 0;
 });
 
 // Virtual to get following count
-userSchema.virtual('followingCount').get(function() {
+userSchema.virtual("followingCount").get(function () {
   return this.following ? this.following.length : 0;
 });
 
 // Ensure virtual fields are serialized
-userSchema.set('toJSON', { virtuals: true });
-userSchema.set('toObject', { virtuals: true });
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
 
 // Create the model
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = User; 
+module.exports = User;
