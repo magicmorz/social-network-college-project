@@ -228,14 +228,14 @@
   </span>
   <span class="d-none d-lg-inline nav-label">Groups</span>
 </a>
+      <a href="/u/<%= user.username %>" class="nav-link">
+        <span class="nav-icon">
+          <!-- Profile Picture -->
+          <img src="/uploads/user_<%= user._id %>/profile_picture/profile.jpg" alt="Profile" class="profile-pic" />
+        </span>
+        <span class="d-none d-lg-inline nav-label profile-pic-nav-text">Profile</span>
+      </a>
 
-        <a href="/u/<%= user.username %>" class="nav-link">
-          <span class="nav-icon">
-            <!-- Profile Picture -->
-            <img src="./user/user_profile_picture.jpg" alt="Profile" class="profile-pic" />
-          </span>
-          <span class="d-none d-lg-inline nav-label profile-pic-nav-text">Profile</span>
-        </a>
       </div>
       <!-- Threads-->
       <a href="#threads" class="nav-link position-relative" id="threadsBtn">
