@@ -407,7 +407,7 @@
     <main id="main-content-scrollable-container" class="flex-grow-1 overflow-auto">
       <!-- 
         flex-grow-1:   Allows the element to expand and fill available space inside a flex container
-        overflow-auto: Adds scrollbars if content overflows the element’s bounds
+        overflow-auto: Adds scrollbars if content overflows the element's bounds
         -->
       <!-- Row 1: Stories -->
       <div class="w-100 mb-4 text-center position-relative">
@@ -533,9 +533,12 @@
                     <%= timeAgo(post.createdAt) %>
                   </div>
                 </div>
-                <% if (post.location) { %>
+                <% if (post.place && post.place.name) { %>
                   <div class="location-top-header text-muted small">
-                    <%= post.location %>
+                    <a href="/places/<%= post.place.placeId || post.place._id %>" 
+                       class="text-decoration-none text-muted hover-underline">
+                      <i class="bi bi-geo-alt me-1"></i><%= post.place.name %>
+                    </a>
                   </div>
                 <% } %>
               </div>

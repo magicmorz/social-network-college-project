@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // === Show all posts (default feed) ===
   function showAllPosts() {
-    console.log('Showing all posts');
     
     // Add loading indicator
     const postsContainer = document.querySelector('.d-flex.flex-column.align-items-center');
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // === Load and display group posts ===
   async function loadGroupPosts(groupId, groupName) {
-    console.log('Loading posts for group:', groupName);
     
     const postsContainer = document.querySelector('.d-flex.flex-column.align-items-center');
     if (!postsContainer) {
@@ -48,8 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       const posts = await response.json();
-      
-      console.log(`Found ${posts.length} posts in group ${groupName}`);
       
       if (posts.length === 0) {
         postsContainer.innerHTML = `
@@ -145,7 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${timeAgo}
               </div>
             </div>
-            ${post.location ? `<div class="location-top-header text-muted small">${post.location}</div>` : ''}
+            ${post.place ? `<div class="location-top-header text-muted small">
+              <a href="/places/${post.place.placeId || post.place._id}" 
+                 class="text-decoration-none text-muted hover-underline">
+                <i class="bi bi-geo-alt me-1"></i>
+                ${post.place.name}
+              </a>
+            </div>` : ''}
           </div>
         </div>
         <button class="btn btn-link text-dark more-options-btn" data-post-id="${post._id}">
@@ -266,8 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // === Initialize post event listeners (like, comment, etc.) ===
   function initializePostEventListeners() {
-    console.log('Initializing post event listeners...');
-
+    
     // Like buttons
     document.querySelectorAll('.like-btn').forEach(btn => {
       btn.addEventListener('click', handleLikeClick);
@@ -375,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
           viewCommentsBtn.textContent = `View all ${result.commentsCount} comment${result.commentsCount !== 1 ? 's' : ''}`;
         }
         
-        console.log('Comment added successfully');
       } else {
         const error = await response.json();
         alert('Error adding comment: ' + (error.error || 'Unknown error'));
@@ -394,5 +394,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePostEventListeners
   };
 
-  console.log('Group Feed initialized');
 });

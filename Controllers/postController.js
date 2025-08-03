@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
 const Group = require('../models/Group'); // Add this import
+const Place = require('../models/Place');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -50,6 +51,7 @@ exports.getFeed = async (req, res) => {
       ]
     })
       .populate('user', 'username avatar isVerified')
+      .populate('place', 'name formattedAddress placeId coordinates')
       .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
@@ -76,6 +78,7 @@ exports.getPostsJson = async (req, res) => {
       ]
     })
       .populate('user', 'username avatar isVerified')
+      .populate('place', 'name formattedAddress placeId coordinates')
       .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
@@ -90,43 +93,60 @@ exports.getPostsJson = async (req, res) => {
 
 // Create new post (UPDATED with group support)
 exports.createPost = async (req, res) => {
-  console.log('\n=== 📝 CREATE POST DEBUG ===');
-  console.log('User:', req.user?.username, req.user?._id);
-  console.log('Body:', req.body);
-  console.log('File:', req.file ? `${req.file.filename} (${req.file.size} bytes)` : 'No file');
-  
   try {
-    const { caption, location, group } = req.body; // Add 'group' here
+    const { caption, group, placeId, placeName, placeLat, placeLng } = req.body;
     
     if (!req.file) {
-      console.log('❌ No file provided');
       return res.status(400).json({ error: 'Image is required' });
     }
 
     if (!req.user || !req.user._id) {
-      console.log('❌ No user in request');
       return res.status(401).json({ error: 'User not authenticated' });
     }
 
     // If posting to a group, verify user is a member
     if (group) {
-      console.log('🔍 Checking group membership for group:', group);
       const groupDoc = await Group.findById(group);
       if (!groupDoc) {
-        console.log('❌ Group not found:', group);
         return res.status(404).json({ error: 'Group not found' });
       }
       
       // Check if user is a member of the group
       if (!groupDoc.members.includes(req.user._id)) {
-        console.log('❌ User not authorized to post to group:', group);
         return res.status(403).json({ error: 'Not authorized to post to this group' });
       }
-      
-      console.log('✅ User is member of group:', groupDoc.name);
     }
 
-    console.log('✅ Creating post for user:', req.user.username);
+    // Handle place creation/finding if location data provided
+    let placeRef = null;
+    if (placeId && placeName && placeLat && placeLng) {
+      try {
+        // Validate coordinates
+        const lat = parseFloat(placeLat);
+        const lng = parseFloat(placeLng);
+        
+        if (isNaN(lat) || isNaN(lng)) {
+          throw new Error('Invalid coordinates');
+        }
+        
+        const placeData = {
+          placeId: placeId.trim(),
+          name: placeName.trim(),
+          formattedAddress: placeName.trim(), // Will be enhanced later with full address
+          lat: lat,
+          lng: lng
+        };
+        
+        const place = await Place.findOrCreate(placeData);
+        placeRef = place._id;
+        
+        // Increment posts count for this place
+        await place.incrementPostsCount();
+      } catch (placeError) {
+        // Continue without place if there's an error
+        placeRef = null;
+      }
+    }
 
     // Extract hashtags from caption
     const hashtags = caption ? caption.match(/#\w+/g) || [] : [];
@@ -135,31 +155,35 @@ exports.createPost = async (req, res) => {
       user: req.user._id,
       caption: caption || '',
       image: '/uploads/posts/' + req.file.filename,
-      location: location || '',
-      group: group || null, // Add this line - null means public feed
+      place: placeRef, // Use place reference instead of location string
+      group: group || null, // null means public feed
       hashtags: hashtags.map(tag => tag.toLowerCase())
     });
 
-    console.log('📝 Saving post...');
     const savedPost = await newPost.save();
-    console.log('✅ Post saved successfully with ID:', savedPost._id);
     
-    // Populate group info in response
+    // Populate group and place info in response
     await savedPost.populate('group', 'name');
+    if (savedPost.place) {
+      await savedPost.populate('place', 'name formattedAddress placeId coordinates');
+    }
     
     // Log where the post was created
     if (savedPost.group) {
-      console.log('📍 Post created in group:', savedPost.group.name);
+      res.json({ 
+        success: true, 
+        post: savedPost,
+        // Add redirect info for frontend
+        redirectTo: `/group/${savedPost.group._id}`
+      });
     } else {
-      console.log('📍 Post created on public feed');
+      res.json({ 
+        success: true, 
+        post: savedPost,
+        // Add redirect info for frontend
+        redirectTo: '/home'
+      });
     }
-    
-    res.json({ 
-      success: true, 
-      post: savedPost,
-      // Add redirect info for frontend
-      redirectTo: savedPost.group ? `/group/${savedPost.group._id}` : '/home'
-    });
     
   } catch (error) {
     console.error('❌ Error creating post:', error.message);
@@ -321,6 +345,7 @@ exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('user', 'username avatar isVerified')
+      .populate('place', 'name formattedAddress placeId coordinates')
       .populate('group', 'name') // Add group info
       .populate('comments.user', 'username avatar');
 
@@ -360,6 +385,7 @@ exports.getUserPosts = async (req, res) => {
       ]
     })
       .populate('user', 'username avatar isVerified')
+      .populate('place', 'name formattedAddress placeId coordinates')
       .populate('group', 'name')
       .sort({ createdAt: -1 });
 
