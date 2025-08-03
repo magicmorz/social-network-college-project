@@ -65,7 +65,7 @@ router.post(
       // Save bio to the database
       await User.findByIdAndUpdate(userId, { bio });
 
-      res.redirect("/home"); // Change this to your actual homepage route
+      res.redirect("/home"); 
     } catch (err) {
       console.error("Profile setup error:", err);
       res.status(500).send("Something went wrong. Please try again.");
