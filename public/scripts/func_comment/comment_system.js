@@ -26,55 +26,71 @@ async function toggleComments(postId) {
   
   if (isCommentsVisible) {
     // Hide comments
-    commentsSection.style.display = 'none';
-    commentsSection.innerHTML = '';
+    commentsSection.style.display = "none";
+    commentsSection.innerHTML = "";
     updateCommentCount(postId); // Reset button text
   } else {
     // Show loading state
-    commentsSection.innerHTML = '<div class="text-center p-2 text-muted">Loading comments...</div>';
-    commentsSection.style.display = 'block';
-    
+    commentsSection.innerHTML =
+      '<div class="text-center p-2 text-muted">Loading comments...</div>';
+    commentsSection.style.display = "block";
+
     try {
       // Fetch post data with comments
       const response = await fetch(`/posts/${postId}/comments`);
-      if (!response.ok) throw new Error('Failed to load comments');
-      
+      if (!response.ok) throw new Error("Failed to load comments");
+
       const data = await response.json();
       commentsSection.innerHTML = "";
 
       if (data.comments && data.comments.length > 0) {
         data.comments.forEach((comment) => {
+          const avatarUrl =
+            comment.user && comment.user._id
+              ? `/api/users/avatars/user_${comment.user._id}`
+              : "/avatars/default.jpg";
+
           const commentElement = document.createElement("div");
           commentElement.className = "comment mb-2 p-2";
           commentElement.innerHTML = `
             <div class="d-flex align-items-start">
-                              <img src="${comment.user.avatar || '/avatars/default.jpg'}" 
-                   alt="${comment.user.username}" 
-                   class="rounded-circle me-2" 
-                   style="width: 28px; height: 28px; object-fit: cover;">
+              <img 
+                src="${avatarUrl}" 
+                alt="${comment.user.username}" 
+                class="rounded-circle me-2" 
+                style="width: 28px; height: 28px; object-fit: cover;">
               <div class="flex-grow-1">
                 <div>
-                  <span class="fw-bold">${comment.user.username}</span> 
+                  <a href="/u/${
+                    comment.user.username
+                  }" class="fw-bold text-decoration-none">
+                    ${comment.user.username}
+                  </a>
                   <span>${comment.text}</span>
                 </div>
-                <small class="text-muted">${new Date(comment.createdAt).toLocaleString()}</small>
+                <small class="text-muted">${new Date(
+                  comment.createdAt
+                ).toLocaleString()}</small>
               </div>
             </div>
           `;
           commentsSection.appendChild(commentElement);
         });
-        
+
         // Update button text to "Hide comments"
-        viewCommentsButton.textContent = `Hide comments`;
+        viewCommentsButton.textContent = "Hide comments";
       } else {
-        commentsSection.innerHTML = '<div class="text-muted text-center p-3">No comments yet. Be the first to comment!</div>';
-        viewCommentsButton.textContent = 'Hide comments';
+        commentsSection.innerHTML =
+          '<div class="text-muted text-center p-3">No comments yet. Be the first to comment!</div>';
+        viewCommentsButton.textContent = "Hide comments";
       }
     } catch (error) {
-      console.error('Error loading comments:', error);
-      commentsSection.innerHTML = '<div class="text-danger text-center p-2">Failed to load comments</div>';
+      console.error("Error loading comments:", error);
+      commentsSection.innerHTML =
+        '<div class="text-danger text-center p-2">Failed to load comments</div>';
     }
   }
+  
 }
 
 // Add new comment to database
