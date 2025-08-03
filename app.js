@@ -188,7 +188,7 @@ app.get("/home", isAuthenticated, async (req, res) => {
     }
     
   } catch (err) {
-    console.error("❌ Error loading posts:", err);
+    console.error("Error loading posts:", err);
     res.status(500).send("Internal server error while loading feed.");
   }
 });

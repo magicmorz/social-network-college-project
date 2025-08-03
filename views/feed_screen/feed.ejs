@@ -814,7 +814,7 @@
                   <div class="profile-picture-container">
                     <a href="/u/<%= post.user.username %>">
                       <img
-                        src="<%= post.user.avatar || '/avatars/default.jpg' %>"
+                        src="/api/users/avatars/user_<%= post.user._id %>"
                         alt="<%= post.user.username %>"
                         class="profile-img"
                       />
