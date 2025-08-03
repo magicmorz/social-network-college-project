@@ -3,7 +3,7 @@ const router = express.Router();
 const isLoggedIn = require('../middleware/auth');
 const feedController = require('../Controllers/feedController');
 
-// GET feed page
-router.get('/feed', isLoggedIn, feedController.showFeed);
+// GET home/feed page
+router.get('/home', isLoggedIn, feedController.showFeed);
 
 module.exports = router; 

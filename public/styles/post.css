@@ -291,6 +291,35 @@ video:hover {
     margin-top: -4px; /* Bring it closer if needed */
     display: inline-block; /* so the cursor effect will only work when hovering over the text and not empty space*/
     cursor: pointer;
+    line-height: 1.2;
+}
+
+.location-top-header a {
+    color: #737373 !important;  /* Darker gray for better visibility */
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 400;
+    min-height: 16px; /* Ensure minimum height for clickability */
+}
+
+.location-top-header a:hover {
+    color: #262626 !important;
+    text-decoration: underline;
+}
+
+.location-top-header a i {
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+[data-theme="dark"] .location-top-header a {
+    color: #8e8e8e !important;
+}
+
+[data-theme="dark"] .location-top-header a:hover {
+    color: #ffffff !important;
 }
 
 .time-since-posted{

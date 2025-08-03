@@ -6,6 +6,7 @@ const fs = require("fs");
 const Post = require('./models/Post');
 const User = require('./models/User');
 const Group = require('./models/Group'); // Add this import
+const Place = require('./models/Place'); // Add Place model
 require("dotenv").config();
 
 const app = express();
@@ -93,13 +94,15 @@ app.use('/posts', postRoutes);
 const searchRoutes = require('./routes/search');
 app.use('/search', searchRoutes);
 
+
 const profileRoutes = require('./routes/profile');
+const placeRoutes = require('./routes/place');
 app.use('/u', profileRoutes);
+app.use('/places', placeRoutes);
 
 // Protected home route - loads posts from DB and passes to feed.ejs (UPDATED WITH GROUP SUPPORT)
 app.get("/home", isAuthenticated, async (req, res) => {
   try {
-    console.log('Loading feed for user:', req.user.username);
     
     const { group: groupId } = req.query; // Get group from query parameter
     
@@ -108,12 +111,10 @@ app.get("/home", isAuthenticated, async (req, res) => {
     
     if (groupId) {
       // Load specific group posts
-      console.log('Loading posts for group:', groupId);
       
       // Verify user has access to this group
       currentGroup = await Group.findById(groupId);
       if (!currentGroup || !currentGroup.members.includes(req.user._id)) {
-        console.log('❌ User not authorized to view this group');
         return res.redirect('/home'); // Redirect to main feed
       }
       
@@ -121,10 +122,13 @@ app.get("/home", isAuthenticated, async (req, res) => {
       posts = await Post.find({ group: groupId })
         .populate('user', 'username avatar isVerified')
         .populate('group', 'name')
+        .populate({
+          path: 'place',
+          model: 'Place',
+          select: 'name formattedAddress placeId coordinates'
+        })
         .populate('comments.user', 'username avatar')
         .sort({ createdAt: -1 });
-      
-      console.log(`Found ${posts.length} posts in group: ${currentGroup.name}`);
       
     } else {
       // Load all posts (public + user's groups)
@@ -139,45 +143,48 @@ app.get("/home", isAuthenticated, async (req, res) => {
       })
         .populate('user', 'username avatar isVerified')
         .populate('group', 'name') // Add group info
+        .populate({
+          path: 'place',
+          model: 'Place',
+          select: 'name formattedAddress placeId coordinates'
+        })
         .populate('comments.user', 'username avatar')
         .sort({ createdAt: -1 });
       
-      console.log(`Found ${posts.length} total posts`);
     }
     
     // Filter out posts with missing users
     const validPosts = posts.filter(post => {
       if (!post.user) {
-        console.log('⚠️ Found post with missing user:', post._id);
         return false;
       }
       return true;
     });
     
-    console.log(`${validPosts.length} valid posts after filtering`);
-    
     if (validPosts.length > 0) {
-      console.log('Valid posts:', validPosts.map(p => ({ 
-        id: p._id, 
-        user: p.user.username, 
-        caption: p.caption?.substring(0, 30) || 'No caption',
-        group: p.group ? p.group.name : 'Public',
-        commentsCount: p.comments ? p.comments.length : 0
-      })));
+      res.render("feed_screen/feed", { 
+        posts: validPosts, 
+        user: req.user,
+        currentGroup: currentGroup, // Pass current group to template
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+      });
     } else {
       if (currentGroup) {
-        console.log(`❌ No posts found in group: ${currentGroup.name}`);
+        res.render("feed_screen/feed", { 
+          posts: [], 
+          user: req.user,
+          currentGroup: currentGroup, // Pass current group to template
+          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+        });
       } else {
-        console.log('❌ No posts found in feed');
+        res.render("feed_screen/feed", { 
+          posts: [], 
+          user: req.user,
+          currentGroup: null, // Pass current group to template
+          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+        });
       }
     }
-    
-res.render("feed_screen/feed", { 
-  posts: validPosts, 
-  user: req.user,
-  currentGroup: currentGroup, // Pass current group to template
-  googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-});
     
   } catch (err) {
     console.error("❌ Error loading posts:", err);
@@ -248,6 +255,30 @@ app.get("/debug-database", isAuthenticated, async (req, res) => {
     });
   } catch (error) {
     console.error('Debug error:', error);
+    res.json({ error: error.message });
+  }
+});
+
+// Debug endpoint specifically for places
+app.get('/debug/places', async (req, res) => {
+  try {
+    const postsWithPlace = await Post.find({ place: { $exists: true, $ne: null } })
+      .populate('place')
+      .limit(10);
+    
+    const places = await Place.find().limit(10);
+    
+    res.json({
+      totalPostsWithPlaces: await Post.countDocuments({ place: { $exists: true, $ne: null } }),
+      totalPlaces: await Place.countDocuments(),
+      posts: postsWithPlace.map(p => ({
+        postId: p._id,
+        caption: p.caption?.substring(0, 30),
+        place: p.place
+      })),
+      places: places
+    });
+  } catch (error) {
     res.json({ error: error.message });
   }
 });

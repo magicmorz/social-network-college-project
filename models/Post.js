@@ -68,8 +68,10 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  location: {
-    type: String,
+  place: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Place',
+    index: true
   },
   hashtags: [
     {
@@ -109,10 +111,18 @@ postSchema.pre("save", function (next) {
       ...new Set(mentions.map((user) => user.slice(1).toLowerCase())),
     ];
 
+    // MongoDB supported languages for text search
+    const supportedLanguages = [
+      'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'nb', 'nl', 'pt', 'ro', 'ru', 'sv', 'tr'
+    ];
+    
     const langCode = franc(this.caption);
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
-      this.language = lang && lang["1"] ? lang["1"] : "en";
+      const detectedLang = lang && lang["1"] ? lang["1"] : "en";
+      
+      // Only use supported languages, default to English for unsupported ones
+      this.language = supportedLanguages.includes(detectedLang) ? detectedLang : "en";
     } else {
       this.language = "en";
     }

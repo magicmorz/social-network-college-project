@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const groupSelector = document.getElementById('postGroupSelector');
     
     const caption = captionInput ? captionInput.value.trim() : '';
-    const location = locationInput ? locationInput.value.trim() : '';
     const groupId = groupSelector ? groupSelector.value : '';
 
     if (!fileInput || !fileInput.files[0]) {
@@ -96,16 +95,25 @@ document.addEventListener('DOMContentLoaded', function() {
       const formData = new FormData();
       formData.append('image', fileInput.files[0]);
       formData.append('caption', caption);
-      formData.append('location', location);
+      
+      // Add place data if location is selected
+      const locationInput = document.getElementById('postLocation');
+      if (locationInput && locationInput.getAttribute('data-place-id') && locationInput.value.trim()) {
+        formData.append('placeId', locationInput.getAttribute('data-place-id'));
+        formData.append('placeName', locationInput.value.trim());
+        formData.append('placeLat', locationInput.getAttribute('data-lat'));
+        formData.append('placeLng', locationInput.getAttribute('data-lng'));
+      }
       
       // Add group ID if posting to a group
       if (groupId) {
         formData.append('group', groupId);
       }
 
+      const locationValue = locationInput && locationInput.getAttribute('data-place-id') ? locationInput.value : 'No location';
       console.log('Sending request to /posts', {
         caption,
-        location,
+        place: locationValue,
         groupId: groupId || 'public feed'
       });
 
@@ -163,6 +171,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (captionInput) captionInput.value = '';
     if (locationInput) {
       locationInput.value = '';
+      // Clear all place data attributes
+      locationInput.removeAttribute('data-place-id');
+      locationInput.removeAttribute('data-lat');
+      locationInput.removeAttribute('data-lng');
       // Reset location autocomplete if available
       if (window.locationAutocomplete) {
         window.locationAutocomplete.reset();
