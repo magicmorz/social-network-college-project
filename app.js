@@ -53,7 +53,7 @@ function timeAgo(date) {
 // Make timeAgo available in EJS templates
 app.locals.timeAgo = timeAgo;
 
-// Authentication check middleware (MOVED HERE - BEFORE IT'S USED)
+// Authentication check middleware
 async function isAuthenticated(req, res, next) {
   if (req.session.userId) {
     try {
@@ -104,40 +104,66 @@ app.use('/places', placeRoutes);
 // Home route - loads posts from followed users, groups, and user's own posts
 app.get("/home", isAuthenticated, async (req, res) => {
   try {
+    // Extract group ID from query params (if any)
     const { group: groupId } = req.query;
     let posts;
     let currentGroup = null;
 
     if (groupId) {
-      // Load specific group posts
+      // If a group is specified in the query, attempt to fetch posts from that group
+
+      // Find the group by ID
       currentGroup = await Group.findById(groupId);
+
+      // If group doesn't exist or user is not a member, redirect to generic home feed
       if (!currentGroup || !currentGroup.members.includes(req.user._id)) {
         return res.redirect('/home');
       }
+
+      // Load all posts from the specified group
       posts = await Post.find({ group: groupId })
+        // Populate user info (username, avatar, verification badge)
         .populate('user', 'username avatar isVerified')
+        // Populate group name
         .populate('group', 'name')
+        // Populate associated place info if any (e.g., a location tagged in the post)
         .populate({
           path: 'place',
           model: 'Place',
           select: 'name formattedAddress placeId coordinates'
         })
+        // Populate comment authors (for rendering avatars and usernames)
         .populate('comments.user', 'username avatar')
+        // Sort posts in reverse chronological order
         .sort({ createdAt: -1 });
+
     } else {
-      // Load posts from followed users, groups, and user's own posts
+      // If no specific group is selected, load the generic home feed
+      
+      // Get the current user document
       const user = await User.findById(req.user._id).lean();
+
+      // Extract IDs of followed users (defensive: default to empty array if `following` is undefined)
       const followedUserIds = user.following ? user.following.map(f => f.user) : [];
+
+      // Get groups the user is a member of
       const userGroups = await Group.find({ members: req.user._id });
+
+      // Extract the group IDs
       const groupIds = userGroups.map(g => g._id);
 
+      // Find posts based on:
+      // - Followed users
+      // - Groups the user is a member of
+      // - User's own posts
       posts = await Post.find({
         $or: [
           { user: { $in: followedUserIds } }, // Posts from followed users
-          { group: { $in: groupIds } }, // Group posts
-          { user: req.user._id } // User's own posts
+          { group: { $in: groupIds } },       // Posts from user’s groups
+          { user: req.user._id }              // User’s own posts
         ]
       })
+        // Same populates as above
         .populate('user', 'username avatar isVerified')
         .populate('group', 'name')
         .populate({
@@ -149,15 +175,19 @@ app.get("/home", isAuthenticated, async (req, res) => {
         .sort({ createdAt: -1 });
     }
 
-    // Filter out posts with missing users
+    // Filter out posts where the user data is missing (possibly deleted accounts)
     const validPosts = posts.filter(post => post.user);
+
+    // Render the feed page with relevant data
     res.render("feed_screen/feed", {
-      posts: validPosts,
-      user: req.user,
-      currentGroup,
-      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+      posts: validPosts,                       // Final list of posts to show
+      user: req.user,                          // Currently logged-in user
+      currentGroup,                            // If a specific group feed is being shown
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // For displaying places on a map
     });
+
   } catch (err) {
+    // Log error and return a generic error response
     console.error("Error in /home route:", err.message);
     res.status(500).send("Internal server error while loading feed.");
   }
