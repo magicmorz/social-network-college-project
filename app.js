@@ -101,25 +101,19 @@ const placeRoutes = require('./routes/place');
 app.use('/u', profileRoutes);
 app.use('/places', placeRoutes);
 
-// Protected home route - loads posts from DB and passes to feed.ejs (UPDATED WITH GROUP SUPPORT)
+// Home route - loads posts from followed users, groups, and user's own posts
 app.get("/home", isAuthenticated, async (req, res) => {
   try {
-    
-    const { group: groupId } = req.query; // Get group from query parameter
-    
+    const { group: groupId } = req.query;
     let posts;
     let currentGroup = null;
-    
+
     if (groupId) {
       // Load specific group posts
-      
-      // Verify user has access to this group
       currentGroup = await Group.findById(groupId);
       if (!currentGroup || !currentGroup.members.includes(req.user._id)) {
-        return res.redirect('/home'); // Redirect to main feed
+        return res.redirect('/home');
       }
-      
-      // Get posts for this specific group
       posts = await Post.find({ group: groupId })
         .populate('user', 'username avatar isVerified')
         .populate('group', 'name')
@@ -130,20 +124,22 @@ app.get("/home", isAuthenticated, async (req, res) => {
         })
         .populate('comments.user', 'username avatar')
         .sort({ createdAt: -1 });
-      
     } else {
-      // Load all posts (public + user's groups)
+      // Load posts from followed users, groups, and user's own posts
+      const user = await User.findById(req.user._id).lean();
+      const followedUserIds = user.following ? user.following.map(f => f.user) : [];
       const userGroups = await Group.find({ members: req.user._id });
       const groupIds = userGroups.map(g => g._id);
-      
+
       posts = await Post.find({
         $or: [
-          { group: null }, // Public posts
-          { group: { $in: groupIds } } // Group posts user has access to
+          { user: { $in: followedUserIds } }, // Posts from followed users
+          { group: { $in: groupIds } }, // Group posts
+          { user: req.user._id } // User's own posts
         ]
       })
         .populate('user', 'username avatar isVerified')
-        .populate('group', 'name') // Add group info
+        .populate('group', 'name')
         .populate({
           path: 'place',
           model: 'Place',
@@ -151,44 +147,18 @@ app.get("/home", isAuthenticated, async (req, res) => {
         })
         .populate('comments.user', 'username avatar')
         .sort({ createdAt: -1 });
-      
     }
-    
+
     // Filter out posts with missing users
-    const validPosts = posts.filter(post => {
-      if (!post.user) {
-        return false;
-      }
-      return true;
+    const validPosts = posts.filter(post => post.user);
+    res.render("feed_screen/feed", {
+      posts: validPosts,
+      user: req.user,
+      currentGroup,
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
     });
-    
-    if (validPosts.length > 0) {
-      res.render("feed_screen/feed", { 
-        posts: validPosts, 
-        user: req.user,
-        currentGroup: currentGroup, // Pass current group to template
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-      });
-    } else {
-      if (currentGroup) {
-        res.render("feed_screen/feed", { 
-          posts: [], 
-          user: req.user,
-          currentGroup: currentGroup, // Pass current group to template
-          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-        });
-      } else {
-        res.render("feed_screen/feed", { 
-          posts: [], 
-          user: req.user,
-          currentGroup: null, // Pass current group to template
-          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-        });
-      }
-    }
-    
   } catch (err) {
-    console.error("Error loading posts:", err);
+    console.error("Error in /home route:", err.message);
     res.status(500).send("Internal server error while loading feed.");
   }
 });
