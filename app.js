@@ -5,8 +5,8 @@ const path = require("path");
 const fs = require("fs");
 const Post = require('./models/Post');
 const User = require('./models/User');
-const Group = require('./models/Group'); // Add this import
-const Place = require('./models/Place'); // Add Place model
+const Group = require('./models/Group'); 
+const Place = require('./models/Place'); 
 require("dotenv").config();
 
 const app = express();

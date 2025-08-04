@@ -4,8 +4,8 @@ let commentCache = {}; // Cache for faster UI updates
 // Initialize comments for each post
 function initializeComments() {
   document.querySelectorAll(".posts-container").forEach((post) => {
-    const postId = post.id.replace('post-', ''); // Remove 'post-' prefix to get actual MongoDB ID
-    
+    const postId = post.id.replace("post-", ""); // Remove 'post-' prefix to get actual MongoDB ID
+
     // Update comment count display from server data
     updateCommentCount(postId);
   });
@@ -18,12 +18,14 @@ async function toggleComments(postId) {
 
   const commentsSection = post.querySelector(".comments-section");
   const viewCommentsButton = post.querySelector(".view-comments button");
-  
+
   if (!commentsSection || !viewCommentsButton) return;
 
   // Check if comments are currently visible
-  const isCommentsVisible = commentsSection.style.display !== 'none' && commentsSection.innerHTML.trim() !== '';
-  
+  const isCommentsVisible =
+    commentsSection.style.display !== "none" &&
+    commentsSection.innerHTML.trim() !== "";
+
   if (isCommentsVisible) {
     // Hide comments
     commentsSection.style.display = "none";
@@ -36,7 +38,6 @@ async function toggleComments(postId) {
     commentsSection.style.display = "block";
 
     try {
-      // Fetch post data with comments
       const response = await fetch(`/posts/${postId}/comments`);
       if (!response.ok) throw new Error("Failed to load comments");
 
@@ -50,6 +51,8 @@ async function toggleComments(postId) {
               ? `/api/users/avatars/user_${comment.user._id}`
               : "/avatars/default.jpg";
 
+          const isOwner = comment.user._id === currentUserId; // Add this check
+
           const commentElement = document.createElement("div");
           commentElement.className = "comment mb-2 p-2";
           commentElement.innerHTML = `
@@ -60,13 +63,28 @@ async function toggleComments(postId) {
                 class="rounded-circle me-2" 
                 style="width: 28px; height: 28px; object-fit: cover;">
               <div class="flex-grow-1">
-                <div>
-                  <a href="/u/${
-                    comment.user.username
-                  }" class="fw-bold text-decoration-none">
-                    ${comment.user.username}
-                  </a>
-                  <span>${comment.text}</span>
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <a href="/u/${
+                      comment.user.username
+                    }" class="fw-bold text-decoration-none">
+                      ${comment.user.username}
+                    </a>
+                    <span>${comment.text}</span>
+                  </div>
+                  ${
+                    isOwner
+                      ? `
+                   <button 
+                      class="btn btn-sm btn-link text-danger delete-comment-btn" 
+                      data-comment-id="${comment._id}" 
+                      data-post-id="${postId}">
+                      <i class="bi bi-trash"></i>
+                    </button>
+
+                  `
+                      : ""
+                  }
                 </div>
                 <small class="text-muted">${new Date(
                   comment.createdAt
@@ -77,7 +95,31 @@ async function toggleComments(postId) {
           commentsSection.appendChild(commentElement);
         });
 
-        // Update button text to "Hide comments"
+        // Add event listeners for delete buttons
+        document.querySelectorAll(".delete-comment-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const commentId = btn.getAttribute("data-comment-id");
+            if (confirm("Are you sure you want to delete this comment?")) {
+              try {
+                const res = await fetch(
+                  `/posts/${postId}/comments/${commentId}`,
+                  {
+                    method: "DELETE",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  }
+                );
+                if (!res.ok) throw new Error("Failed to delete comment");
+                btn.closest(".comment").remove(); // Remove comment from DOM
+              } catch (err) {
+                alert("Error deleting comment.");
+                console.error(err);
+              }
+            }
+          });
+        });
+
         viewCommentsButton.textContent = "Hide comments";
       } else {
         commentsSection.innerHTML =
@@ -89,8 +131,8 @@ async function toggleComments(postId) {
       commentsSection.innerHTML =
         '<div class="text-danger text-center p-2">Failed to load comments</div>';
     }
+    console.log(data.comments[0]); 
   }
-  
 }
 
 // Add new comment to database
@@ -99,36 +141,40 @@ async function addComment(postId, text) {
 
   try {
     const response = await fetch(`/posts/${postId}/comment`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: text.trim() })
+      body: JSON.stringify({ text: text.trim() }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to add comment');
+      throw new Error(errorData.error || "Failed to add comment");
     }
-    
+
     const data = await response.json();
-    console.log('Comment added successfully:', data);
-    
+    console.log("Comment added successfully:", data);
+
     // Update comment count in UI
     updateCommentCount(postId);
-    
+
     // If comments are currently visible, refresh them
     const post = document.getElementById(`post-${postId}`);
     const commentsSection = post.querySelector(".comments-section");
-    if (commentsSection && commentsSection.style.display !== 'none' && commentsSection.innerHTML.trim() !== '') {
+    if (
+      commentsSection &&
+      commentsSection.style.display !== "none" &&
+      commentsSection.innerHTML.trim() !== ""
+    ) {
       toggleComments(postId); // Hide first
       setTimeout(() => toggleComments(postId), 100); // Then show updated comments
     }
-    
+
     return data.comment;
   } catch (error) {
-    console.error('Error adding comment:', error);
-    alert('Failed to add comment: ' + error.message);
+    console.error("Error adding comment:", error);
+    alert("Failed to add comment: " + error.message);
     return null;
   }
 }
@@ -142,20 +188,22 @@ function updateCommentCount(postId) {
   if (commentCount) {
     // Get current count from the post data or fetch from server
     fetch(`/posts/${postId}/comments`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         const count = data.comments ? data.comments.length : 0;
         if (count > 0) {
-          commentCount.textContent = `View all ${count} comment${count !== 1 ? 's' : ''}`;
-          commentCount.style.display = 'block';
+          commentCount.textContent = `View all ${count} comment${
+            count !== 1 ? "s" : ""
+          }`;
+          commentCount.style.display = "block";
         } else {
-          commentCount.textContent = 'Be the first to comment';
-          commentCount.style.display = 'block';
+          commentCount.textContent = "Be the first to comment";
+          commentCount.style.display = "block";
         }
       })
-      .catch(error => {
-        console.error('Error updating comment count:', error);
-        commentCount.textContent = 'View comments';
+      .catch((error) => {
+        console.error("Error updating comment count:", error);
+        commentCount.textContent = "View comments";
       });
   }
 }
@@ -167,10 +215,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Add event listeners for comment buttons and inputs
   document.querySelectorAll(".posts-container").forEach((post) => {
-    const postId = post.id.replace('post-', ''); // Remove 'post-' prefix
+    const postId = post.id.replace("post-", ""); // Remove 'post-' prefix
 
     // Comment icon click - toggle comments
-    const commentButton = post.querySelector('.btn[aria-label="Comment on post"]');
+    const commentButton = post.querySelector(
+      '.btn[aria-label="Comment on post"]'
+    );
     if (commentButton) {
       commentButton.addEventListener("click", () => {
         toggleComments(postId);
@@ -188,13 +238,13 @@ window.addEventListener("DOMContentLoaded", () => {
     // Add comment input and Post button functionality
     const commentInput = post.querySelector(".add-comment input");
     const postCommentBtn = post.querySelector(".post-comment-btn");
-    
+
     if (commentInput) {
       // Function to handle comment submission
       const submitComment = async () => {
         const text = commentInput.value.trim();
         if (!text) return;
-        
+
         // Show loading state
         commentInput.disabled = true;
         if (postCommentBtn) {
@@ -202,18 +252,18 @@ window.addEventListener("DOMContentLoaded", () => {
           postCommentBtn.textContent = "Posting...";
         }
         commentInput.placeholder = "Adding comment...";
-        
+
         const comment = await addComment(postId, text);
         if (comment) {
           commentInput.value = ""; // Clear input after successful submission
-          
+
           // Hide post button
           if (postCommentBtn) {
             postCommentBtn.style.display = "none";
             postCommentBtn.textContent = "Post";
           }
         }
-        
+
         // Reset input state
         commentInput.disabled = false;
         if (postCommentBtn) {
@@ -240,7 +290,7 @@ window.addEventListener("DOMContentLoaded", () => {
       // Show/hide post button based on input content
       commentInput.addEventListener("input", () => {
         const hasText = commentInput.value.trim().length > 0;
-        
+
         if (postCommentBtn) {
           postCommentBtn.style.display = hasText ? "inline-block" : "none";
         }

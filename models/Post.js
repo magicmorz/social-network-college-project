@@ -41,9 +41,14 @@ const postSchema = new mongoose.Schema({
   ],
   comments: [
     {
+      _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
+      },
       user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+        required: true,
       },
       text: {
         type: String,
@@ -70,8 +75,8 @@ const postSchema = new mongoose.Schema({
   },
   place: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Place',
-    index: true
+    ref: "Place",
+    index: true,
   },
   hashtags: [
     {
