@@ -196,7 +196,7 @@ exports.createPost = async (req, res) => {
     }
     
   } catch (error) {
-    console.error('❌ Error creating post:', error.message);
+    console.error('Error creating post:', error.message);
     console.error('Full error:', error);
     
     res.status(500).json({ 

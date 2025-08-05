@@ -8,6 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
                0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
     </svg>`.trim();
 
+  const OUTLINE_HEART = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
+               0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+               1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>`.trim();
+
   const fmt = (n) => n.toLocaleString("en-US");
 
   document.body.addEventListener("click", async (e) => {
@@ -22,9 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Missing post ID");
       return;
     }
-
-    // Save original icon if not already saved
-    if (!btn.__outline) btn.__outline = btn.innerHTML;
 
     try {
       const response = await fetch(`/posts/${postId}/like`, {
@@ -41,8 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
       const { liked, likesCount } = data;
 
-      // Update heart icon
-      btn.innerHTML = liked ? FULL_HEART : btn.__outline;
+      // Update heart icon and data-liked attribute
+      btn.innerHTML = liked ? FULL_HEART : OUTLINE_HEART;
+      btn.dataset.liked = liked; // Update data-liked attribute
 
       // Update like count
       if (counter) {
@@ -61,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "mouseenter",
     (e) => {
       const btn = e.target.closest("button[aria-label='Like post']");
-      if (btn && !btn.__liked) btn.classList.add("bounce");
+      if (btn && btn.dataset.liked !== "true") btn.classList.add("bounce");
     },
     true
   );
