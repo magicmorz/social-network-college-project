@@ -5,8 +5,8 @@ const path = require("path");
 const fs = require("fs");
 const Post = require('./models/Post');
 const User = require('./models/User');
-const Group = require('./models/Group'); // Add this import
-const Place = require('./models/Place'); // Add Place model
+const Group = require('./models/Group'); 
+const Place = require('./models/Place'); 
 require("dotenv").config();
 
 const app = express();
@@ -15,6 +15,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "devsecret",
@@ -52,7 +53,7 @@ function timeAgo(date) {
 // Make timeAgo available in EJS templates
 app.locals.timeAgo = timeAgo;
 
-// Authentication check middleware (MOVED HERE - BEFORE IT'S USED)
+// Authentication check middleware
 async function isAuthenticated(req, res, next) {
   if (req.session.userId) {
     try {
@@ -100,26 +101,69 @@ const placeRoutes = require('./routes/place');
 app.use('/u', profileRoutes);
 app.use('/places', placeRoutes);
 
-// Protected home route - loads posts from DB and passes to feed.ejs (UPDATED WITH GROUP SUPPORT)
+// Home route - loads posts from followed users, groups, and user's own posts
 app.get("/home", isAuthenticated, async (req, res) => {
   try {
-    
-    const { group: groupId } = req.query; // Get group from query parameter
-    
+    // Extract group ID from query params (if any)
+    const { group: groupId } = req.query;
     let posts;
     let currentGroup = null;
-    
+
     if (groupId) {
-      // Load specific group posts
-      
-      // Verify user has access to this group
+      // If a group is specified in the query, attempt to fetch posts from that group
+
+      // Find the group by ID
       currentGroup = await Group.findById(groupId);
+
+      // If group doesn't exist or user is not a member, redirect to generic home feed
       if (!currentGroup || !currentGroup.members.includes(req.user._id)) {
-        return res.redirect('/home'); // Redirect to main feed
+        return res.redirect('/home');
       }
-      
-      // Get posts for this specific group
+
+      // Load all posts from the specified group
       posts = await Post.find({ group: groupId })
+        // Populate user info (username, avatar, verification badge)
+        .populate('user', 'username avatar isVerified')
+        // Populate group name
+        .populate('group', 'name')
+        // Populate associated place info if any (e.g., a location tagged in the post)
+        .populate({
+          path: 'place',
+          model: 'Place',
+          select: 'name formattedAddress placeId coordinates'
+        })
+        // Populate comment authors (for rendering avatars and usernames)
+        .populate('comments.user', 'username avatar')
+        // Sort posts in reverse chronological order
+        .sort({ createdAt: -1 });
+
+    } else {
+      // If no specific group is selected, load the generic home feed
+      
+      // Get the current user document
+      const user = await User.findById(req.user._id).lean();
+
+      // Extract IDs of followed users (defensive: default to empty array if `following` is undefined)
+      const followedUserIds = user.following ? user.following.map(f => f.user) : [];
+
+      // Get groups the user is a member of
+      const userGroups = await Group.find({ members: req.user._id });
+
+      // Extract the group IDs
+      const groupIds = userGroups.map(g => g._id);
+
+      // Find posts based on:
+      // - Followed users
+      // - Groups the user is a member of
+      // - User's own posts
+      posts = await Post.find({
+        $or: [
+          { user: { $in: followedUserIds } }, // Posts from followed users
+          { group: { $in: groupIds } },       // Posts from user’s groups
+          { user: req.user._id }              // User’s own posts
+        ]
+      })
+        // Same populates as above
         .populate('user', 'username avatar isVerified')
         .populate('group', 'name')
         .populate({
@@ -129,65 +173,22 @@ app.get("/home", isAuthenticated, async (req, res) => {
         })
         .populate('comments.user', 'username avatar')
         .sort({ createdAt: -1 });
-      
-    } else {
-      // Load all posts (public + user's groups)
-      const userGroups = await Group.find({ members: req.user._id });
-      const groupIds = userGroups.map(g => g._id);
-      
-      posts = await Post.find({
-        $or: [
-          { group: null }, // Public posts
-          { group: { $in: groupIds } } // Group posts user has access to
-        ]
-      })
-        .populate('user', 'username avatar isVerified')
-        .populate('group', 'name') // Add group info
-        .populate({
-          path: 'place',
-          model: 'Place',
-          select: 'name formattedAddress placeId coordinates'
-        })
-        .populate('comments.user', 'username avatar')
-        .sort({ createdAt: -1 });
-      
     }
-    
-    // Filter out posts with missing users
-    const validPosts = posts.filter(post => {
-      if (!post.user) {
-        return false;
-      }
-      return true;
+
+    // Filter out posts where the user data is missing (possibly deleted accounts)
+    const validPosts = posts.filter(post => post.user);
+
+    // Render the feed page with relevant data
+    res.render("feed_screen/feed", {
+      posts: validPosts,                       // Final list of posts to show
+      user: req.user,                          // Currently logged-in user
+      currentGroup,                            // If a specific group feed is being shown
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // For displaying places on a map
     });
-    
-    if (validPosts.length > 0) {
-      res.render("feed_screen/feed", { 
-        posts: validPosts, 
-        user: req.user,
-        currentGroup: currentGroup, // Pass current group to template
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-      });
-    } else {
-      if (currentGroup) {
-        res.render("feed_screen/feed", { 
-          posts: [], 
-          user: req.user,
-          currentGroup: currentGroup, // Pass current group to template
-          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-        });
-      } else {
-        res.render("feed_screen/feed", { 
-          posts: [], 
-          user: req.user,
-          currentGroup: null, // Pass current group to template
-          googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
-        });
-      }
-    }
-    
+
   } catch (err) {
-    console.error("❌ Error loading posts:", err);
+    // Log error and return a generic error response
+    console.error("Error in /home route:", err.message);
     res.status(500).send("Internal server error while loading feed.");
   }
 });

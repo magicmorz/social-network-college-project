@@ -1,214 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= targetUser.username %> (@<%= targetUser.username %>) • Instagram</title>
-    <link rel="stylesheet" href="/styles/feed.css">
-    <link rel="stylesheet" href="/styles/theme.css">
-    <link rel="stylesheet" href="/styles/profile.css">
-    <link rel="icon" href="/utils/tab_instagram_icon.png" type="image/png">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      <%= targetUser.username %> (@<%= targetUser.username %>) • Instagram
+    </title>
+    <link rel="stylesheet" href="/styles/feed.css" />
+    <link rel="stylesheet" href="/styles/theme.css" />
+    <link rel="stylesheet" href="/styles/profile.css" />
+    <link rel="icon" href="/utils/tab_instagram_icon.png" type="image/png" />
+  </head>
+  <body>
     <div class="main-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="/home">
-                        <img src="/utils/Instagram_Image_2x.png" alt="Instagram">
-                    </a>
-                </div>
-                <div class="header-actions">
-                    <a href="/home" class="back-to-feed">← Back to Feed</a>
-                    <span class="current-user">@<%= currentUser.username %></span>
-                </div>
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <div class="logo">
+            <a href="/home">
+              <img src="/utils/Instagram_Image_2x.png" alt="Instagram" />
+            </a>
+          </div>
+          <div class="header-actions">
+            <a href="/home" class="back-to-feed">← Back to Feed</a>
+            <span class="current-user">@<%= currentUser.username %></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Profile Content -->
+      <main class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <img
+              src="/uploads/user_<%= targetUser._id %>/profile_picture/profile.jpg"
+              alt="<%= targetUser.username %>'s avatar"
+              class="profile-img"
+            />
+            <% if (isOwnProfile) { %>
+            <div class="avatar-upload-control">
+              <button class="upload-avatar-btn" title="Upload new picture">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                  />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </button>
             </div>
-        </header>
+            <% } %>
+          </div>
 
-        <!-- Profile Content -->
-        <main class="profile-container">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <img src="<%= targetUser.avatar || '/avatars/default.jpg' %>" alt="<%= targetUser.username %>'s avatar">
-                    <% if (isOwnProfile) { %>
-                        <div class="avatar-upload-control">
-                            <button class="upload-avatar-btn" title="Upload new picture">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                    <circle cx="12" cy="13" r="4"/>
-                                </svg>
-                            </button>
-                        </div>
-                    <% } %>
-                </div>
-                
-                <div class="profile-info">
-                    <div class="profile-username">
-                        <h1><%= targetUser.username %></h1>
-                        <% if (targetUser.isVerified) { %>
-                            <span class="verified-badge">✓</span>
-                        <% } %>
-                        
-                        <% if (isOwnProfile) { %>
-                            <button class="edit-profile-btn">Edit profile</button>
-                            <a href="/u/<%= targetUser.username %>/insights" class="insights-btn">📊 Insights</a>
-                        <% } else { %>
-                            <button class="follow-btn <%= isFollowing ? 'following' : '' %>" 
-                                    data-username="<%= targetUser.username %>"
-                                    data-following="<%= isFollowing %>">
-                                <%= isFollowing ? 'Following' : 'Follow' %>
-                            </button>
-                        <% } %>
-                    </div>
-
-                    <div class="profile-stats">
-                        <div class="stat">
-                            <span class="stat-number"><%= postsCount %></span>
-                            <span class="stat-label">posts</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number follower-count"><%= followerCount %></span>
-                            <span class="stat-label">followers</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number"><%= followingCount %></span>
-                            <span class="stat-label">following</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-bio">
-                        <% if (targetUser.bio) { %>
-                            <p><%= targetUser.bio %></p>
-                        <% } %>
-                        <% if (targetUser.country) { %>
-                            <p class="profile-country">📍 <%= targetUser.country %></p>
-                        <% } %>
-                    </div>
-                </div>
+          <div class="profile-info">
+            <div class="profile-username">
+              <h1><%= targetUser.username %></h1>
+              <% if (targetUser.isVerified) { %>
+              <span class="verified-badge">✓</span>
+              <% } %> <% if (isOwnProfile) { %>
+              <button class="edit-profile-btn">Edit profile</button>
+              <a
+                href="/u/<%= targetUser.username %>/insights"
+                class="insights-btn"
+                >📊 Insights</a
+              >
+              <% } else { %>
+              <button
+                class="follow-btn <%= isFollowing ? 'following' : '' %>"
+                data-username="<%= targetUser.username %>"
+                data-following="<%= isFollowing %>"
+              >
+                <%= isFollowing ? 'Following' : 'Follow' %>
+              </button>
+              <% } %>
             </div>
 
-            <!-- Posts Grid -->
-            <div class="posts-section">
-                <div class="posts-header">
-                    <h2>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21,15 16,10 5,21"/>
-                        </svg>
-                        POSTS
-                    </h2>
-                </div>
-
-                <% if (posts.length > 0) { %>
-                    <div class="posts-grid">
-                        <% posts.forEach(post => { %>
-                            <div class="post-thumbnail" data-post-id="<%= post._id %>">
-                                <% if (post.image) { %>
-                                    <img src="<%= post.image %>" alt="Post by <%= post.user.username %>">
-                                <% } else { %>
-                                    <div class="post-text-preview">
-                                        <p><%= post.caption.substring(0, 100) %><%= post.caption.length > 100 ? '...' : '' %></p>
-                                    </div>
-                                <% } %>
-                                <div class="post-overlay">
-                                    <div class="post-stats">
-                                        <span class="likes-count">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                                            </svg>
-                                            <%= post.likes ? post.likes.length : 0 %>
-                                        </span>
-                                        <span class="comments-count">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                                            </svg>
-                                            <%= post.comments ? post.comments.length : 0 %>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }) %>
-                    </div>
-                <% } else { %>
-                    <div class="no-posts">
-                        <div class="no-posts-icon">
-                            <svg width="62" height="62" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="12" r="3.2"/>
-                                <path d="M9 2L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9z"/>
-                            </svg>
-                        </div>
-                        <h3>No Posts Yet</h3>
-                        <% if (isOwnProfile) { %>
-                            <p>When you share photos and videos, they will appear on your profile.</p>
-                            <a href="/home" class="share-first-post">Share your first post</a>
-                        <% } else { %>
-                            <p><%= targetUser.username %> hasn't shared any posts yet.</p>
-                        <% } %>
-                    </div>
-                <% } %>
+            <div class="profile-stats">
+              <div class="stat">
+                <span class="stat-number"><%= postsCount %></span>
+                <span class="stat-label">posts</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number follower-count"
+                  ><%= followerCount %></span
+                >
+                <span class="stat-label">followers</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number"><%= followingCount %></span>
+                <span class="stat-label">following</span>
+              </div>
             </div>
-        </main>
+
+            <div class="profile-bio">
+              <% if (targetUser.bio) { %>
+              <p><%= targetUser.bio %></p>
+              <% } %> <% if (targetUser.country) { %>
+              <p class="profile-country">📍 <%= targetUser.country %></p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Posts Grid -->
+        <div class="posts-section">
+          <div class="posts-header">
+            <h2>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21,15 16,10 5,21" />
+              </svg>
+              POSTS
+            </h2>
+          </div>
+
+          <% if (posts.length > 0) { %>
+          <div class="posts-grid">
+            <% posts.forEach(post => { %>
+            <div class="post-thumbnail" data-post-id="<%= post._id %>">
+              <% if (post.image) { %>
+              <!-- Extract filename from post.image -->
+              <% const filename = post.image.split('/').pop(); %>
+              <% if (post.image.match(/\.(mp4|webm)$/i)) { %>
+              <video
+                src="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
+                poster="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename.replace(/\.(mp4|webm)$/i, '.jpg')) %>"
+                muted
+                class="post-media"
+                onloadstart="console.log('Video load started: ' + this.src)"
+                onerror="console.error('Video failed to load: ' + this.src + '; Error: ' + (this.error ? this.error.message : 'Unknown error')); this.style.display='none'; this.nextElementSibling.style.display='block';"
+              ></video>
+              <div
+                class="media-error"
+                style="display: none; color: red; text-align: center"
+              >
+                Video failed to load: <%= filename %>
+              </div>
+              <% } else { %>
+              <img
+                src="/Uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
+                alt="Post by <%= post.user.username %>"
+                onload="console.log('Image loaded successfully: ' + this.src)"
+                onerror="console.error('Image failed to load: ' + this.src + '; Error: ' + (this.error ? this.error.message : 'Unknown error')); this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div
+                class="media-error"
+                style="display: none; color: red; text-align: center"
+              >
+                Image failed to load: <%= filename %>
+              </div>
+              <% } %> <% } else { %>
+              <div class="post-text-preview">
+                <p>
+                  <%= post.caption.substring(0, 100) %><%= post.caption.length >
+                  100 ? '...' : '' %>
+                </p>
+              </div>
+              <% } %>
+              <div class="post-overlay">
+                <div class="post-stats">
+                  <span class="likes-count">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                    >
+                      <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                      />
+                    </svg>
+                    <%= post.likes ? post.likes.length : 0 %>
+                  </span>
+                  <span class="comments-count">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                    >
+                      <path
+                        d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                      />
+                    </svg>
+                    <%= post.comments ? post.comments.length : 0 %>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <div class="no-posts">
+            <div class="no-posts-icon">
+              <svg
+                width="62"
+                height="62"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <circle cx="12" cy="12" r="3.2" />
+                <path
+                  d="M9 2L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9z"
+                />
+              </svg>
+            </div>
+            <h3>No Posts Yet</h3>
+            <% if (isOwnProfile) { %>
+            <p>
+              When you share photos and videos, they will appear on your
+              profile.
+            </p>
+            <a href="/home" class="share-first-post">Share your first post</a>
+            <% } else { %>
+            <p><%= targetUser.username %> hasn't shared any posts yet.</p>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+      </main>
     </div>
 
     <script>
-        // Follow/Unfollow functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const followBtn = document.querySelector('.follow-btn');
-            
-            if (followBtn) {
-                followBtn.addEventListener('click', async function() {
-                    const username = this.dataset.username;
-                    const isFollowing = this.dataset.following === 'true';
-                    const action = isFollowing ? 'unfollow' : 'follow';
-                    
-                    try {
-                        this.disabled = true;
-                        this.textContent = isFollowing ? 'Unfollowing...' : 'Following...';
-                        
-                        const response = await fetch(`/u/${username}/${action}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            this.dataset.following = data.isFollowing;
-                            this.textContent = data.isFollowing ? 'Following' : 'Follow';
-                            this.classList.toggle('following', data.isFollowing);
-                            
-                            // Update follower count
-                            const followerCountEl = document.querySelector('.follower-count');
-                            if (followerCountEl) {
-                                followerCountEl.textContent = data.followerCount;
-                            }
-                        } else {
-                            throw new Error(data.error || 'Action failed');
-                        }
-                    } catch (error) {
-                        console.error('Follow/unfollow error:', error);
-                        alert('Error: ' + error.message);
-                        // Reset button
-                        this.textContent = isFollowing ? 'Following' : 'Follow';
-                    } finally {
-                        this.disabled = false;
-                    }
-                });
+      // Follow/Unfollow functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const followBtn = document.querySelector(".follow-btn");
+
+        if (followBtn) {
+          followBtn.addEventListener("click", async function () {
+            const username = this.dataset.username;
+            const isFollowing = this.dataset.following === "true";
+            const action = isFollowing ? "unfollow" : "follow";
+
+            try {
+              this.disabled = true;
+              this.textContent = isFollowing
+                ? "Unfollowing..."
+                : "Following...";
+
+              const response = await fetch(`/u/${username}/${action}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                this.dataset.following = data.isFollowing;
+                this.textContent = data.isFollowing ? "Following" : "Follow";
+                this.classList.toggle("following", data.isFollowing);
+
+                // Update follower count
+                const followerCountEl =
+                  document.querySelector(".follower-count");
+                if (followerCountEl) {
+                  followerCountEl.textContent = data.followerCount;
+                }
+              } else {
+                throw new Error(data.error || "Action failed");
+              }
+            } catch (error) {
+              console.error("Follow/unfollow error:", error);
+              alert("Error: " + error.message);
+              // Reset button
+              this.textContent = isFollowing ? "Following" : "Follow";
+            } finally {
+              this.disabled = false;
             }
-            
-            // Post thumbnail clicks (placeholder for future post modal)
-            document.querySelectorAll('.post-thumbnail').forEach(thumbnail => {
-                thumbnail.addEventListener('click', function() {
-                    const postId = this.dataset.postId;
-                    // TODO: Open post modal
-                    console.log('Open post:', postId);
-                });
-            });
+          });
+        }
+
+        // Post thumbnail clicks (placeholder for future post modal)
+        document.querySelectorAll(".post-thumbnail").forEach((thumbnail) => {
+          thumbnail.addEventListener("click", function () {
+            const postId = this.dataset.postId;
+            // TODO: Open post modal
+            console.log("Open post:", postId);
+          });
         });
+      });
     </script>
-</body>
-</html> 
+  </body>
+</html>

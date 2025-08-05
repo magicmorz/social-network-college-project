@@ -9,17 +9,27 @@ const fs = require('fs');
 // Configure multer for image uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'public/uploads/posts';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const userId = req.user._id.toString();
+    const uploadDir = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      `user_${userId}`,
+      "posts"
+    );
+
+    fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
 });
+
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
@@ -79,7 +89,7 @@ exports.getPostsJson = async (req, res) => {
     })
       .populate('user', 'username avatar isVerified')
       .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name') // Add group info
+      .populate('group', 'name') 
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
@@ -154,7 +164,7 @@ exports.createPost = async (req, res) => {
     const newPost = new Post({
       user: req.user._id,
       caption: caption || '',
-      image: '/uploads/posts/' + req.file.filename,
+      image: `uploads/user_${req.user._id}/posts/${req.file.filename}`,
       place: placeRef, // Use place reference instead of location string
       group: group || null, // null means public feed
       hashtags: hashtags.map(tag => tag.toLowerCase())
@@ -201,20 +211,33 @@ exports.getPostComments = async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await Post.findById(postId)
-      .populate('comments.user', 'username avatar')
-      .select('comments');
+      .populate("comments.user", "username avatar") // this is good
+      .select("comments");
 
     if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
+      return res.status(404).json({ error: "Post not found" });
     }
 
-    res.json({ 
-      success: true, 
-      comments: post.comments.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+    const comments = post.comments.map((comment) => ({
+      _id: comment._id, 
+      text: comment.text,
+      createdAt: comment.createdAt,
+      user: {
+        _id: comment.user._id,
+        username: comment.user.username,
+        avatar: comment.user.avatar,
+      },
+    }));
+
+    res.json({
+      success: true,
+      comments: comments.sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      ),
     });
   } catch (error) {
-    console.error('Error fetching comments:', error);
-    res.status(500).json({ error: 'Failed to fetch comments' });
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Failed to fetch comments" });
   }
 };
 
@@ -325,21 +348,41 @@ exports.deletePost = async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to delete this post' });
     }
 
-    // Delete image file
-    const imagePath = path.join(__dirname, '../public', post.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+    // Log post.image to understand what it contains
+    console.log('Post image:', post.image);
+
+    // Construct full path based on image
+    let imagePath;
+
+    if (path.isAbsolute(post.image)) {
+      imagePath = post.image; // already absolute
+    } else if (post.image.includes(req.user._id.toString())) {
+      // If post.image already includes user directory
+      imagePath = path.join(__dirname, '..', post.image);
+    } else {
+      // Otherwise, assume image is just filename
+      imagePath = path.join(__dirname, '../uploads', req.user._id.toString(), path.basename(post.image));
     }
 
+    console.log('Resolved image path:', imagePath);
+
+    // Delete image file
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+      console.log('Image deleted successfully');
+    } else {
+      console.warn('Image file not found at path:', imagePath);
+    }
+
+    // Delete post from DB
     await Post.findByIdAndDelete(postId);
-    
+
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting post:', error);
     res.status(500).json({ error: 'Failed to delete post' });
   }
 };
-
 // Get single post
 exports.getPost = async (req, res) => {
   try {
@@ -395,6 +438,47 @@ exports.getUserPosts = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch posts' });
   }
 };
+
+// Delete comment from post
+exports.deleteComment = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Find the comment
+    const comment = post.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    // Check ownership
+    if (comment.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: 'You are not authorized to delete this comment' });
+    }
+
+    console.log("Delete Comment:", {
+      user: req.user._id,
+      postId: req.params.postId,
+      commentId: req.params.commentId,
+    });
+    
+    // Remove the comment and save
+    post.comments.pull({ _id: commentId });
+    await post.save();
+  
+    res.json({ success: true, message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    res.status(500).json({ error: 'Failed to delete comment' });
+  }
+};
+
 
 // Export upload middleware
 exports.uploadImage = upload.single('image');

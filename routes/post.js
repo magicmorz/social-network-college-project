@@ -41,4 +41,7 @@ router.delete('/:id', requireAuth, postController.deletePost);
 
 router.get('/:id/comments', requireAuth, postController.getPostComments);
 
+// DELETE comment route
+router.delete("/:postId/comments/:commentId", requireAuth, postController.deleteComment);
+
 module.exports = router;

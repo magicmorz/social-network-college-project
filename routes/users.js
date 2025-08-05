@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const User   = require('../models/User');
+const userController = require("../Controllers/userController");
+
 
 // GET /api/users → return all users
 router.get('/', async (req, res) => {
@@ -15,4 +17,9 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Serve user avatar image
+router.get("/avatars/:userId", userController.serveAvatar);
+
+
 module.exports = router;
+

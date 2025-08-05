@@ -32,19 +32,6 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    avatar: {
-      type: String,
-      default: "/avatars/default.jpg",
-      trim: true,
-      validate: {
-        validator: function (v) {
-          // Must be a relative URL starting with /avatars/ or /user/ for compatibility
-          return !v || v.startsWith("/avatars/") || v.startsWith("/user/");
-        },
-        message:
-          "Avatar must be a relative URL starting with /avatars/ or /user/",
-      },
-    },
     groups: [
       {
         type: String,
