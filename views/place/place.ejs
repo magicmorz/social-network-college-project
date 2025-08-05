@@ -258,14 +258,15 @@
         </div>
     </div>
 
-    <!--Posts Grid-->
+    <!-- Posts Grid -->
     <div class="posts-container">
         <div class="container" style="max-width: 935px; padding: 0;">
             <% if (posts.length > 0) { %>
                 <div class="posts-grid">
                     <% posts.forEach(post => { %>
                         <div class="post-item">
-                            <img src="<%= post.image %>" class="post-image" alt="Post from <%= place.name %>">
+                            <% const filename = post.image.split('/').pop(); %>
+                            <img src="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>" class="post-image" alt="Post from <%= place.name %>">
                             <div class="post-overlay">
                                 <div class="post-stats">
                                     <div class="post-stat">
