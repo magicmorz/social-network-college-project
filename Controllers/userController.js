@@ -44,7 +44,7 @@ exports.serveAvatar = (req, res) => {
     "..",
     "public",
     "avatars",
-    "default_profile_picture.jpg"
+    "default_profile_picture.png"
   );
 
   // Log that the avatar was not found and that the default will be served instead
