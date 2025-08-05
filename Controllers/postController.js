@@ -89,7 +89,7 @@ exports.getPostsJson = async (req, res) => {
     })
       .populate('user', 'username avatar isVerified')
       .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name') // Add group info
+      .populate('group', 'name') 
       .populate('comments.user', 'username avatar')
       .sort({ createdAt: -1 })
       .limit(20);
