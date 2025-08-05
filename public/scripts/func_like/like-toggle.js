@@ -1,8 +1,4 @@
-/* like-toggle.js  – works for hearts that appear later, too
-   --------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', () => {
-
-  /* the filled-red SVG we swap in */
+document.addEventListener("DOMContentLoaded", () => {
   const FULL_HEART = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
          width="24" height="24" fill="rgb(255,48,64)" role="img">
@@ -12,48 +8,70 @@ document.addEventListener('DOMContentLoaded', () => {
                0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
     </svg>`.trim();
 
-  /* helper: add thousands separators */
-  const fmt = n => n.toLocaleString('en-US');
+  const fmt = (n) => n.toLocaleString("en-US");
 
-  /* --------------------------------------------------------
-     EVENT  DELEGATION:
-     listen once on <body>, check if the click came
-     from a “Like” button (present or future)               */
-  document.body.addEventListener('click', e => {
-
+  document.body.addEventListener("click", async (e) => {
     const btn = e.target.closest("button[aria-label='Like post']");
-    if (!btn) return;                     // click wasn’t on a heart
+    if (!btn) return;
 
-    /* keep the outline SVG the first time we meet this button */
-    if (!btn.__outline) btn.__outline = btn.innerHTML;
+    const post = btn.closest(".instagram-post");
+    const counter = post?.querySelector(".likes-simple .likes-count");
+    const postId = post?.dataset.postId;
 
-    /* toggle state flag on the DOM node itself */
-    btn.__liked = !btn.__liked;
-
-    /* swap the icon */
-    btn.innerHTML = btn.__liked ? FULL_HEART : btn.__outline;
-
-    /* ---- optional: update simple numeric like counter ---- */
-    const post       = btn.closest('.instagram-post');
-    const counter    = post?.querySelector('.likes-simple .likes-count');
-    if (counter) {
-      let n = +counter.textContent.replace(/,/g,'');
-      n += btn.__liked ? 1 : -1;
-      counter.textContent = fmt(n);
+    if (!postId) {
+      console.error("Missing post ID");
+      return;
     }
 
-    /* small bounce animation when liking */
-    btn.classList.add('pop');
-    setTimeout(() => btn.classList.remove('pop'), 350);
+    // Save original icon if not already saved
+    if (!btn.__outline) btn.__outline = btn.innerHTML;
+
+    try {
+      const response = await fetch(`/posts/${postId}/like`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error("Failed to toggle like");
+        return;
+      }
+
+      const data = await response.json();
+      const { liked, likesCount } = data;
+
+      // Update heart icon
+      btn.innerHTML = liked ? FULL_HEART : btn.__outline;
+
+      // Update like count
+      if (counter) {
+        counter.textContent = fmt(likesCount);
+      }
+
+      // Small bounce animation
+      btn.classList.add("pop");
+      setTimeout(() => btn.classList.remove("pop"), 350);
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
   });
 
-  /* hover bounce ONLY while it’s an outline --------------- */
-  document.body.addEventListener('mouseenter', e => {
-    const btn = e.target.closest("button[aria-label='Like post']");
-    if (btn && !btn.__liked) btn.classList.add('bounce');
-  }, true);
-  document.body.addEventListener('mouseleave', e => {
-    const btn = e.target.closest("button[aria-label='Like post']");
-    if (btn) btn.classList.remove('bounce');
-  }, true);
+  document.body.addEventListener(
+    "mouseenter",
+    (e) => {
+      const btn = e.target.closest("button[aria-label='Like post']");
+      if (btn && !btn.__liked) btn.classList.add("bounce");
+    },
+    true
+  );
+
+  document.body.addEventListener(
+    "mouseleave",
+    (e) => {
+      const btn = e.target.closest("button[aria-label='Like post']");
+      if (btn) btn.classList.remove("bounce");
+    },
+    true
+  );
 });

@@ -183,7 +183,8 @@ app.get("/home", isAuthenticated, async (req, res) => {
       posts: validPosts,                       // Final list of posts to show
       user: req.user,                          // Currently logged-in user
       currentGroup,                            // If a specific group feed is being shown
-      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY // For displaying places on a map
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY, // For displaying places on a map
+      currentUserId: req.user._id.toString()   // Pass current user ID as string for JS use
     });
 
   } catch (err) {
