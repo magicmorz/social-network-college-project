@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
           counter.textContent = format(liked ? n+1 : n-1);
         }
       });
+      console.log("✅ like.js loaded");
     });
 
   /* helpers */
