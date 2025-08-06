@@ -1,7 +1,40 @@
-// models/Post.js
 const mongoose = require("mongoose");
 const { franc } = require("franc-min");
 const langs = require("langs");
+
+const commentSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: () => new mongoose.Types.ObjectId(),
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  text: {
+    type: String,
+    default: "",
+    maxLength: 500,
+  },
+  gifUrl: {
+    type: String,
+    default: "",
+    maxLength: 500,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Custom validation to ensure at least one of text or gifUrl is provided
+commentSchema.pre("validate", function (next) {
+  if (!this.text && !this.gifUrl) {
+    return next(new Error("Comment must have either text or a GIF"));
+  }
+  next();
+});
 
 const postSchema = new mongoose.Schema({
   user: {
@@ -16,6 +49,7 @@ const postSchema = new mongoose.Schema({
   caption: {
     type: String,
     maxLength: 2200,
+    default: "",
   },
   language: {
     type: String,
@@ -27,8 +61,8 @@ const postSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["text", "image", "video"],
-    default: "image",
+    enum: ["image", "video"],
+    required: true,
   },
   likes: [
     {
@@ -36,28 +70,7 @@ const postSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
-  comments: [
-    {
-      _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        default: () => new mongoose.Types.ObjectId(),
-      },
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
-      text: {
-        type: String,
-        required: true,
-        maxLength: 500,
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
+  comments: [commentSchema],
   likesCount: {
     type: Number,
     default: 0,
@@ -73,7 +86,7 @@ const postSchema = new mongoose.Schema({
   place: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Place",
-    index: true,
+    index: true, // Index defined here
   },
   hashtags: [
     {
@@ -98,7 +111,15 @@ postSchema.index({ caption: "text" });
 postSchema.index({ type: 1 });
 postSchema.index({ hashtags: 1 });
 
-// Smart extraction middleware
+// Maintain counts for likes, comments, and shares
+postSchema.pre("save", function (next) {
+  this.likesCount = this.likes.length;
+  this.commentsCount = this.comments.length;
+  this.sharesCount = this.sharesCount || 0;
+  next();
+});
+
+// Smart extraction middleware for hashtags, mentions, and language
 postSchema.pre("save", function (next) {
   if (this.caption) {
     const hashtagRegex = /#\w+/g;
@@ -131,16 +152,17 @@ postSchema.pre("save", function (next) {
       "tr",
     ];
 
-    const langCode = franc(this.caption);
+    const langCode = franc(this.caption, { whitelist: supportedLanguages });
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
-      const detectedLang = lang && lang["1"] ? lang["1"] : "en";
-      this.language = supportedLanguages.includes(detectedLang)
-        ? detectedLang
-        : "en";
+      this.language = lang && lang["1"] ? lang["1"] : "en";
     } else {
       this.language = "en";
     }
+  } else {
+    this.hashtags = [];
+    this.mentions = [];
+    this.language = "en";
   }
   next();
 });

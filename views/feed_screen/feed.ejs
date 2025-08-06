@@ -923,7 +923,6 @@
                     </svg>
                     <% } %>
                   </button>
-                  <!-- Comment and Share buttons -->
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Comment on post"
@@ -938,7 +937,7 @@
                     >
                       <path
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2
-                        0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                          0 0 1 2-2h14a2 2 0 0 1 2 2z"
                       ></path>
                     </svg>
                   </button>
@@ -955,8 +954,7 @@
                       stroke-width="2"
                     >
                       <path
-                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2
-                        0 0 0 2-2v-8"
+                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
                       ></path>
                       <polyline points="16,6 12,2 8,6"></polyline>
                       <line x1="12" y1="2" x2="12" y2="15"></line>
@@ -1001,8 +999,22 @@
                 <% } %>
                 <!-- Comments Section -->
                 <div class="comments-section" style="display: none"></div>
+                <!-- GIF Picker -->
+                <div
+                  class="gif-picker bg-white border rounded shadow-sm p-2"
+                  style="display: none"
+                >
+                  <input
+                    type="text"
+                    class="form-control mb-2 gif-search-input"
+                    placeholder="Search GIFs..."
+                  />
+                  <div class="gif-container d-flex flex-wrap"></div>
+                </div>
                 <!-- Add Comment -->
-                <div class="add-comment d-flex align-items-center">
+                <div
+                  class="add-comment d-flex align-items-center position-relative"
+                >
                   <input
                     type="text"
                     class="form-control border-0"
@@ -1011,6 +1023,9 @@
                   />
                   <button class="btn btn-link text-muted p-0 ms-2 emoji-btn">
                     <i class="bi bi-emoji-smile"></i>
+                  </button>
+                  <button class="btn btn-link text-muted p-0 ms-2 gif-btn">
+                    <i class="bi bi-image"></i>
                   </button>
                   <button
                     class="btn btn-link fw-bold p-0 ms-2 post-comment-btn"
@@ -1028,7 +1043,7 @@
                 </div>
               </div>
             </div>
-            <% }) %> <% } else { %>
+            <% }) %><% } else { %>
             <!-- No Posts Message -->
             <div class="text-center mt-5">
               <h5 class="text-muted">No posts to show</h5>
