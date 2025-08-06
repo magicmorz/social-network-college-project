@@ -33,7 +33,7 @@
         <div class="profile-header">
           <div class="profile-avatar">
             <img
-              src="/uploads/user_<%= targetUser._id %>/profile_picture/profile.jpg"
+              src="/Uploads/user_<%= targetUser._id %>/profile_picture/profile.jpg"
               alt="<%= targetUser.username %>'s avatar"
               class="profile-img"
             />
@@ -127,29 +127,14 @@
           <% if (posts.length > 0) { %>
           <div class="posts-grid">
             <% posts.forEach(post => { %>
-            <div class="post-thumbnail" data-post-id="<%= post._id %>">
-              <% if (post.image) { %>
-              <!-- Extract filename from post.image -->
-              <% const filename = post.image.split('/').pop(); %>
-              <% if (post.image.match(/\.(mp4|webm)$/i)) { %>
-              <video
-                src="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
-                poster="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename.replace(/\.(mp4|webm)$/i, '.jpg')) %>"
-                muted
-                class="post-media"
-                onloadstart="console.log('Video load started: ' + this.src)"
-                onerror="console.error('Video failed to load: ' + this.src + '; Error: ' + (this.error ? this.error.message : 'Unknown error')); this.style.display='none'; this.nextElementSibling.style.display='block';"
-              ></video>
-              <div
-                class="media-error"
-                style="display: none; color: red; text-align: center"
-              >
-                Video failed to load: <%= filename %>
-              </div>
-              <% } else { %>
+            <div class="post-thumbnail" data-post-id="<%= post._id %>" data-type="<%= post.type %>">
+              <% if (post.media) { %>
+              <% const filename = post.media.split('/').pop(); %>
+              <% if (post.type === 'image') { %>
               <img
-                src="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
+                src="/Uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
                 alt="Post by <%= post.user.username %>"
+                class="post-media"
                 onload="console.log('Image loaded successfully: ' + this.src)"
                 onerror="console.error('Image failed to load: ' + this.src + '; Error: ' + (this.error ? this.error.message : 'Unknown error')); this.style.display='none'; this.nextElementSibling.style.display='block';"
               />
@@ -159,7 +144,26 @@
               >
                 Image failed to load: <%= filename %>
               </div>
-              <% } %> <% } else { %>
+              <% } else if (post.type === 'video') { %>
+              <video
+                src="/Uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
+                poster="/utils/video_placeholder.jpg"
+                muted
+                class="post-media"
+                onloadstart="console.log('Video load started: ' + this.src)"
+                onerror="console.error('Video failed to load: ' + this.src + '; Error: ' + (this.error ? this.error.message : 'Unknown error')); this.style.display='none'; this.nextElementSibling.style.display='block';"
+              >
+                <source src="/Uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              <div
+                class="media-error"
+                style="display: none; color: red; text-align: center"
+              >
+                Video failed to load: <%= filename %>
+              </div>
+              <% } %>
+              <% } else { %>
               <div class="post-text-preview">
                 <p>
                   <%= post.caption.substring(0, 100) %><%= post.caption.length >
