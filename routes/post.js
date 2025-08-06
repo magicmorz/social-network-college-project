@@ -19,7 +19,7 @@ const requireAuth = async (req, res, next) => {
     req.user = user; // Attach full user object
     next();
   } catch (error) {
-    console.error('❌ Auth error:', error.message);
+    console.error('Auth error:', error.message);
     return res.status(500).json({ error: 'Authentication error' });
   }
 };
