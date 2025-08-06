@@ -64,16 +64,12 @@ async function toggleComments(postId) {
                     }" class="fw-bold text-decoration-none">
                       ${comment.user.username}
                     </a>
-                    ${
-                      comment.gifUrl
-                        ? `<img src="${comment.gifUrl}" alt="GIF comment" class="mt-1" style="max-width: 200px; max-height: 150px; object-fit: contain;">`
-                        : `<span>${comment.text}</span>`
-                    }
+                    ${comment.text ? `<span class="ms-1">${comment.text}</span>` : ""}
                   </div>
                   ${
                     isOwner
                       ? `
-                   <button 
+                  <button 
                       class="btn btn-sm btn-link text-danger delete-comment-btn" 
                       data-comment-id="${comment._id}" 
                       data-post-id="${postId}">
@@ -83,6 +79,13 @@ async function toggleComments(postId) {
                       : ""
                   }
                 </div>
+                ${
+                  comment.gifUrl
+                    ? `<div class="gif-comment-container mt-1">
+                        <img src="${comment.gifUrl}" alt="GIF comment" style="max-width: 200px; max-height: 150px; object-fit: contain;">
+                      </div>`
+                    : ""
+                }
                 <small class="text-muted">${new Date(
                   comment.createdAt
                 ).toLocaleString()}</small>
@@ -135,6 +138,7 @@ async function addComment(postId, text = "", gifUrl = "") {
   if (!text.trim() && !gifUrl) return;
 
   try {
+    console.log("Posting comment:", { postId, text, gifUrl });
     const response = await fetch(`/posts/${postId}/comment`, {
       method: "POST",
       headers: {
@@ -145,7 +149,10 @@ async function addComment(postId, text = "", gifUrl = "") {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to add comment");
+      console.error("Comment error response:", errorData);
+      throw new Error(
+        errorData.details || errorData.error || "Failed to add comment"
+      );
     }
 
     const data = await response.json();
@@ -166,8 +173,8 @@ async function addComment(postId, text = "", gifUrl = "") {
 
     return data.comment;
   } catch (error) {
-    console.error("Error adding comment:", error);
-    alert("Failed to add comment: " + error.message);
+    console.error("Error adding comment:", error.message);
+    alert(`Failed to add comment: ${error.message}`);
     return null;
   }
 }
@@ -216,61 +223,69 @@ function initializeGiphyPicker(postId) {
   const searchInput = post.querySelector(".gif-search-input");
   const gifContainer = post.querySelector(".gif-container");
 
-  searchInput.addEventListener("input", debounce(async () => {
-    const query = searchInput.value.trim();
-    if (!query) {
-      gifContainer.innerHTML = "";
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/gifs/search?query=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error("Failed to load GIFs");
-
-      const data = await response.json();
-      gifContainer.innerHTML = "";
-
-      if (data.data && data.data.length > 0) {
-        data.data.forEach((gif) => {
-          const img = document.createElement("img");
-          img.src = gif.images.fixed_height.url;
-          img.alt = gif.title;
-          img.className = "gif-option m-1";
-          img.style.cursor = "pointer";
-          img.style.maxWidth = "100px";
-          img.style.maxHeight = "100px";
-          img.addEventListener("click", async () => {
-            const commentInput = post.querySelector(".add-comment input");
-            commentInput.disabled = true;
-            const postCommentBtn = post.querySelector(".post-comment-btn");
-            if (postCommentBtn) {
-              postCommentBtn.disabled = true;
-              postCommentBtn.textContent = "Posting...";
-            }
-
-            await addComment(postId, "", gif.images.fixed_height.url);
-            gifPicker.style.display = "none";
-            searchInput.value = "";
-            gifContainer.innerHTML = "";
-            commentInput.disabled = false;
-            if (postCommentBtn) {
-              postCommentBtn.disabled = false;
-              postCommentBtn.textContent = "Post";
-              postCommentBtn.style.display = "none";
-            }
-            commentInput.placeholder = "Add a comment...";
-          });
-          gifContainer.appendChild(img);
-        });
-      } else {
-        gifContainer.innerHTML = '<div class="text-muted p-2">No GIFs found</div>';
+  searchInput.addEventListener(
+    "input",
+    debounce(async () => {
+      const query = searchInput.value.trim();
+      if (!query) {
+        gifContainer.innerHTML = "";
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching GIFs:", error);
-      gifContainer.innerHTML =
-        '<div class="text-danger p-2">Failed to load GIFs</div>';
-    }
-  }, 300));
+
+      try {
+        const response = await fetch(
+          `/api/gifs/search?query=${encodeURIComponent(query)}`
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to load GIFs");
+        }
+
+        const data = await response.json();
+        gifContainer.innerHTML = "";
+
+        if (data.data && data.data.length > 0) {
+          data.data.forEach((gif) => {
+            const img = document.createElement("img");
+            img.src = gif.images.fixed_height.url;
+            img.alt = gif.title;
+            img.className = "gif-option m-1";
+            img.style.cursor = "pointer";
+            img.style.maxWidth = "100px";
+            img.style.maxHeight = "100px";
+            img.addEventListener("click", async () => {
+              const commentInput = post.querySelector(".add-comment input");
+              commentInput.disabled = true;
+              const postCommentBtn = post.querySelector(".post-comment-btn");
+              if (postCommentBtn) {
+                postCommentBtn.disabled = true;
+                postCommentBtn.textContent = "Posting...";
+              }
+
+              await addComment(postId, "", gif.images.fixed_height.url);
+              gifPicker.style.display = "none";
+              searchInput.value = "";
+              gifContainer.innerHTML = "";
+              commentInput.disabled = false;
+              if (postCommentBtn) {
+                postCommentBtn.disabled = false;
+                postCommentBtn.textContent = "Post";
+                postCommentBtn.style.display = "none";
+              }
+              commentInput.placeholder = "Add a comment...";
+            });
+            gifContainer.appendChild(img);
+          });
+        } else {
+          gifContainer.innerHTML =
+            '<div class="text-muted p-2">No GIFs found</div>';
+        }
+      } catch (error) {
+        console.error("Error fetching GIFs:", error.message);
+        gifContainer.innerHTML = `<div class="text-danger p-2">Failed to load GIFs: ${error.message}</div>`;
+      }
+    }, 300)
+  );
 }
 
 // Debounce function to limit API calls
