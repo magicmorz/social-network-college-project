@@ -900,9 +900,9 @@
                     >
                       <path
                         d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                  2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                  1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
-                  0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                          2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                          1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                          0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                       />
                     </svg>
                     <% } else { %>
@@ -917,13 +917,12 @@
                     >
                       <path
                         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
-                  0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                  1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                          1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
                       />
                     </svg>
                     <% } %>
                   </button>
-                  <!-- Comment and Share buttons -->
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Comment on post"
@@ -938,7 +937,7 @@
                     >
                       <path
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2
-                  0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                          0 0 1 2-2h14a2 2 0 0 1 2 2z"
                       ></path>
                     </svg>
                   </button>
@@ -955,8 +954,7 @@
                       stroke-width="2"
                     >
                       <path
-                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2
-                  0 0 0 2-2v-8"
+                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
                       ></path>
                       <polyline points="16,6 12,2 8,6"></polyline>
                       <line x1="12" y1="2" x2="12" y2="15"></line>
@@ -1001,6 +999,18 @@
                 <% } %>
                 <!-- Comments Section -->
                 <div class="comments-section" style="display: none"></div>
+                <!-- GIF Picker -->
+                <div
+                  class="gif-picker bg-white border rounded shadow-sm p-2"
+                  style="display: none"
+                >
+                  <input
+                    type="text"
+                    class="form-control mb-2 gif-search-input"
+                    placeholder="Search GIFs..."
+                  />
+                  <div class="gif-container d-flex flex-wrap"></div>
+                </div>
                 <!-- Add Comment -->
                 <div
                   class="add-comment d-flex align-items-center position-relative"
@@ -1016,7 +1026,6 @@
                   </button>
                   <button class="btn btn-link text-muted p-0 ms-2 gif-btn">
                     <i class="bi bi-image"></i>
-                    <!-- Bootstrap icon for GIF -->
                   </button>
                   <button
                     class="btn btn-link fw-bold p-0 ms-2 post-comment-btn"
@@ -1024,26 +1033,6 @@
                   >
                     Post
                   </button>
-                  <!-- GIF Picker -->
-                  <div
-                    class="gif-picker position-absolute bg-white border rounded shadow-sm p-2"
-                    style="
-                      display: none;
-                      top: -200px;
-                      left: 0;
-                      width: 300px;
-                      max-height: 200px;
-                      overflow-y: auto;
-                      z-index: 1000;
-                    "
-                  >
-                    <input
-                      type="text"
-                      class="form-control mb-2 gif-search-input"
-                      placeholder="Search GIFs..."
-                    />
-                    <div class="gif-container d-flex flex-wrap"></div>
-                  </div>
                 </div>
                 <!-- Typing indicator -->
                 <div
@@ -1054,7 +1043,7 @@
                 </div>
               </div>
             </div>
-            <% }) %> <% } else { %>
+            <% }) %><% } else { %>
             <!-- No Posts Message -->
             <div class="text-center mt-5">
               <h5 class="text-muted">No posts to show</h5>
