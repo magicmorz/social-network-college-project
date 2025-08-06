@@ -528,7 +528,6 @@ exports.searchGifs = async (req, res) => {
     if (!query) {
       return res.status(400).json({ error: "Search query is required" });
     }
-    console.log("GIPHY_API_KEY:", process.env.GIPHY_API_KEY); // Debug log
     const response = await fetch(
       `https://api.giphy.com/v1/gifs/search?api_key=${
         process.env.GIPHY_API_KEY
