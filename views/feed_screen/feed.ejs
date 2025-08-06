@@ -803,8 +803,8 @@
               class="instagram-post posts-container mb-4"
               id="post-<%= post._id %>"
               data-post-id="<%= post._id %>"
-              data-type="picture"
-              data-group="<%= post.group %>"
+              data-type="<%= post.type %>"
+              data-group="<%= post.group || '' %>"
               data-owner-id="<%= post.user._id %>"
             >
               <!-- Post Header -->
@@ -858,23 +858,31 @@
                   <i class="bi bi-three-dots"></i>
                 </button>
               </div>
-
-              <!-- Post Image -->
+              <!-- Post Media -->
               <div class="post-image">
+                <% if (post.type === 'image') { %>
                 <img
-                  src="<%= post.image %>"
+                  src="<%= post.media %>"
                   alt="Post image"
                   class="w-100"
                   style="max-height: 600px; object-fit: cover"
                 />
+                <% } else if (post.type === 'video') { %>
+                <video
+                  controls
+                  class="w-100"
+                  style="max-height: 600px; object-fit: cover"
+                >
+                  <source src="<%= post.media %>" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <% } %>
               </div>
-
               <!-- Post Actions -->
               <div class="post-actions py-3">
                 <div class="d-flex align-items-center mb-2">
                   <% const userLikedPost = post.likes.includes(currentUserId);
                   %>
-
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Like post"
@@ -892,9 +900,9 @@
                     >
                       <path
                         d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                   1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
-                   0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                          2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                          1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                          0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                       />
                     </svg>
                     <% } else { %>
@@ -909,13 +917,12 @@
                     >
                       <path
                         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
-                   0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                   1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                          1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
                       />
                     </svg>
                     <% } %>
                   </button>
-
                   <!-- Comment and Share buttons -->
                   <button
                     class="btn btn-link text-dark p-0 me-3"
@@ -931,11 +938,10 @@
                     >
                       <path
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2
-                 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                        0 0 1 2-2h14a2 2 0 0 1 2 2z"
                       ></path>
                     </svg>
                   </button>
-
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Share"
@@ -950,14 +956,13 @@
                     >
                       <path
                         d="M4 12v8a2 2 0 0 0 2 2h12a2 2
-                 0 0 0 2-2v-8"
+                        0 0 0 2-2v-8"
                       ></path>
                       <polyline points="16,6 12,2 8,6"></polyline>
                       <line x1="12" y1="2" x2="12" y2="15"></line>
                     </svg>
                   </button>
                 </div>
-
                 <!-- Likes -->
                 <div class="likes-simple mb-2">
                   <span class="likes-count fw-bold">
@@ -965,7 +970,6 @@
                   </span>
                   <span class="likes-text fw-bold"> likes</span>
                 </div>
-
                 <!-- Caption -->
                 <% if (post.caption) { %>
                 <div class="caption mb-2">
@@ -980,7 +984,6 @@
                   <span class="caption-text"> <%= post.caption %></span>
                 </div>
                 <% } %>
-
                 <!-- View Comments Button -->
                 <% if (post.comments && post.comments.length > 0) { %>
                 <div class="view-comments mb-2">
@@ -996,10 +999,8 @@
                   </button>
                 </div>
                 <% } %>
-
                 <!-- Comments Section -->
                 <div class="comments-section" style="display: none"></div>
-
                 <!-- Add Comment -->
                 <div class="add-comment d-flex align-items-center">
                   <input
@@ -1018,7 +1019,6 @@
                     Post
                   </button>
                 </div>
-
                 <!-- Typing indicator -->
                 <div
                   class="typing-indicator text-muted small"
@@ -1579,7 +1579,12 @@
 
                   <!-- hidden input + label -->
                   <label class="ig-fileBtn">
-                    <input id="fileInput" type="file" accept="image/*,video/*" hidden />
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*,video/*"
+                      hidden
+                    />
                     Select from computer
                   </label>
                 </div>
