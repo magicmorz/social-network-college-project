@@ -61,7 +61,7 @@ const postSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["image", "video"], // Aligned with postController.js
+    enum: ["image", "video"],
     required: true,
   },
   likes: [
@@ -86,7 +86,7 @@ const postSchema = new mongoose.Schema({
   place: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Place",
-    index: true,
+    index: true, // Index defined here
   },
   hashtags: [
     {
@@ -110,13 +110,12 @@ postSchema.index({ user: 1 });
 postSchema.index({ caption: "text" });
 postSchema.index({ type: 1 });
 postSchema.index({ hashtags: 1 });
-postSchema.index({ place: 1 });
 
 // Maintain counts for likes, comments, and shares
 postSchema.pre("save", function (next) {
   this.likesCount = this.likes.length;
   this.commentsCount = this.comments.length;
-  this.sharesCount = this.sharesCount || 0; // No shares array, so keep as is
+  this.sharesCount = this.sharesCount || 0;
   next();
 });
 

@@ -1,212 +1,210 @@
 .instagram-post {
-    width: 470px;
-    max-width: 600px;
-    background: var(--bg);
-    box-shadow: none;
-    border: none !important;
-    box-shadow: none;
-    color: inherit;
-    background-color:var(--bg) !important;
-    border-bottom:  1px solid var(--border);
-    padding-bottom: 24px;
+  width: 470px;
+  max-width: 600px;
+  background: var(--bg);
+  box-shadow: none;
+  border: none !important;
+  box-shadow: none;
+  color: inherit;
+  background-color: var(--bg) !important;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
 }
 
-.instagram-post:nth-last-of-type{
-    border-bottom: none;
+.instagram-post:nth-last-of-type {
+  border-bottom: none;
 }
 
 /* adding Dark mode default colors */
 
-
 /* stop Bootstrap (or extensions) from injecting a pill in future */
-.add-comment input:focus{
+.add-comment input:focus {
   background: transparent !important;
 }
 
-
-.header-more-options button, .header-more-options button > * {
-    color: var(--icon) !important;
+.header-more-options button,
+.header-more-options button > * {
+  color: var(--icon) !important;
 }
 
-
-.tagged_profile_text
-{
-    color:rgb(65, 80, 247);
+.tagged_profile_text {
+  color: rgb(65, 80, 247);
 }
 
-.hashtag_text
-{
-    color:rgb(65, 80, 247);
+.hashtag_text {
+  color: rgb(65, 80, 247);
 }
 
 .carousel-indicators [data-bs-target] {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #555;
-    opacity: 0.5; /* Sets element transparency to 50%, making it semi-transparent */
-    transition: opacity 0.3s ease;  /* Smoothly animates opacity changes over 0.3 seconds with easing */
-    margin: 0 3px; 
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #555;
+  opacity: 0.5; /* Sets element transparency to 50%, making it semi-transparent */
+  transition: opacity 0.3s ease; /* Smoothly animates opacity changes over 0.3 seconds with easing */
+  margin: 0 3px;
 }
 
 .carousel-indicators .active {
-    opacity: 1; /* Fully opaque, no transparency */
-    background-color: white;
+  opacity: 1; /* Fully opaque, no transparency */
+  background-color: white;
 }
 
 .custom-carousel-btn {
-    width: 25px;  /* Smaller button size */
-    height: 25px; /* Smaller button size */
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.6); /* transparent white */
-    border: none;
-    display: flex;                     /* Enable flexbox layout */
-    align-items: center;               /* Vertically center flex items */
-    justify-content: center;           /* Horizontally center flex items */
-    opacity: 1;                       /* Fully visible */
-    transition: background-color 0.3s ease; /* Smooth background color change over 0.3s */
-    position: absolute;               /* Position relative to nearest positioned ancestor */
-    top: 50%;                        /* Position 50% from the top of the containing block */
-    transform: translateY(-50%);     /* Shift element up by 50% of its own height to vertically center */
+  width: 25px; /* Smaller button size */
+  height: 25px; /* Smaller button size */
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6); /* transparent white */
+  border: none;
+  display: flex; /* Enable flexbox layout */
+  align-items: center; /* Vertically center flex items */
+  justify-content: center; /* Horizontally center flex items */
+  opacity: 1; /* Fully visible */
+  transition: background-color 0.3s ease; /* Smooth background color change over 0.3s */
+  position: absolute; /* Position relative to nearest positioned ancestor */
+  top: 50%; /* Position 50% from the top of the containing block */
+  transform: translateY(
+    -50%
+  ); /* Shift element up by 50% of its own height to vertically center */
 }
 
 .custom-carousel-btn.left {
-    left: 10px;
+  left: 10px;
 }
 
 .custom-carousel-btn.right {
-    right: 10px;
+  right: 10px;
 }
 
 .custom-carousel-btn:hover {
-    background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .custom-carousel-btn .chevron {
-    font-size: 31px; /* Bigger chevron size */
-    color: #333;
-    line-height: 1;  /* Sets line height equal to font size for tight vertical spacing */
-    font-weight: 500; /* Make the chevron thicker */
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); /* Adds a subtle shadow for thickness effect */
-    transform: translateY(-5px);
+  font-size: 31px; /* Bigger chevron size */
+  color: #333;
+  line-height: 1; /* Sets line height equal to font size for tight vertical spacing */
+  font-weight: 500; /* Make the chevron thicker */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.4); /* Adds a subtle shadow for thickness effect */
+  transform: translateY(-5px);
 }
 
 /* Speeds up the slide transition */
 .post-image .carousel-item {
-    transition: transform 0.15s ease-in-out;  /* Smoothly animates transform changes over 0.15 seconds with ease-in-out timing */
+  transition: transform 0.15s ease-in-out; /* Smoothly animates transform changes over 0.15 seconds with ease-in-out timing */
 }
 
-.rounded-circle{
-    width:32px;
-    height:32px;
-    object-fit:cover;
-    background-color: white;
-    padding: 2px;
+.rounded-circle {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  background-color: white;
+  padding: 2px;
 }
 
 .story-ring-wrapper {
-    background: conic-gradient(
-            #9360f7,
-            #d62976,
-            #f3425f,
-            #fa7e1e,
-            #feda75,
-            #feda75,
-            #feda75,
-            #f3425f,
-            #d62976,
-            #9360f7
-    );
-    width: 37px;
-    height: 37px;
-    border-radius: 50%;
-    padding: 0.5px;
-    display: flex;               /* Enables flexbox layout */
-    align-items: center;         /* Vertically centers flex items */
-    justify-content: center;     /* Horizontally centers flex items */
+  background: conic-gradient(
+    #9360f7,
+    #d62976,
+    #f3425f,
+    #fa7e1e,
+    #feda75,
+    #feda75,
+    #feda75,
+    #f3425f,
+    #d62976,
+    #9360f7
+  );
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  padding: 0.5px;
+  display: flex; /* Enables flexbox layout */
+  align-items: center; /* Vertically centers flex items */
+  justify-content: center; /* Horizontally centers flex items */
 }
 
 .no-story {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Apply styling to all action icons (like, comment, share, save) */
 .action-icon {
-    color: var(--icon);
+  color: var(--icon);
 }
 
 .action-icon:hover {
-    color: var(--icon-hover);         /* Solid black on hover */
+  color: var(--icon-hover); /* Solid black on hover */
 }
 
-.action-icon svg{ fill: currentColor;}
+.action-icon svg {
+  fill: currentColor;
+}
 
 .fade-on-hover:hover {
-    opacity: 0.6; /* Slightly faded on hover */
+  opacity: 0.6; /* Slightly faded on hover */
 }
-.time-since-posted:hover{
-    cursor: pointer;
+.time-since-posted:hover {
+  cursor: pointer;
 }
-.suggested-follow-btn{
-    position: relative;
-    top: -3px;   /* raises text slightly */
-}
-
-.suggested-follow-btn:hover{
-    color: rgb(0, 55, 107);
+.suggested-follow-btn {
+  position: relative;
+  top: -3px; /* raises text slightly */
 }
 
-.likes-simple{
-    font-size: 0.90rem;
+.suggested-follow-btn:hover {
+  color: rgb(0, 55, 107);
+}
+
+.likes-simple {
+  font-size: 0.9rem;
 }
 
 .likes-text:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.likes-simple:hover{
-    cursor: pointer;
+.likes-simple:hover {
+  cursor: pointer;
 }
 .view-comments:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.caption-username:hover
-{
-    cursor: pointer;
+.caption-username:hover {
+  cursor: pointer;
 }
 
 .tagged-icon {
-    background-color: rgba(33, 33, 33, 0.7); /* Semi-transparent dark gray */
-    border-radius: 50%;                      /* Perfect circle */
-    width: 28px;                            /* Match Instagram icon size */
-    height: 28px;                           /* Match Instagram icon size */
-    padding: 0;                            /* No padding */
-    display: flex;                        /* Flexbox for centering */
-    align-items: center;                  /* Vertically center SVG */
-    justify-content: center;              /* Horizontally center SVG */
-    cursor: pointer;                      /* Optional: pointer on hover */
+  background-color: rgba(33, 33, 33, 0.7); /* Semi-transparent dark gray */
+  border-radius: 50%; /* Perfect circle */
+  width: 28px; /* Match Instagram icon size */
+  height: 28px; /* Match Instagram icon size */
+  padding: 0; /* No padding */
+  display: flex; /* Flexbox for centering */
+  align-items: center; /* Vertically center SVG */
+  justify-content: center; /* Horizontally center SVG */
+  cursor: pointer; /* Optional: pointer on hover */
 }
 
-.tagged-icon:hover{
-    cursor: pointer;
+.tagged-icon:hover {
+  cursor: pointer;
 }
 
 .post-actions button.btn-link:hover i {
-    opacity: 0.5; /* fade effect on hover */
+  opacity: 0.5; /* fade effect on hover */
 }
 
 .post-actions button.btn-link i {
+  /* Smoothly animate any change to opacity over 0.3 seconds with easing */
+  transition: opacity 0.3s ease;
 
-    /* Smoothly animate any change to opacity over 0.3 seconds with easing */
-    transition: opacity 0.3s ease;
-
-    /*
+  /*
       Add a subtle text shadow to simulate a thicker outline for the icon.
       Since Bootstrap Icons are SVG-based fonts and don't support font-weight,
       this is a common trick to visually "thicken" the icon without changing its shape.
@@ -214,186 +212,183 @@
       The two identical shadows here (0 0 1px) are stacked to enhance the intensity slightly.
       currentColor means the shadow will match the icon's color, making it look bolder.
     */
-    text-shadow:
-            0 0 1px currentColor,  /* Shadow 1: 1px blur, no offset, same color */
-            0 0 1px currentColor;  /* Shadow 2: same as above, stacked for a thicker look */
+  text-shadow: 0 0 1px currentColor,
+    /* Shadow 1: 1px blur, no offset, same color */ 0 0 1px currentColor; /* Shadow 2: same as above, stacked for a thicker look */
 }
 
-
 .sound-icon {
-    width: 28px;
-    height: 28px;
-    background-color: rgba(33, 33, 33, 0.7);
-    border-radius: 50%;
-    display: inline-flex;        /* Enables flexbox layout but behaves like an inline element */
-    align-items: center;         /* Vertically centers flex items */
-    justify-content: center;     /* Horizontally centers flex items */
-    cursor: pointer;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(33, 33, 33, 0.7);
+  border-radius: 50%;
+  display: inline-flex; /* Enables flexbox layout but behaves like an inline element */
+  align-items: center; /* Vertically centers flex items */
+  justify-content: center; /* Horizontally centers flex items */
+  cursor: pointer;
 }
 
 video:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .double-profile-picture-container {
-    position: relative;
-    width: 32px;   /* Container a bit bigger to fit both pics */
-    height: 32px;
+  position: relative;
+  width: 32px; /* Container a bit bigger to fit both pics */
+  height: 32px;
 }
 
-
 .double-profile-img {
-    border-radius: 50%;
-    border: 2px solid white; /* White border like Instagram */
-    object-fit: cover; 
-    width: 24px;    /* Fixed size */
-    height: 24px;
-    position: absolute;
+  border-radius: 50%;
+  border: 2px solid white; /* White border like Instagram */
+  object-fit: cover;
+  width: 24px; /* Fixed size */
+  height: 24px;
+  position: absolute;
 }
 
 /* Primary picture bottom-left */
 .double-primary-pic {
-    bottom: 2px;
-    left: 4px;
-    width: 24px;
-    height: 24px;
-    z-index: 2;
+  bottom: 2px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
 }
 
 /* Secondary picture top-right */
 .double-secondary-pic {
-    top: 0;
-    right: -8px;
-    width: 24px;
-    height: 24px;
-    z-index: 1;
-    opacity: 0.9; /* Optional */
+  top: 0;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  z-index: 1;
+  opacity: 0.9; /* Optional */
 }
 
-.time-since-posted{
-    font-size: 0.90rem;
+.time-since-posted {
+  font-size: 0.9rem;
 }
-.header-more-options{
-    padding-right: 5px;
+.header-more-options {
+  padding-right: 5px;
 }
 
 .username-top-header {
-    display: inline-block; /* so the cursor effect will only work when hovering over the text and not empty space*/
-    font-size: 0.90rem;
+  display: inline-block; /* so the cursor effect will only work when hovering over the text and not empty space*/
+  font-size: 0.9rem;
 }
 
-.username-top-header:hover{
-    cursor: pointer;
+.username-top-header:hover {
+  cursor: pointer;
 }
 
 .location-top-header {
-    font-size: 0.8rem;
-    margin-top: -4px; /* Bring it closer if needed */
-    display: inline-block; /* so the cursor effect will only work when hovering over the text and not empty space*/
-    cursor: pointer;
-    line-height: 1.2;
+  font-size: 0.8rem;
+  margin-top: -4px; /* Bring it closer if needed */
+  display: inline-block; /* so the cursor effect will only work when hovering over the text and not empty space*/
+  cursor: pointer;
+  line-height: 1.2;
 }
 
 .location-top-header a {
-    color: #737373 !important;  /* Darker gray for better visibility */
-    text-decoration: none;
-    transition: color 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    font-weight: 400;
-    min-height: 16px; /* Ensure minimum height for clickability */
+  color: #737373 !important; /* Darker gray for better visibility */
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 400;
+  min-height: 16px; /* Ensure minimum height for clickability */
 }
 
 .location-top-header a:hover {
-    color: #262626 !important;
-    text-decoration: underline;
+  color: #262626 !important;
+  text-decoration: underline;
 }
 
 .location-top-header a i {
-    font-size: 12px;
-    margin-right: 4px;
+  font-size: 12px;
+  margin-right: 4px;
 }
 
 [data-theme="dark"] .location-top-header a {
-    color: #8e8e8e !important;
+  color: #8e8e8e !important;
 }
 
 [data-theme="dark"] .location-top-header a:hover {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
-.time-since-posted{
-    color: #8e8e8e; /* Instagram's light gray for timestamps */
+.time-since-posted {
+  color: #8e8e8e; /* Instagram's light gray for timestamps */
 }
 
 .verification-icon {
-    margin-top: -4px;
-    width: 12px;
-    height: 12px;
+  margin-top: -4px;
+  width: 12px;
+  height: 12px;
 }
 
-.separation-dot{
-    color: gray;
+.separation-dot {
+  color: gray;
 }
 
-.likes-simple{
-    margin-top: 10px;
+.likes-simple {
+  margin-top: 10px;
 }
 
 .likes-count {
-    font-size: 0.85rem;
-    font-weight: 620;
+  font-size: 0.85rem;
+  font-weight: 620;
 }
 
 .likes-text {
-    font-size: 0.85rem;
-    font-weight: 620;
+  font-size: 0.85rem;
+  font-weight: 620;
 }
 
-.caption-text{
-    font-size: 0.90rem;
+.caption-text {
+  font-size: 0.9rem;
 }
 
-.hashtag-link{
-    color:rgb(65, 80, 247);           /* Bootstrap primary blue */
-    text-decoration: none;
-    cursor: pointer;
+.hashtag-link {
+  color: rgb(65, 80, 247); /* Bootstrap primary blue */
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .hashtag-link:hover,
 .hashtag-link:focus,
 .hashtag-link:active {
-    color:rgb(65, 80, 247);           /* Maintain same color on hover/focus */
-    text-decoration: none;
-    outline: none;
+  color: rgb(65, 80, 247); /* Maintain same color on hover/focus */
+  text-decoration: none;
+  outline: none;
 }
 
-.tag-link{
-    color:rgb(65, 80, 247);           /* Bootstrap primary blue */
-    text-decoration: none;
-    cursor: pointer;
+.tag-link {
+  color: rgb(65, 80, 247); /* Bootstrap primary blue */
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .tag-link:hover,
 .tag-link:focus,
 .tag-link:active {
-    color:rgb(65, 80, 247);           /* Maintain same color on hover/focus */
-    text-decoration: none;
-    outline: none;
+  color: rgb(65, 80, 247); /* Maintain same color on hover/focus */
+  text-decoration: none;
+  outline: none;
 }
 
 .view-comments * {
-    font-size: 0.90rem;
-    color: var(--link) !important;;
+  font-size: 0.9rem;
+  color: var(--link) !important;
 }
-.add-comment i, .add-comment svg{
-    color: var(--icon) !important;
+.add-comment i,
+.add-comment svg {
+  color: var(--icon) !important;
 }
 
 [data-theme="dark"] .add-comment i,
-[data-theme="dark"] .add-comment svg{
-    color: var(--text);
-
+[data-theme="dark"] .add-comment svg {
+  color: var(--text);
 }
 
 /* ———  “Add a comment…” pill ——— */
@@ -401,102 +396,102 @@ video:hover {
 .add-comment input,
 .add-comment input:hover,
 .add-comment input:focus {
-    background: transparent !important;   /* kill the grey pill in every state  */
-    box-shadow: none !important;          /* be safe: no Bootstrap focus ring  */
-    outline: none !important;
+  background: transparent !important; /* kill the grey pill in every state  */
+  box-shadow: none !important; /* be safe: no Bootstrap focus ring  */
+  outline: none !important;
 }
-
 
 .add-comment input {
-    font-size: 0.85rem;
-    width: 100%;
-    
-    border: none;
-    outline: none;
-    box-shadow: none;
-    padding: 0;
+  font-size: 0.85rem;
+  width: 100%;
+
+  border: none;
+  outline: none;
+  box-shadow: none;
+  padding: 0;
 }
-.add-comment input::placeholder{
-    color: var(--link);
-   
+.add-comment input::placeholder {
+  color: var(--link);
 }
 .add-comment,
-.add-comment input { background: transparent !important; }
+.add-comment input {
+  background: transparent !important;
+}
 
-.add-comment input:focus{
-    outline: none;
-    box-shadow: none;
-    color: var(--text) !important;
+.add-comment input:focus {
+  outline: none;
+  box-shadow: none;
+  color: var(--text) !important;
 }
 
 .post-actions button.btn-link:hover {
-    opacity: 0.6;          /* Make icon a bit transparent */
+  opacity: 0.6; /* Make icon a bit transparent */
 }
 
 .like-profile-img {
-    width: 20px;
-    height: 20px;
-    object-fit: cover; 
-    margin-right: -8px; /* slight overlap effect */
-    
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  margin-right: -8px; /* slight overlap effect */
 }
 
 .ig-next-btn {
-    background-color: rgba(0, 0, 0, 0.6); /* Instagram-style background */
-    border: none;
-    border-radius: 50%;                 /* Circle shape */
-    width: 32px;
-    height: 32px;
-    display: flex;                 /* Enables flexbox layout */
-    align-items: center;           /* Vertically centers flex items */
-    justify-content: center;       /* Horizontally centers flex items */
-    position: absolute;            /* Positions relative to nearest positioned ancestor */
-    top: 50%;                     /* Positions element 50% from the top */
-    right: 8px;                   /* Positions element 8px from the right */
-    transform: translateY(-50%);  /* Vertically centers by shifting up 50% of its height */
-    cursor: pointer;              /* Changes cursor to pointer on hover to indicate clickable */
-    z-index: 2;                   /* Places element above lower z-index elements */
+  background-color: rgba(0, 0, 0, 0.6); /* Instagram-style background */
+  border: none;
+  border-radius: 50%; /* Circle shape */
+  width: 32px;
+  height: 32px;
+  display: flex; /* Enables flexbox layout */
+  align-items: center; /* Vertically centers flex items */
+  justify-content: center; /* Horizontally centers flex items */
+  position: absolute; /* Positions relative to nearest positioned ancestor */
+  top: 50%; /* Positions element 50% from the top */
+  right: 8px; /* Positions element 8px from the right */
+  transform: translateY(
+    -50%
+  ); /* Vertically centers by shifting up 50% of its height */
+  cursor: pointer; /* Changes cursor to pointer on hover to indicate clickable */
+  z-index: 2; /* Places element above lower z-index elements */
 }
 
-.see-translation{
-    font-size: 0.85rem;
-    margin-top: 5px;
-    margin-bottom: -5px;
+.see-translation {
+  font-size: 0.85rem;
+  margin-top: 5px;
+  margin-bottom: -5px;
 }
 
-.see-translation:hover{
-    cursor: pointer;
+.see-translation:hover {
+  cursor: pointer;
 }
 
 .profile-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-    background-color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  background-color: white;
 }
 
-.profile-picture-container{
-    padding-right: 0;
+.profile-picture-container {
+  padding-right: 0;
 }
 
-.profile-picture-container:hover{
-    cursor: pointer;
+.profile-picture-container:hover {
+  cursor: pointer;
 }
-
 
 .instagram-post * {
   text-align: left !important;
 }
 
 .gif-picker {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  .gif-option:hover {
-    opacity: 0.8;
-    border: 2px solid #0095f6;
-  }
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.gif-option:hover {
+  opacity: 0.8;
+  border: 2px solid #0095f6;
+}
