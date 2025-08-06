@@ -1,4 +1,3 @@
-// postController.js
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Group = require("../models/Group");
@@ -6,6 +5,7 @@ const Place = require("../models/Place");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const fetch = require("node-fetch"); // for GIPHY API calls
 
 // Configure multer for media uploads
 const storage = multer.diskStorage({
@@ -55,7 +55,7 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-exports.uploadMedia = upload.single("media"); 
+exports.uploadMedia = upload.single("media");
 
 // Create new post
 exports.createPost = async (req, res) => {
@@ -237,7 +237,7 @@ exports.getPostComments = async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await Post.findById(postId)
-      .populate("comments.user", "username avatar") // this is good
+      .populate("comments.user", "username avatar")
       .select("comments");
 
     if (!post) {
@@ -247,6 +247,7 @@ exports.getPostComments = async (req, res) => {
     const comments = post.comments.map((comment) => ({
       _id: comment._id,
       text: comment.text,
+      gifUrl: comment.gifUrl,
       createdAt: comment.createdAt,
       user: {
         _id: comment.user._id,
@@ -317,10 +318,10 @@ exports.toggleLike = async (req, res) => {
 exports.addComment = async (req, res) => {
   try {
     const postId = req.params.id;
-    const { text } = req.body;
+    const { text, gifUrl } = req.body;
 
-    if (!text || text.trim().length === 0) {
-      return res.status(400).json({ error: "Comment text is required" });
+    if (!text && !gifUrl) {
+      return res.status(400).json({ error: "Comment text or GIF is required" });
     }
 
     const post = await Post.findById(postId);
@@ -328,7 +329,6 @@ exports.addComment = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // Check if post is in a group and user has access
     if (post.group) {
       const group = await Group.findById(post.group);
       if (!group || !group.members.includes(req.user._id)) {
@@ -340,14 +340,14 @@ exports.addComment = async (req, res) => {
 
     const comment = {
       user: req.user._id,
-      text: text.trim(),
+      text: text ? text.trim() : "",
+      gifUrl: gifUrl || "",
       createdAt: new Date(),
     };
 
     post.comments.push(comment);
     await post.save();
 
-    // Populate the user info for the response
     await post.populate("comments.user", "username avatar");
 
     const newComment = post.comments[post.comments.length - 1];
@@ -380,35 +380,35 @@ exports.deletePost = async (req, res) => {
         .json({ error: "Not authorized to delete this post" });
     }
 
-    // Log post.image to understand what it contains
-    console.log("Post image:", post.image);
+    // Log post.media to understand what it contains
+    console.log("Post media:", post.media);
 
-    // Construct full path based on image
-    let imagePath;
+    // Construct full path based on media
+    let mediaPath;
 
-    if (path.isAbsolute(post.image)) {
-      imagePath = post.image; // already absolute
-    } else if (post.image.includes(req.user._id.toString())) {
-      // If post.image already includes user directory
-      imagePath = path.join(__dirname, "..", post.image);
+    if (path.isAbsolute(post.media)) {
+      mediaPath = post.media; // already absolute
+    } else if (post.media.includes(req.user._id.toString())) {
+      // If post.media already includes user directory
+      mediaPath = path.join(__dirname, "..", post.media);
     } else {
-      // Otherwise, assume image is just filename
-      imagePath = path.join(
+      // Otherwise, assume media is just filename
+      mediaPath = path.join(
         __dirname,
         "../uploads",
         req.user._id.toString(),
-        path.basename(post.image)
+        path.basename(post.media)
       );
     }
 
-    console.log("Resolved image path:", imagePath);
+    console.log("Resolved media path:", mediaPath);
 
-    // Delete image file
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-      console.log("Image deleted successfully");
+    // Delete media file
+    if (fs.existsSync(mediaPath)) {
+      fs.unlinkSync(mediaPath);
+      console.log("Media deleted successfully");
     } else {
-      console.warn("Image file not found at path:", imagePath);
+      console.warn("Media file not found at path:", mediaPath);
     }
 
     // Delete post from DB
@@ -420,13 +420,14 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ error: "Failed to delete post" });
   }
 };
+
 // Get single post
 exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate("user", "username avatar isVerified")
       .populate("place", "name formattedAddress placeId coordinates")
-      .populate("group", "name") // Add group info
+      .populate("group", "name")
       .populate("comments.user", "username avatar");
 
     if (!post) {
@@ -517,6 +518,30 @@ exports.deleteComment = async (req, res) => {
   } catch (error) {
     console.error("Error deleting comment:", error);
     res.status(500).json({ error: "Failed to delete comment" });
+  }
+};
+
+// endpoint to search GIFs via GIPHY API
+exports.searchGifs = async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ error: "Search query is required" });
+    }
+    console.log("GIPHY_API_KEY:", process.env.GIPHY_API_KEY); // Debug log
+    const response = await fetch(
+      `https://api.giphy.com/v1/gifs/search?api_key=${
+        process.env.GIPHY_API_KEY
+      }&q=${encodeURIComponent(query)}&limit=10&rating=g`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch GIFs from GIPHY");
+    }
+    const data = await response.json();
+    res.json({ success: true, data: data.data });
+  } catch (error) {
+    console.error("Error fetching GIFs:", error);
+    res.status(500).json({ error: "Failed to fetch GIFs" });
   }
 };
 

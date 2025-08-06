@@ -1,12 +1,9 @@
-// Comment system integrated with database - Inline comments
 let commentCache = {}; // Cache for faster UI updates
 
 // Initialize comments for each post
 function initializeComments() {
   document.querySelectorAll(".posts-container").forEach((post) => {
-    const postId = post.id.replace("post-", ""); // Remove 'post-' prefix to get actual MongoDB ID
-
-    // Update comment count display from server data
+    const postId = post.id.replace("post-", "");
     updateCommentCount(postId);
   });
 }
@@ -21,18 +18,15 @@ async function toggleComments(postId) {
 
   if (!commentsSection || !viewCommentsButton) return;
 
-  // Check if comments are currently visible
   const isCommentsVisible =
     commentsSection.style.display !== "none" &&
     commentsSection.innerHTML.trim() !== "";
 
   if (isCommentsVisible) {
-    // Hide comments
     commentsSection.style.display = "none";
     commentsSection.innerHTML = "";
-    updateCommentCount(postId); // Reset button text
+    updateCommentCount(postId);
   } else {
-    // Show loading state
     commentsSection.innerHTML =
       '<div class="text-center p-2 text-muted">Loading comments...</div>';
     commentsSection.style.display = "block";
@@ -51,7 +45,7 @@ async function toggleComments(postId) {
               ? `/api/users/avatars/user_${comment.user._id}`
               : "/avatars/default.jpg";
 
-          const isOwner = comment.user._id === currentUserId; // Add this check
+          const isOwner = comment.user._id === currentUserId;
 
           const commentElement = document.createElement("div");
           commentElement.className = "comment mb-2 p-2";
@@ -70,7 +64,11 @@ async function toggleComments(postId) {
                     }" class="fw-bold text-decoration-none">
                       ${comment.user.username}
                     </a>
-                    <span>${comment.text}</span>
+                    ${
+                      comment.gifUrl
+                        ? `<img src="${comment.gifUrl}" alt="GIF comment" class="mt-1" style="max-width: 200px; max-height: 150px; object-fit: contain;">`
+                        : `<span>${comment.text}</span>`
+                    }
                   </div>
                   ${
                     isOwner
@@ -81,7 +79,6 @@ async function toggleComments(postId) {
                       data-post-id="${postId}">
                       <i class="bi bi-trash"></i>
                     </button>
-
                   `
                       : ""
                   }
@@ -95,7 +92,6 @@ async function toggleComments(postId) {
           commentsSection.appendChild(commentElement);
         });
 
-        // Add event listeners for delete buttons
         document.querySelectorAll(".delete-comment-btn").forEach((btn) => {
           btn.addEventListener("click", async (e) => {
             const commentId = btn.getAttribute("data-comment-id");
@@ -111,7 +107,7 @@ async function toggleComments(postId) {
                   }
                 );
                 if (!res.ok) throw new Error("Failed to delete comment");
-                btn.closest(".comment").remove(); // Remove comment from DOM
+                btn.closest(".comment").remove();
               } catch (err) {
                 alert("Error deleting comment.");
                 console.error(err);
@@ -131,13 +127,12 @@ async function toggleComments(postId) {
       commentsSection.innerHTML =
         '<div class="text-danger text-center p-2">Failed to load comments</div>';
     }
-    console.log(data.comments[0]); 
   }
 }
 
-// Add new comment to database
-async function addComment(postId, text) {
-  if (!text.trim()) return;
+// Add new comment to database (text or GIF)
+async function addComment(postId, text = "", gifUrl = "") {
+  if (!text.trim() && !gifUrl) return;
 
   try {
     const response = await fetch(`/posts/${postId}/comment`, {
@@ -145,7 +140,7 @@ async function addComment(postId, text) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: text.trim() }),
+      body: JSON.stringify({ text: text.trim(), gifUrl }),
     });
 
     if (!response.ok) {
@@ -156,10 +151,8 @@ async function addComment(postId, text) {
     const data = await response.json();
     console.log("Comment added successfully:", data);
 
-    // Update comment count in UI
     updateCommentCount(postId);
 
-    // If comments are currently visible, refresh them
     const post = document.getElementById(`post-${postId}`);
     const commentsSection = post.querySelector(".comments-section");
     if (
@@ -167,8 +160,8 @@ async function addComment(postId, text) {
       commentsSection.style.display !== "none" &&
       commentsSection.innerHTML.trim() !== ""
     ) {
-      toggleComments(postId); // Hide first
-      setTimeout(() => toggleComments(postId), 100); // Then show updated comments
+      toggleComments(postId);
+      setTimeout(() => toggleComments(postId), 100);
     }
 
     return data.comment;
@@ -186,7 +179,6 @@ function updateCommentCount(postId) {
 
   const commentCount = post.querySelector(".view-comments button");
   if (commentCount) {
-    // Get current count from the post data or fetch from server
     fetch(`/posts/${postId}/comments`)
       .then((response) => response.json())
       .then((data) => {
@@ -208,16 +200,102 @@ function updateCommentCount(postId) {
   }
 }
 
+// Initialize GIPHY picker
+function initializeGiphyPicker(postId) {
+  const post = document.getElementById(`post-${postId}`);
+  const gifButton = post.querySelector(".gif-btn");
+  const gifPicker = post.querySelector(".gif-picker");
+
+  if (!gifButton || !gifPicker) return;
+
+  gifButton.addEventListener("click", () => {
+    gifPicker.style.display =
+      gifPicker.style.display === "none" ? "block" : "none";
+  });
+
+  const searchInput = post.querySelector(".gif-search-input");
+  const gifContainer = post.querySelector(".gif-container");
+
+  searchInput.addEventListener("input", debounce(async () => {
+    const query = searchInput.value.trim();
+    if (!query) {
+      gifContainer.innerHTML = "";
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/gifs/search?query=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error("Failed to load GIFs");
+
+      const data = await response.json();
+      gifContainer.innerHTML = "";
+
+      if (data.data && data.data.length > 0) {
+        data.data.forEach((gif) => {
+          const img = document.createElement("img");
+          img.src = gif.images.fixed_height.url;
+          img.alt = gif.title;
+          img.className = "gif-option m-1";
+          img.style.cursor = "pointer";
+          img.style.maxWidth = "100px";
+          img.style.maxHeight = "100px";
+          img.addEventListener("click", async () => {
+            const commentInput = post.querySelector(".add-comment input");
+            commentInput.disabled = true;
+            const postCommentBtn = post.querySelector(".post-comment-btn");
+            if (postCommentBtn) {
+              postCommentBtn.disabled = true;
+              postCommentBtn.textContent = "Posting...";
+            }
+
+            await addComment(postId, "", gif.images.fixed_height.url);
+            gifPicker.style.display = "none";
+            searchInput.value = "";
+            gifContainer.innerHTML = "";
+            commentInput.disabled = false;
+            if (postCommentBtn) {
+              postCommentBtn.disabled = false;
+              postCommentBtn.textContent = "Post";
+              postCommentBtn.style.display = "none";
+            }
+            commentInput.placeholder = "Add a comment...";
+          });
+          gifContainer.appendChild(img);
+        });
+      } else {
+        gifContainer.innerHTML = '<div class="text-muted p-2">No GIFs found</div>';
+      }
+    } catch (error) {
+      console.error("Error fetching GIFs:", error);
+      gifContainer.innerHTML =
+        '<div class="text-danger p-2">Failed to load GIFs</div>';
+    }
+  }, 300));
+}
+
+// Debounce function to limit API calls
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 // Initialize everything
 window.addEventListener("DOMContentLoaded", () => {
-  // Initialize existing comments
   initializeComments();
 
-  // Add event listeners for comment buttons and inputs
   document.querySelectorAll(".posts-container").forEach((post) => {
-    const postId = post.id.replace("post-", ""); // Remove 'post-' prefix
+    const postId = post.id.replace("post-", "");
 
-    // Comment icon click - toggle comments
+    // Initialize GIPHY picker for this post
+    initializeGiphyPicker(postId);
+
     const commentButton = post.querySelector(
       '.btn[aria-label="Comment on post"]'
     );
@@ -227,7 +305,6 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // View all comments click - toggle comments
     const viewCommentsButton = post.querySelector(".view-comments button");
     if (viewCommentsButton) {
       viewCommentsButton.addEventListener("click", () => {
@@ -235,17 +312,14 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Add comment input and Post button functionality
     const commentInput = post.querySelector(".add-comment input");
     const postCommentBtn = post.querySelector(".post-comment-btn");
 
     if (commentInput) {
-      // Function to handle comment submission
       const submitComment = async () => {
         const text = commentInput.value.trim();
         if (!text) return;
 
-        // Show loading state
         commentInput.disabled = true;
         if (postCommentBtn) {
           postCommentBtn.disabled = true;
@@ -255,16 +329,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const comment = await addComment(postId, text);
         if (comment) {
-          commentInput.value = ""; // Clear input after successful submission
-
-          // Hide post button
+          commentInput.value = "";
           if (postCommentBtn) {
             postCommentBtn.style.display = "none";
             postCommentBtn.textContent = "Post";
           }
         }
 
-        // Reset input state
         commentInput.disabled = false;
         if (postCommentBtn) {
           postCommentBtn.disabled = false;
@@ -272,14 +343,12 @@ window.addEventListener("DOMContentLoaded", () => {
         commentInput.placeholder = "Add a comment...";
       };
 
-      // Enter key handler
       commentInput.addEventListener("keypress", async (e) => {
         if (e.key === "Enter") {
           await submitComment();
         }
       });
 
-      // Post button click handler
       if (postCommentBtn) {
         postCommentBtn.addEventListener("click", async (e) => {
           e.preventDefault();
@@ -287,7 +356,6 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Show/hide post button based on input content
       commentInput.addEventListener("input", () => {
         const hasText = commentInput.value.trim().length > 0;
 

@@ -52,6 +52,10 @@ const postSchema = new mongoose.Schema({
         required: true,
         maxLength: 500,
       },
+      gifUrl: {
+        type: String,
+        maxLength: 500,
+      },
       createdAt: {
         type: Date,
         default: Date.now,
