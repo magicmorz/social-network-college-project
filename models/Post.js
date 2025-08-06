@@ -9,13 +9,10 @@ const postSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-
-  // ← NEW: reference to a Group
   group: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Group",
   },
-
   caption: {
     type: String,
     maxLength: 2200,
@@ -24,7 +21,7 @@ const postSchema = new mongoose.Schema({
     type: String,
     default: "en",
   },
-  image: {
+  media: {
     type: String,
     required: true,
   },
@@ -116,18 +113,31 @@ postSchema.pre("save", function (next) {
       ...new Set(mentions.map((user) => user.slice(1).toLowerCase())),
     ];
 
-    // MongoDB supported languages for text search
     const supportedLanguages = [
-      'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'nb', 'nl', 'pt', 'ro', 'ru', 'sv', 'tr'
+      "da",
+      "de",
+      "en",
+      "es",
+      "fi",
+      "fr",
+      "hu",
+      "it",
+      "nb",
+      "nl",
+      "pt",
+      "ro",
+      "ru",
+      "sv",
+      "tr",
     ];
-    
+
     const langCode = franc(this.caption);
     if (langCode !== "und") {
       const lang = langs.where("3", langCode);
       const detectedLang = lang && lang["1"] ? lang["1"] : "en";
-      
-      // Only use supported languages, default to English for unsupported ones
-      this.language = supportedLanguages.includes(detectedLang) ? detectedLang : "en";
+      this.language = supportedLanguages.includes(detectedLang)
+        ? detectedLang
+        : "en";
     } else {
       this.language = "en";
     }

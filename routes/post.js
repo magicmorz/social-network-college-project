@@ -24,8 +24,8 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
-// POST /posts - Create new post (for your modal)
-router.post('/', requireAuth, postController.uploadImage, postController.createPost);
+// POST /posts - Create new post 
+router.post('/', requireAuth, postController.uploadMedia, postController.createPost);
 
 // POST /posts/:id/like - Like/unlike post
 router.post('/:id/like', requireAuth, postController.toggleLike);

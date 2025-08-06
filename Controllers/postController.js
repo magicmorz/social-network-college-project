@@ -1,12 +1,13 @@
-const Post = require('../models/Post');
-const User = require('../models/User');
-const Group = require('../models/Group'); // Add this import
-const Place = require('../models/Place');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+// postController.js
+const Post = require("../models/Post");
+const User = require("../models/User");
+const Group = require("../models/Group");
+const Place = require("../models/Place");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-// Configure multer for image uploads
+// Configure multer for media uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const userId = req.user._id.toString();
@@ -17,7 +18,6 @@ const storage = multer.diskStorage({
       `user_${userId}`,
       "posts"
     );
-
     fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
@@ -30,47 +30,178 @@ const storage = multer.diskStorage({
   },
 });
 
-
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  const allowedTypes = /jpeg|jpg|png|gif|mp4|webm|mov/;
+  const extname = allowedTypes.test(
+    path.extname(file.originalname).toLowerCase()
+  );
+  const mimetype = allowedTypes.test(file.mimetype);
+
+  if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(
+      new Error(
+        "Only images (jpeg, jpg, png, gif) and videos (mp4, webm, mov) are allowed"
+      ),
+      false
+    );
   }
 };
 
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
-  },
-  fileFilter: fileFilter
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+  fileFilter: fileFilter,
 });
+
+exports.uploadMedia = upload.single("media"); 
+
+// Create new post
+exports.createPost = async (req, res) => {
+  try {
+    const { caption, group, placeId, placeName, placeLat, placeLng, type } =
+      req.body;
+
+    console.log("Received body:", req.body); // Debug log
+    console.log("Received file:", req.file); // Debug log
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Media is required" });
+    }
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    // Validate file type and set type if not provided
+    const validTypes = ["image", "video"];
+    let mediaType = type;
+    if (!mediaType) {
+      // Fallback: Determine type from MIME type
+      mediaType = req.file.mimetype.startsWith("video/") ? "video" : "image";
+    }
+    if (!validTypes.includes(mediaType)) {
+      return res
+        .status(400)
+        .json({ error: `Invalid media type: ${mediaType}` });
+    }
+
+    // If posting to a group, verify user is a member
+    if (group) {
+      const groupDoc = await Group.findById(group);
+      if (!groupDoc) {
+        return res.status(404).json({ error: "Group not found" });
+      }
+      if (!groupDoc.members.includes(req.user._id)) {
+        return res
+          .status(403)
+          .json({ error: "Not authorized to post to this group" });
+      }
+    }
+
+    // Handle place creation/finding
+    let placeRef = null;
+    if (placeId && placeName && placeLat && placeLng) {
+      try {
+        const lat = parseFloat(placeLat);
+        const lng = parseFloat(placeLng);
+        if (isNaN(lat) || isNaN(lng)) {
+          throw new Error("Invalid coordinates");
+        }
+        const placeData = {
+          placeId: placeId.trim(),
+          name: placeName.trim(),
+          formattedAddress: placeName.trim(),
+          lat: lat,
+          lng: lng,
+        };
+        const place = await Place.findOrCreate(placeData);
+        placeRef = place._id;
+        await place.incrementPostsCount();
+      } catch (placeError) {
+        console.error("Place error:", placeError);
+        placeRef = null;
+      }
+    }
+
+    const hashtags = caption ? caption.match(/#\w+/g) || [] : [];
+
+    const newPost = new Post({
+      user: req.user._id,
+      caption: caption || "",
+      media: `uploads/user_${req.user._id}/posts/${req.file.filename}`,
+      type: mediaType,
+      place: placeRef,
+      group: group || null,
+      hashtags: hashtags.map((tag) => tag.toLowerCase()),
+    });
+
+    const savedPost = await newPost.save();
+
+    await savedPost.populate("group", "name");
+    if (savedPost.place) {
+      await savedPost.populate(
+        "place",
+        "name formattedAddress placeId coordinates"
+      );
+    }
+
+    if (savedPost.group) {
+      res.json({
+        success: true,
+        post: savedPost,
+        redirectTo: `/group/${savedPost.group._id}`,
+      });
+    } else {
+      res.json({
+        success: true,
+        post: savedPost,
+        redirectTo: "/home",
+      });
+    }
+  } catch (error) {
+    console.error("Error creating post:", error.message);
+    console.error("Full error:", error);
+
+    // Clean up uploaded file if save fails
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Failed to delete file:", err);
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to create post",
+      details: error.message,
+    });
+  }
+};
 
 // Get all posts for feed (updated to include group posts)
 exports.getFeed = async (req, res) => {
   try {
     // Get user's groups to show group posts they have access to
     const userGroups = await Group.find({ members: req.user._id });
-    const groupIds = userGroups.map(g => g._id);
-    
+    const groupIds = userGroups.map((g) => g._id);
+
     const posts = await Post.find({
       $or: [
         { group: null }, // Public posts
-        { group: { $in: groupIds } } // Group posts user has access to
-      ]
+        { group: { $in: groupIds } }, // Group posts user has access to
+      ],
     })
-      .populate('user', 'username avatar isVerified')
-      .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name') // Add group info
-      .populate('comments.user', 'username avatar')
+      .populate("user", "username avatar isVerified")
+      .populate("place", "name formattedAddress placeId coordinates")
+      .populate("group", "name") // Add group info
+      .populate("comments.user", "username avatar")
       .sort({ createdAt: -1 })
       .limit(20);
-    
-    res.render('feed', { posts, user: req.user });
+
+    res.render("feed", { posts, user: req.user });
   } catch (error) {
-    console.error('Error fetching feed:', error);
-    res.status(500).render('error', { message: 'Failed to load feed' });
+    console.error("Error fetching feed:", error);
+    res.status(500).render("error", { message: "Failed to load feed" });
   }
 };
 
@@ -79,130 +210,25 @@ exports.getPostsJson = async (req, res) => {
   try {
     // Get user's groups to show group posts they have access to
     const userGroups = await Group.find({ members: req.user._id });
-    const groupIds = userGroups.map(g => g._id);
-    
+    const groupIds = userGroups.map((g) => g._id);
+
     const posts = await Post.find({
       $or: [
         { group: null }, // Public posts
-        { group: { $in: groupIds } } // Group posts user has access to
-      ]
+        { group: { $in: groupIds } }, // Group posts user has access to
+      ],
     })
-      .populate('user', 'username avatar isVerified')
-      .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name') 
-      .populate('comments.user', 'username avatar')
+      .populate("user", "username avatar isVerified")
+      .populate("place", "name formattedAddress placeId coordinates")
+      .populate("group", "name")
+      .populate("comments.user", "username avatar")
       .sort({ createdAt: -1 })
       .limit(20);
-    
+
     res.json({ posts });
   } catch (error) {
-    console.error('Error fetching posts:', error);
-    res.status(500).json({ error: 'Failed to fetch posts' });
-  }
-};
-
-// Create new post (UPDATED with group support)
-exports.createPost = async (req, res) => {
-  try {
-    const { caption, group, placeId, placeName, placeLat, placeLng } = req.body;
-    
-    if (!req.file) {
-      return res.status(400).json({ error: 'Image is required' });
-    }
-
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
-
-    // If posting to a group, verify user is a member
-    if (group) {
-      const groupDoc = await Group.findById(group);
-      if (!groupDoc) {
-        return res.status(404).json({ error: 'Group not found' });
-      }
-      
-      // Check if user is a member of the group
-      if (!groupDoc.members.includes(req.user._id)) {
-        return res.status(403).json({ error: 'Not authorized to post to this group' });
-      }
-    }
-
-    // Handle place creation/finding if location data provided
-    let placeRef = null;
-    if (placeId && placeName && placeLat && placeLng) {
-      try {
-        // Validate coordinates
-        const lat = parseFloat(placeLat);
-        const lng = parseFloat(placeLng);
-        
-        if (isNaN(lat) || isNaN(lng)) {
-          throw new Error('Invalid coordinates');
-        }
-        
-        const placeData = {
-          placeId: placeId.trim(),
-          name: placeName.trim(),
-          formattedAddress: placeName.trim(), // Will be enhanced later with full address
-          lat: lat,
-          lng: lng
-        };
-        
-        const place = await Place.findOrCreate(placeData);
-        placeRef = place._id;
-        
-        // Increment posts count for this place
-        await place.incrementPostsCount();
-      } catch (placeError) {
-        // Continue without place if there's an error
-        placeRef = null;
-      }
-    }
-
-    // Extract hashtags from caption
-    const hashtags = caption ? caption.match(/#\w+/g) || [] : [];
-    
-    const newPost = new Post({
-      user: req.user._id,
-      caption: caption || '',
-      image: `uploads/user_${req.user._id}/posts/${req.file.filename}`,
-      place: placeRef, // Use place reference instead of location string
-      group: group || null, // null means public feed
-      hashtags: hashtags.map(tag => tag.toLowerCase())
-    });
-
-    const savedPost = await newPost.save();
-    
-    // Populate group and place info in response
-    await savedPost.populate('group', 'name');
-    if (savedPost.place) {
-      await savedPost.populate('place', 'name formattedAddress placeId coordinates');
-    }
-    
-    // Log where the post was created
-    if (savedPost.group) {
-      res.json({ 
-        success: true, 
-        post: savedPost,
-        // Add redirect info for frontend
-        redirectTo: `/group/${savedPost.group._id}`
-      });
-    } else {
-      res.json({ 
-        success: true, 
-        post: savedPost,
-        // Add redirect info for frontend
-        redirectTo: '/home'
-      });
-    }
-    
-  } catch (error) {
-    console.error('Error creating post:', error.message);
-    console.error('Full error:', error);
-    
-    res.status(500).json({ 
-      error: 'Failed to create post', 
-      details: error.message 
-    });
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Failed to fetch posts" });
   }
 };
 
@@ -219,7 +245,7 @@ exports.getPostComments = async (req, res) => {
     }
 
     const comments = post.comments.map((comment) => ({
-      _id: comment._id, 
+      _id: comment._id,
       text: comment.text,
       createdAt: comment.createdAt,
       user: {
@@ -249,14 +275,16 @@ exports.toggleLike = async (req, res) => {
 
     const post = await Post.findById(postId);
     if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     // Check if post is in a group and user has access
     if (post.group) {
       const group = await Group.findById(post.group);
       if (!group || !group.members.includes(userId)) {
-        return res.status(403).json({ error: 'Not authorized to interact with this post' });
+        return res
+          .status(403)
+          .json({ error: "Not authorized to interact with this post" });
       }
     }
 
@@ -273,15 +301,15 @@ exports.toggleLike = async (req, res) => {
     }
 
     await post.save();
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       liked: liked,
-      likesCount: post.likes.length 
+      likesCount: post.likes.length,
     });
   } catch (error) {
-    console.error('Error toggling like:', error);
-    res.status(500).json({ error: 'Failed to toggle like' });
+    console.error("Error toggling like:", error);
+    res.status(500).json({ error: "Failed to toggle like" });
   }
 };
 
@@ -292,44 +320,46 @@ exports.addComment = async (req, res) => {
     const { text } = req.body;
 
     if (!text || text.trim().length === 0) {
-      return res.status(400).json({ error: 'Comment text is required' });
+      return res.status(400).json({ error: "Comment text is required" });
     }
 
     const post = await Post.findById(postId);
     if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     // Check if post is in a group and user has access
     if (post.group) {
       const group = await Group.findById(post.group);
       if (!group || !group.members.includes(req.user._id)) {
-        return res.status(403).json({ error: 'Not authorized to comment on this post' });
+        return res
+          .status(403)
+          .json({ error: "Not authorized to comment on this post" });
       }
     }
 
     const comment = {
       user: req.user._id,
       text: text.trim(),
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     post.comments.push(comment);
     await post.save();
 
     // Populate the user info for the response
-    await post.populate('comments.user', 'username avatar');
-    
+    await post.populate("comments.user", "username avatar");
+
     const newComment = post.comments[post.comments.length - 1];
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       comment: newComment,
-      commentsCount: post.comments.length 
+      commentsCount: post.comments.length,
     });
   } catch (error) {
-    console.error('Error adding comment:', error);
-    res.status(500).json({ error: 'Failed to add comment' });
+    console.error("Error adding comment:", error);
+    res.status(500).json({ error: "Failed to add comment" });
   }
 };
 
@@ -340,16 +370,18 @@ exports.deletePost = async (req, res) => {
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     // Check if user owns the post
     if (post.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'Not authorized to delete this post' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to delete this post" });
     }
 
     // Log post.image to understand what it contains
-    console.log('Post image:', post.image);
+    console.log("Post image:", post.image);
 
     // Construct full path based on image
     let imagePath;
@@ -358,20 +390,25 @@ exports.deletePost = async (req, res) => {
       imagePath = post.image; // already absolute
     } else if (post.image.includes(req.user._id.toString())) {
       // If post.image already includes user directory
-      imagePath = path.join(__dirname, '..', post.image);
+      imagePath = path.join(__dirname, "..", post.image);
     } else {
       // Otherwise, assume image is just filename
-      imagePath = path.join(__dirname, '../uploads', req.user._id.toString(), path.basename(post.image));
+      imagePath = path.join(
+        __dirname,
+        "../uploads",
+        req.user._id.toString(),
+        path.basename(post.image)
+      );
     }
 
-    console.log('Resolved image path:', imagePath);
+    console.log("Resolved image path:", imagePath);
 
     // Delete image file
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
-      console.log('Image deleted successfully');
+      console.log("Image deleted successfully");
     } else {
-      console.warn('Image file not found at path:', imagePath);
+      console.warn("Image file not found at path:", imagePath);
     }
 
     // Delete post from DB
@@ -379,35 +416,37 @@ exports.deletePost = async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error('Error deleting post:', error);
-    res.status(500).json({ error: 'Failed to delete post' });
+    console.error("Error deleting post:", error);
+    res.status(500).json({ error: "Failed to delete post" });
   }
 };
 // Get single post
 exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('user', 'username avatar isVerified')
-      .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name') // Add group info
-      .populate('comments.user', 'username avatar');
+      .populate("user", "username avatar isVerified")
+      .populate("place", "name formattedAddress placeId coordinates")
+      .populate("group", "name") // Add group info
+      .populate("comments.user", "username avatar");
 
     if (!post) {
-      return res.status(404).render('error', { message: 'Post not found' });
+      return res.status(404).render("error", { message: "Post not found" });
     }
 
     // Check if post is in a group and user has access
     if (post.group) {
       const group = await Group.findById(post.group);
       if (!group || !group.members.includes(req.user._id)) {
-        return res.status(403).render('error', { message: 'Not authorized to view this post' });
+        return res
+          .status(403)
+          .render("error", { message: "Not authorized to view this post" });
       }
     }
 
-    res.render('post', { post, user: req.user });
+    res.render("post", { post, user: req.user });
   } catch (error) {
-    console.error('Error fetching post:', error);
-    res.status(500).render('error', { message: 'Failed to load post' });
+    console.error("Error fetching post:", error);
+    res.status(500).render("error", { message: "Failed to load post" });
   }
 };
 
@@ -415,27 +454,27 @@ exports.getPost = async (req, res) => {
 exports.getUserPosts = async (req, res) => {
   try {
     const userId = req.params.userId || req.user._id;
-    
+
     // Get user's groups to filter posts appropriately
     const userGroups = await Group.find({ members: req.user._id });
-    const groupIds = userGroups.map(g => g._id);
-    
-    const posts = await Post.find({ 
+    const groupIds = userGroups.map((g) => g._id);
+
+    const posts = await Post.find({
       user: userId,
       $or: [
         { group: null }, // Public posts
-        { group: { $in: groupIds } } // Group posts user has access to
-      ]
+        { group: { $in: groupIds } }, // Group posts user has access to
+      ],
     })
-      .populate('user', 'username avatar isVerified')
-      .populate('place', 'name formattedAddress placeId coordinates')
-      .populate('group', 'name')
+      .populate("user", "username avatar isVerified")
+      .populate("place", "name formattedAddress placeId coordinates")
+      .populate("group", "name")
       .sort({ createdAt: -1 });
 
     res.json({ posts });
   } catch (error) {
-    console.error('Error fetching user posts:', error);
-    res.status(500).json({ error: 'Failed to fetch posts' });
+    console.error("Error fetching user posts:", error);
+    res.status(500).json({ error: "Failed to fetch posts" });
   }
 };
 
@@ -448,18 +487,20 @@ exports.deleteComment = async (req, res) => {
     const post = await Post.findById(postId);
 
     if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
+      return res.status(404).json({ error: "Post not found" });
     }
 
     // Find the comment
     const comment = post.comments.id(commentId);
     if (!comment) {
-      return res.status(404).json({ error: 'Comment not found' });
+      return res.status(404).json({ error: "Comment not found" });
     }
 
     // Check ownership
     if (comment.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: 'You are not authorized to delete this comment' });
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to delete this comment" });
     }
 
     console.log("Delete Comment:", {
@@ -467,18 +508,17 @@ exports.deleteComment = async (req, res) => {
       postId: req.params.postId,
       commentId: req.params.commentId,
     });
-    
+
     // Remove the comment and save
     post.comments.pull({ _id: commentId });
     await post.save();
-  
-    res.json({ success: true, message: 'Comment deleted successfully' });
+
+    res.json({ success: true, message: "Comment deleted successfully" });
   } catch (error) {
-    console.error('Error deleting comment:', error);
-    res.status(500).json({ error: 'Failed to delete comment' });
+    console.error("Error deleting comment:", error);
+    res.status(500).json({ error: "Failed to delete comment" });
   }
 };
 
-
 // Export upload middleware
-exports.uploadImage = upload.single('image');
+exports.uploadImage = upload.single("image");
