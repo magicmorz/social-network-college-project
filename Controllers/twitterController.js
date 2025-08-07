@@ -404,7 +404,7 @@ exports.sharePostToTwitter = async (req, res) => {
     }
     
     // Get image path
-    const imagePath = path.join(__dirname, '..', post.image);
+    const imagePath = path.join(__dirname, '..', post.media);
     
     let tweetResult;
     

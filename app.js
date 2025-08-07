@@ -218,7 +218,7 @@ app.get("/debug-database", isAuthenticated, async (req, res) => {
         id: posts[0]._id,
         user: posts[0].user,
         caption: posts[0].caption,
-        image: posts[0].image,
+        image: posts[0].media,
         group: posts[0].group,
         createdAt: posts[0].createdAt
       });
@@ -249,7 +249,7 @@ app.get("/debug-database", isAuthenticated, async (req, res) => {
         id: p._id,
         user: p.user,
         caption: p.caption,
-        image: p.image,
+        image: p.media,
         group: p.group
       })),
       sampleUsers: users.map(u => ({
