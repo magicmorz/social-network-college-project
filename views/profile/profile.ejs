@@ -129,6 +129,17 @@
         font-size: 20px;
         cursor: pointer;
       }
+      .username-link {
+        color: inherit;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .username-link:hover {
+        text-decoration: underline;
+      }
+      .delete-post-btn:hover {
+        background: darkred;
+      }
     </style>
   </head>
   <body>
@@ -407,7 +418,6 @@
     </div>
 
     <script>
-      // Inside profile.ejs <script> tag
       document.addEventListener("DOMContentLoaded", function () {
         const followBtn = document.querySelector(".follow-btn");
         const modal = document.getElementById("postModal");
@@ -430,7 +440,7 @@
           ".modal-add-comment .post-comment-btn"
         );
 
-        let currentPostId = null; // Track current post ID
+        let currentPostId = null;
 
         if (followBtn) {
           followBtn.addEventListener("click", async function () {
@@ -475,7 +485,6 @@
           });
         }
 
-        // Open post modal
         document.querySelectorAll(".post-thumbnail").forEach((thumbnail) => {
           thumbnail.addEventListener("click", async function () {
             currentPostId = this.dataset.postId;
@@ -494,7 +503,7 @@
               }
               const postData = await postResponse.json();
               console.log("Post data:", postData);
-              console.log("Media path:", postData.post.media); // Debug media path
+              console.log("Media path:", postData.post.media);
 
               const commentsResponse = await fetch(
                 `/post/${currentPostId}/comments`
@@ -512,14 +521,14 @@
                 throw new Error(errorData.error || "Failed to fetch comments");
               }
               const commentsData = await commentsResponse.json();
-              console.log("Comments data:", commentsData); // Debug
+              console.log("Comments data:", commentsData);
 
               modalMedia.innerHTML = "";
               modalComments.innerHTML = "";
               modalCaption.innerHTML = "";
 
               modalHeaderImg.src = `/Uploads/user_${postData.post.user._id}/profile_picture/profile.jpg`;
-              modalUsername.textContent = postData.post.user.username;
+              modalUsername.innerHTML = `<a href="/u/${postData.post.user.username}" class="username-link">${postData.post.user.username}</a>`;
               modalVerifiedBadge.style.display = postData.post.user.isVerified
                 ? "inline"
                 : "none";
@@ -528,45 +537,56 @@
                 const imagePath = `/${postData.post.media.replace(
                   "uploads",
                   "Uploads"
-                )}`; // Ensure /Uploads and forward slashes
+                )}`;
                 modalMedia.innerHTML = `
-    <img src="${imagePath}" alt="Post image" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';" />
-    <div style="display: none; color: red; text-align: center;">Failed to load image</div>
-  `;
+                  <img src="${imagePath}" alt="Post image" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                  <div style="display: none; color: red; text-align: center;">Failed to load image</div>
+                `;
               } else if (postData.post.type === "video") {
                 const videoPath = `/${postData.post.media.replace(
                   "uploads",
                   "Uploads"
                 )}`;
                 modalMedia.innerHTML = `
-    <video controls>
-      <source src="${videoPath}" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>`;
+                  <video controls>
+                    <source src="${videoPath}" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>`;
               }
 
               if (postData.post.caption) {
                 modalCaption.innerHTML = `
-            <span class="fw-bold">${postData.post.user.username}</span>
-            <span>${postData.post.caption}</span>`;
+                  <span><a href="/u/${postData.post.user.username}" class="username-link fw-bold">${postData.post.user.username}</a></span>
+                  <span>${postData.post.caption}</span>`;
               }
+
+              // Add Delete Post button for post owner
+              const isPostOwner =
+                postData.post.user._id === "<%= currentUser._id %>";
+              modalComments.innerHTML = isPostOwner
+                ? `<button class="delete-post-btn" style="background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-bottom: 10px;">Delete Post</button>`
+                : "";
 
               commentsData.comments.forEach((comment) => {
                 const commentEl = document.createElement("div");
                 commentEl.classList.add("modal-comment");
                 commentEl.innerHTML = `
-            <img src="/Uploads/user_${
-              comment.user._id
-            }/profile_picture/profile.jpg" alt="${comment.user.username}" />
-            <div class="comment-content">
-              <span class="fw-bold">${comment.user.username}</span>
-              <span>${comment.text}</span>
-              ${
-                comment.gifUrl
-                  ? `<img src="${comment.gifUrl}" alt="Comment GIF" style="max-width: 100px;" />`
-                  : ""
-              }
-            </div>`;
+                  <img src="/Uploads/user_${
+                    comment.user._id
+                  }/profile_picture/profile.jpg" alt="${
+                  comment.user.username
+                }" />
+                  <div class="comment-content">
+                    <span class="fw-bold"><a href="/u/${
+                      comment.user.username
+                    }" class="username-link">${comment.user.username}</a></span>
+                    <span>${comment.text}</span>
+                    ${
+                      comment.gifUrl
+                        ? `<img src="${comment.gifUrl}" alt="Comment GIF" style="max-width: 100px;" />`
+                        : ""
+                    }
+                  </div>`;
                 modalComments.appendChild(commentEl);
               });
 
@@ -576,17 +596,51 @@
               modalLikeBtn.dataset.liked = userLikedPost;
               modalLikeBtn.innerHTML = userLikedPost
                 ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgb(255,48,64)">
-               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
-                 0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-             </svg>`
+                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                       1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                       0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                   </svg>`
                 : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
-                 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-             </svg>`;
+                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
+                       0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                       1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                   </svg>`;
               modalLikesCount.textContent = `${postData.post.likes.length} likes`;
+
+              // Delete Post button handler
+              if (isPostOwner) {
+                const deleteBtn =
+                  modalComments.querySelector(".delete-post-btn");
+                deleteBtn.addEventListener("click", async function () {
+                  if (!confirm("Are you sure you want to delete this post?"))
+                    return;
+                  try {
+                    const response = await fetch(`/post/${currentPostId}`, {
+                      method: "DELETE",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                      // Remove post from DOM
+                      const postElement = document
+                        .querySelector(
+                          `.post-thumbnail[data-post-id="${currentPostId}"]`
+                        )
+                        ?.closest(".post-container");
+                      if (postElement) postElement.remove();
+                      closeModal();
+                    } else {
+                      throw new Error(data.error || "Failed to delete post");
+                    }
+                  } catch (error) {
+                    console.error("Delete post error:", error);
+                    alert("Error: " + error.message);
+                  }
+                });
+              }
 
               modal.style.display = "flex";
             } catch (error) {
@@ -596,7 +650,6 @@
           });
         });
 
-        // Like/Unlike functionality
         modalLikeBtn.addEventListener("click", async function () {
           if (!currentPostId) return;
 
@@ -613,16 +666,16 @@
               this.dataset.liked = data.liked;
               this.innerHTML = data.liked
                 ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgb(255,48,64)">
-               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
-                 0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-             </svg>`
+                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                       1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                       0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                   </svg>`
                 : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
-                 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-             </svg>`;
+                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
+                       0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                       1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                   </svg>`;
               modalLikesCount.textContent = `${data.likesCount} likes`;
             } else {
               throw new Error(data.error || "Failed to toggle like");
@@ -633,7 +686,6 @@
           }
         });
 
-        // Comment functionality
         commentInput.addEventListener("input", function () {
           postCommentBtn.style.display = this.value.trim() ? "block" : "none";
         });
@@ -655,11 +707,11 @@
               const commentEl = document.createElement("div");
               commentEl.classList.add("modal-comment");
               commentEl.innerHTML = `
-          <img src="/Uploads/user_${data.comment.user._id}/profile_picture/profile.jpg" alt="${data.comment.user.username}" />
-          <div class="comment-content">
-            <span class="fw-bold">${data.comment.user.username}</span>
-            <span>${data.comment.text}</span>
-          </div>`;
+                <img src="/Uploads/user_${data.comment.user._id}/profile_picture/profile.jpg" alt="${data.comment.user.username}" />
+                <div class="comment-content">
+                  <span class="fw-bold"><a href="/u/${data.comment.user.username}" class="username-link">${data.comment.user.username}</a></span>
+                  <span>${data.comment.text}</span>
+                </div>`;
               modalComments.appendChild(commentEl);
               commentInput.value = "";
               postCommentBtn.style.display = "none";
@@ -682,6 +734,274 @@
             closeModal();
           }
         });
+      });
+      const followBtn = document.querySelector(".follow-btn");
+      const modal = document.getElementById("postModal");
+      const modalMedia = document.querySelector(".modal-media");
+      const modalHeaderImg = document.querySelector(".modal-header img");
+      const modalUsername = document.querySelector(".modal-header .username");
+      const modalVerifiedBadge = document.querySelector(
+        ".modal-header .verified-badge"
+      );
+      const modalCaption = document.querySelector(".modal-caption");
+      const modalComments = document.querySelector(".modal-comments");
+      const modalLikesCount = document.querySelector(
+        ".modal-actions .likes-count"
+      );
+      const modalLikeBtn = document.querySelector(".modal-actions .like-btn");
+      const commentInput = document.querySelector(
+        ".modal-add-comment .comment-input"
+      );
+      const postCommentBtn = document.querySelector(
+        ".modal-add-comment .post-comment-btn"
+      );
+
+      let currentPostId = null; // Track current post ID
+
+      if (followBtn) {
+        followBtn.addEventListener("click", async function () {
+          const username = this.dataset.username;
+          const isFollowing = this.dataset.following === "true";
+          const action = isFollowing ? "unfollow" : "follow";
+
+          try {
+            this.disabled = true;
+            this.textContent = isFollowing ? "Unfollowing..." : "Following...";
+
+            const response = await fetch(`/u/${username}/${action}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              this.dataset.following = data.isFollowing;
+              this.textContent = data.isFollowing ? "Following" : "Follow";
+              this.classList.toggle("following", data.isFollowing);
+              const followerCountEl = document.querySelector(".follower-count");
+              if (followerCountEl) {
+                followerCountEl.textContent = data.followerCount;
+              }
+            } else {
+              throw new Error(data.error || "Action failed");
+            }
+          } catch (error) {
+            console.error("Follow/unfollow error:", error);
+            alert("Error: " + error.message);
+            this.textContent = isFollowing ? "Following" : "Follow";
+          } finally {
+            this.disabled = false;
+          }
+        });
+      }
+
+      // Open post modal
+      document.querySelectorAll(".post-thumbnail").forEach((thumbnail) => {
+        thumbnail.addEventListener("click", async function () {
+          currentPostId = this.dataset.postId;
+          console.log("Fetching post with ID:", currentPostId);
+          try {
+            const postResponse = await fetch(`/post/${currentPostId}`);
+            if (!postResponse.ok) {
+              console.error(
+                "Fetch post status:",
+                postResponse.status,
+                postResponse.statusText
+              );
+              const errorData = await postResponse.json().catch(() => ({}));
+              console.error("Fetch post error:", errorData);
+              throw new Error(errorData.error || "Failed to fetch post");
+            }
+            const postData = await postResponse.json();
+            console.log("Post data:", postData);
+            console.log("Media path:", postData.post.media); // Debug media path
+
+            const commentsResponse = await fetch(
+              `/post/${currentPostId}/comments`
+            );
+            if (!commentsResponse.ok) {
+              console.error(
+                "Fetch comments status:",
+                commentsResponse.status,
+                commentsResponse.statusText
+              );
+              const errorData = await commentsResponse.json().catch(() => ({}));
+              console.error("Fetch comments error:", errorData);
+              throw new Error(errorData.error || "Failed to fetch comments");
+            }
+            const commentsData = await commentsResponse.json();
+            console.log("Comments data:", commentsData); // Debug
+
+            modalMedia.innerHTML = "";
+            modalComments.innerHTML = "";
+            modalCaption.innerHTML = "";
+
+            modalHeaderImg.src = `/Uploads/user_${postData.post.user._id}/profile_picture/profile.jpg`;
+            modalUsername.textContent = postData.post.user.username;
+            modalVerifiedBadge.style.display = postData.post.user.isVerified
+              ? "inline"
+              : "none";
+
+            if (postData.post.type === "image") {
+              const imagePath = `/${postData.post.media.replace(
+                "uploads",
+                "Uploads"
+              )}`; 
+              modalMedia.innerHTML = `
+        <img src="${imagePath}" alt="Post image" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none; color: red; text-align: center;">Failed to load image</div>
+      `;
+            } else if (postData.post.type === "video") {
+              const videoPath = `/${postData.post.media.replace(
+                "uploads",
+                "Uploads"
+              )}`;
+              modalMedia.innerHTML = `
+        <video controls>
+          <source src="${videoPath}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>`;
+            }
+
+            if (postData.post.caption) {
+              modalCaption.innerHTML = `
+                <span class="fw-bold">${postData.post.user.username}</span>
+                <span>${postData.post.caption}</span>`;
+            }
+
+            commentsData.comments.forEach((comment) => {
+              const commentEl = document.createElement("div");
+              commentEl.classList.add("modal-comment");
+              commentEl.innerHTML = `
+                <img src="/Uploads/user_${
+                  comment.user._id
+                }/profile_picture/profile.jpg" alt="${comment.user.username}" />
+                <div class="comment-content">
+                  <span class="fw-bold">${comment.user.username}</span>
+                  <span>${comment.text}</span>
+                  ${
+                    comment.gifUrl
+                      ? `<img src="${comment.gifUrl}" alt="Comment GIF" style="max-width: 100px;" />`
+                      : ""
+                  }
+                </div>`;
+              modalComments.appendChild(commentEl);
+            });
+
+            const userLikedPost = postData.post.likes.includes(
+              "<%= currentUser._id %>"
+            );
+            modalLikeBtn.dataset.liked = userLikedPost;
+            modalLikeBtn.innerHTML = userLikedPost
+              ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgb(255,48,64)">
+                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                     1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                     0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                 </svg>`
+              : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
+                     0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                     1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                 </svg>`;
+            modalLikesCount.textContent = `${postData.post.likes.length} likes`;
+
+            modal.style.display = "flex";
+          } catch (error) {
+            console.error("Error opening post:", error);
+            alert("Error: " + error.message);
+          }
+        });
+      });
+
+      // Like/Unlike functionality
+      modalLikeBtn.addEventListener("click", async function () {
+        if (!currentPostId) return;
+
+        try {
+          const response = await fetch(`/post/${currentPostId}/like`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            this.dataset.liked = data.liked;
+            this.innerHTML = data.liked
+              ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgb(255,48,64)">
+                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                     1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                     0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                 </svg>`
+              : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
+                     0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                     1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                 </svg>`;
+            modalLikesCount.textContent = `${data.likesCount} likes`;
+          } else {
+            throw new Error(data.error || "Failed to toggle like");
+          }
+        } catch (error) {
+          console.error("Like/unlike error:", error);
+          alert("Error: " + error.message);
+        }
+      });
+
+      // Comment functionality
+      commentInput.addEventListener("input", function () {
+        postCommentBtn.style.display = this.value.trim() ? "block" : "none";
+      });
+
+      postCommentBtn.addEventListener("click", async function () {
+        if (!currentPostId || !commentInput.value.trim()) return;
+
+        try {
+          const response = await fetch(`/post/${currentPostId}/comment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: commentInput.value.trim() }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            const commentEl = document.createElement("div");
+            commentEl.classList.add("modal-comment");
+            commentEl.innerHTML = `
+              <img src="/Uploads/user_${data.comment.user._id}/profile_picture/profile.jpg" alt="${data.comment.user.username}" />
+              <div class="comment-content">
+                <span class="fw-bold">${data.comment.user.username}</span>
+                <span>${data.comment.text}</span>
+              </div>`;
+            modalComments.appendChild(commentEl);
+            commentInput.value = "";
+            postCommentBtn.style.display = "none";
+          } else {
+            throw new Error(data.error || "Failed to add comment");
+          }
+        } catch (error) {
+          console.error("Comment error:", error);
+          alert("Error: " + error.message);
+        }
+      });
+
+      window.closeModal = function () {
+        modal.style.display = "none";
+        currentPostId = null;
+      };
+
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) {
+          closeModal();
+        }
       });
     </script>
   </body>
