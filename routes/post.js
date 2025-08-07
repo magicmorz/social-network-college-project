@@ -19,13 +19,13 @@ const requireAuth = async (req, res, next) => {
     req.user = user; // Attach full user object
     next();
   } catch (error) {
-    console.error('Auth error:', error.message);
+    console.error('❌ Auth error:', error.message);
     return res.status(500).json({ error: 'Authentication error' });
   }
 };
 
-// POST /posts - Create new post 
-router.post('/', requireAuth, postController.uploadMedia, postController.createPost);
+// POST /posts - Create new post (for your modal)
+router.post('/', requireAuth, postController.uploadImage, postController.createPost);
 
 // POST /posts/:id/like - Like/unlike post
 router.post('/:id/like', requireAuth, postController.toggleLike);
