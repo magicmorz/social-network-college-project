@@ -32,6 +32,7 @@ router.post(
   postController.createPost
 );
 
+
 // POST /posts/:id/like - Like/unlike post
 router.post("/:id/like", requireAuth, postController.toggleLike);
 

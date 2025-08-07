@@ -164,7 +164,7 @@
         <div class="profile-header">
           <div class="profile-avatar">
             <img
-              src="/Uploads/user_<%= targetUser._id %>/profile_picture/profile.jpg"
+              src="/uploads/user_<%= targetUser._id %>/profile_picture/profile.jpg"
               alt="<%= targetUser.username %>'s avatar"
               class="profile-img"
             />
@@ -279,9 +279,10 @@
                 Image failed to load: <%= filename %>
               </div>
               <% } else if (post.type === 'video') { %>
+
               <video
-                src="/Uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
-                poster="/utils/video_placeholder.jpg"
+                src="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename) %>"
+                poster="/uploads/user_<%= post.user._id %>/posts/<%= encodeURIComponent(filename.replace(/\.(mp4|webm)$/i, '.jpg')) %>"
                 muted
                 class="post-media"
                 onloadstart="console.log('Video load started: ' + this.src)"
@@ -293,12 +294,14 @@
                 />
                 Your browser does not support the video tag.
               </video>
+
               <div
                 class="media-error"
                 style="display: none; color: red; text-align: center"
               >
                 Video failed to load: <%= filename %>
               </div>
+
               <% } %> <% } else { %>
               <div class="post-text-preview">
                 <p>

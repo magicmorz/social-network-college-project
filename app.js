@@ -6,7 +6,8 @@ const fs = require("fs");
 const Post = require('./models/Post');
 const User = require('./models/User');
 const Group = require('./models/Group'); 
-const Place = require('./models/Place'); 
+const Place = require('./models/Place');
+const TwitterAccount = require('./models/TwitterAccount'); 
 require("dotenv").config();
 
 const app = express();
@@ -20,10 +21,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(session({
   secret: process.env.SESSION_SECRET || "devsecret",
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Changed to true to ensure sessions are created for OAuth flow
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax', // Allow cookies in OAuth redirects
     maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 }));
@@ -82,9 +84,6 @@ app.get("/", (req, res) => {
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
-const postController = require("./Controllers/postController");
-app.get("/api/gifs/search", postController.searchGifs);
-
 // API routes (with authentication)
 const groupRouter = require('./routes/group');  
 const usersRouter = require('./routes/users');
@@ -101,8 +100,10 @@ app.use('/search', searchRoutes);
 
 const profileRoutes = require('./routes/profile');
 const placeRoutes = require('./routes/place');
+const twitterRoutes = require('./routes/twitter');
 app.use('/u', profileRoutes);
 app.use('/places', placeRoutes);
+app.use('/twitter', twitterRoutes);
 
 // Home route - loads posts from followed users, groups, and user's own posts
 app.get("/home", isAuthenticated, async (req, res) => {

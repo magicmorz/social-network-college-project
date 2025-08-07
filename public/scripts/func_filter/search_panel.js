@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchTabs = document.querySelectorAll(".search-tab");
   const usersTab = document.getElementById("usersTab");
   const postsTab = document.getElementById("postsTab");
+  const groupsTab = document.getElementById("groupsTab");
 
   // User search elements
   const userSearchField = document.getElementById("userSearchField");
@@ -29,6 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const postResults = document.getElementById("postResults");
   const postLoading = document.getElementById("postLoading");
 
+  // Group search elements
+  const groupSearchField = document.getElementById("groupSearchField");
+  const groupResults = document.getElementById("groupResults");
+  const groupLoading = document.getElementById("groupLoading");
+
   // Current active tab and search state
   let currentTab = "users";
   let userSearchState = {
@@ -40,6 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let postSearchState = {
     page: 1,
     hasMore: true,
+    loading: false,
+    lastQuery: "",
+  };
+  let groupSearchState = {
     loading: false,
     lastQuery: "",
   };
@@ -61,9 +71,17 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebar.classList.toggle("collapsed", willOpen);
 
     if (willOpen) {
-      const activeSearchField =
-        currentTab === "users" ? userSearchField : postSearchField;
+      const activeSearchField = getActiveSearchField();
       activeSearchField.focus();
+    }
+  }
+
+  function getActiveSearchField() {
+    switch (currentTab) {
+      case "users": return userSearchField;
+      case "posts": return postSearchField;
+      case "groups": return groupSearchField;
+      default: return userSearchField;
     }
   }
 
@@ -79,12 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update tab content
     usersTab.classList.toggle("active", tabName === "users");
     postsTab.classList.toggle("active", tabName === "posts");
+    groupsTab.classList.toggle("active", tabName === "groups");
 
     currentTab = tabName;
 
     // Focus the search field of the active tab
-    const activeSearchField =
-      tabName === "users" ? userSearchField : postSearchField;
+    const activeSearchField = getActiveSearchField();
     activeSearchField.focus();
 
     // Clear results when switching tabs
@@ -96,11 +114,17 @@ document.addEventListener("DOMContentLoaded", () => {
         loading: false,
         lastQuery: "",
       };
-    } else {
+    } else if (tabName === "posts") {
       postResults.innerHTML = "";
       postSearchState = {
         page: 1,
         hasMore: true,
+        loading: false,
+        lastQuery: "",
+      };
+    } else if (tabName === "groups") {
+      groupResults.innerHTML = "";
+      groupSearchState = {
         loading: false,
         lastQuery: "",
       };
@@ -134,10 +158,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prevent multiple simultaneous requests
     if (userSearchState.loading) return;
 
-    // Reset if it's a new search
     if (!loadMore || userSearchState.lastQuery !== query) {
       userSearchState = {
         page: 1,
@@ -180,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
           renderUserResults(data.users);
         }
         userSearchState.page++;
-        userSearchState.hasMore = data.users.length === 20; // Assume no more if less than limit
+        userSearchState.hasMore = data.users.length === 20;
       } else {
         if (!loadMore) {
           userResults.innerHTML =
@@ -215,10 +237,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prevent multiple simultaneous requests
     if (postSearchState.loading) return;
 
-    // Reset if it's a new search
     if (!loadMore || postSearchState.lastQuery !== query) {
       postSearchState = {
         page: 1,
@@ -263,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
           renderPostResults(data.posts);
         }
         postSearchState.page++;
-        postSearchState.hasMore = data.posts.length === 20; // Assume no more if less than limit
+        postSearchState.hasMore = data.posts.length === 20;
       } else {
         if (!loadMore) {
           postResults.innerHTML =
@@ -283,8 +303,102 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Group search
+  async function searchGroups() {
+    const query = groupSearchField.value.trim();
+
+    if (!query) {
+      groupResults.innerHTML = "";
+      groupSearchState = { loading: false, lastQuery: "" };
+      return;
+    }
+
+    if (groupSearchState.loading) return;
+
+    groupSearchState.loading = true;
+    groupSearchState.lastQuery = query;
+    groupLoading.style.display = "block";
+
+    try {
+      console.log('Searching for groups with query:', query);
+      const response = await fetch(`/search/groups?q=${encodeURIComponent(query)}`);
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Data received:', data);
+
+      // Extract groups and current user ID from response
+      const groups = data.groups || data; // Handle both old and new format
+      const currentUserId = data.currentUserId;
+      
+      // Store current user ID globally for use in renderGroupResults
+      if (currentUserId) {
+        window.currentUserId = currentUserId;
+      }
+
+      if (groups && groups.length > 0) {
+        renderGroupResults(groups);
+      } else {
+        groupResults.innerHTML =
+          '<div class="text-center text-muted mt-3">No groups found</div>';
+      }
+    } catch (error) {
+      console.error("Error searching groups:", error);
+      groupResults.innerHTML =
+        '<div class="text-center text-danger mt-3">Error searching groups</div>';
+    } finally {
+      groupSearchState.loading = false;
+      groupLoading.style.display = "none";
+    }
+  }
+
   /* ---------------------------------------------------------------
-       5 • Render search results
+       5 • Join group functionality
+       --------------------------------------------------------------- */
+  async function joinGroup(groupId, buttonElement) {
+    try {
+      buttonElement.disabled = true;
+      buttonElement.textContent = 'Joining...';
+
+      const response = await fetch(`/api/group/${groupId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to join group');
+      }
+
+      buttonElement.textContent = 'Joined!';
+      buttonElement.classList.add('joined');
+      
+      showMessage('Successfully joined the group!', 'success');
+      
+    } catch (error) {
+      buttonElement.disabled = false;
+      buttonElement.textContent = 'Join Group';
+      showMessage(error.message, 'error');
+    }
+  }
+
+  function showMessage(text, type) {
+    const message = document.createElement('div');
+    message.className = `search-message ${type}`;
+    message.textContent = text;
+    document.body.appendChild(message);
+    
+    setTimeout(() => message.remove(), 3000);
+  }
+
+  /* ---------------------------------------------------------------
+       6 • Render search results
        --------------------------------------------------------------- */
   function renderUserResults(users) {
     const html = users
@@ -416,8 +530,63 @@ document.addEventListener("DOMContentLoaded", () => {
     postResults.insertAdjacentHTML("beforeend", html);
   }
 
+function renderGroupResults(groups) {
+    const resultsContainer = document.getElementById('groupResults');
+    if (!groups || groups.length === 0) {
+      resultsContainer.innerHTML = '<div class="text-center text-muted mt-3">No groups found</div>';
+      return;
+    }
+
+    const groupsHTML = groups
+      .map(
+        (group) => {
+          // Check if current user is already a member
+          const currentUserId = window.currentUserId;
+          const isMember = group.members && group.members.some(member => {
+            // Handle different formats of member IDs
+            const memberId = member._id || member;
+            return memberId === currentUserId || memberId.toString() === currentUserId;
+          });
+
+          // Determine button text and state
+          let buttonHTML;
+          if (isMember) {
+            buttonHTML = `<button class="join-group-btn member-btn" disabled>You are a member</button>`;
+          } else {
+            buttonHTML = `<button class="join-group-btn" data-group-id="${group._id}">Join Group</button>`;
+          }
+
+          return `
+            <div class="search-result-item">
+              <div class="search-result-group">
+                <div class="group-info">
+                  <div class="group-name">${group.name}</div>
+                  <div class="group-description">${group.description || 'No description'}</div>
+                  <div class="group-meta">
+                    <span class="member-count">${group.members ? group.members.length : 0} members</span>
+                    <span class="created-by">by ${group.createdBy?.username || 'Unknown'}</span>
+                  </div>
+                </div>
+                ${buttonHTML}
+              </div>
+            </div>
+          `;
+        }
+      )
+      .join('');
+
+    resultsContainer.innerHTML = groupsHTML;
+
+    // Add join button event listeners (only for non-member buttons)
+    resultsContainer.querySelectorAll('.join-group-btn:not(.member-btn)').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        joinGroup(e.target.dataset.groupId, e.target);
+      });
+    });
+  }
+
   /* ---------------------------------------------------------------
-       6 • Infinite scroll functionality
+       7 • Infinite scroll functionality
        --------------------------------------------------------------- */
   function setupInfiniteScroll() {
     userResults.addEventListener("scroll", () => {
@@ -452,7 +621,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------------------------------------------------------------
-       7 • Event listeners
+       8 • Event listeners
        --------------------------------------------------------------- */
 
   // Tab switching
@@ -502,6 +671,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 300)
   );
 
+  groupSearchField.addEventListener(
+    "input",
+    debounce(() => {
+      searchGroups();
+    }, 300)
+  );
+
   // Advanced search form submissions
   userAdvancedForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -538,8 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (clickedInsidePanel || clickedMagnifier) return;
 
-    const activeSearchField =
-      currentTab === "users" ? userSearchField : postSearchField;
+    const activeSearchField = getActiveSearchField();
 
     if (document.activeElement === activeSearchField) {
       activeSearchField.blur();

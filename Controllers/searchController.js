@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Post = require('../models/Post');
+const Group = require('../models/Group');
 
 // Advanced user search endpoint
 exports.searchUsers = async (req, res, next) => {
@@ -144,4 +145,60 @@ exports.searchPosts = async (req, res, next) => {
         console.error('Error in post search:', err);
         next(err);
     }
-}; 
+};
+
+// Group search endpoint 
+exports.searchGroups = async (req, res, next) => {
+    try {
+        console.log('🔍 Group search called with query:', req.query);
+        const { q } = req.query;
+        
+        if (!q) {
+            console.log('❌ No query provided');
+            return res.status(400).json({ error: 'Search query required' });
+        }
+        
+        console.log('🔍 Searching for groups with query:', q);
+        
+        // First, let's check if there are ANY public groups
+        const publicGroupsCount = await Group.countDocuments({ isPublic: true });
+        console.log('📊 Public groups in database:', publicGroupsCount);
+        
+        // If no public groups exist, return empty array with user ID
+        if (publicGroupsCount === 0) {
+            console.log('❌ No public groups found in database');
+            return res.json({
+                groups: [],
+                currentUserId: req.session.userId
+            });
+        }
+        
+        // Search both name and description fields, case-insensitive
+        const groups = await Group.find({
+            $and: [
+                { isPublic: true },    // Only search public groups
+                {
+                    $or: [
+                        { name: { $regex: q, $options: 'i' } },           // Match name
+                        { description: { $regex: q, $options: 'i' } }     // Match description
+                    ]
+                }
+            ]
+        })
+        .populate('createdBy', 'username avatar')
+        .populate('members', '_id')  // Include member IDs so frontend can check membership
+        .limit(10);  // Limit search results for performance
+        
+        console.log('📋 Search results:', groups.length, groups);
+        
+        // Return both groups and current user ID
+        res.json({
+            groups: groups,
+            currentUserId: req.session.userId
+        });
+        
+    } catch (err) {
+        console.error('Error in group search:', err);
+        res.status(500).json({ error: 'Search failed' });
+    }
+};

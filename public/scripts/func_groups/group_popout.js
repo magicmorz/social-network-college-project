@@ -4,7 +4,7 @@
  * 
  * This script handles the groups popup interface that allows users to:
  * - View all their groups
- * - Create new groups
+ * - Create new groups (public or private)
  * - Navigate to specific groups
  * - Leave or delete groups
  * - Access group admin settings (if they have permissions)
@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cancelCreateBtn   = document.getElementById('cancelCreateGroup');   // Cancel button in create modal
   const submitCreateBtn   = document.getElementById('submitCreateGroup');   // Submit button in create modal
   const newGroupNameInput = document.getElementById('newGroupName');        // Input field for new group name
+  const groupDescInput    = document.getElementById('groupDescription');    // NEW: Group description textarea
+  const makePublicCheckbox = document.getElementById('makeGroupPublic');    // NEW: Public/private checkbox
   const memberListDiv     = document.getElementById('memberList');          // Container for member checkboxes
 
   // === POPUP VISIBILITY HELPERS ===
@@ -274,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * This function builds the complete UI for each group including:
    * - Group name and icon
    * - Permission badges (Creator/Admin)
+   * - Public/Private indicator
    * - Action buttons (Settings, Leave/Delete)
    * - Click handlers for navigation
    * 
@@ -291,13 +294,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupInfo = document.createElement('div');
     groupInfo.className = 'd-flex align-items-center group-info-clickable';
     groupInfo.style.cursor = 'pointer'; // Visual indication that this area is clickable
+    
+    // Determine if group is public (if we have the data)
+    let isPublic = false;
+    if (groupData && typeof groupData.isPublic !== 'undefined') {
+      isPublic = groupData.isPublic;
+    }
+    
+    // Add public/private indicator icon
+    const privacyIcon = isPublic ? 
+      '<i class="bi bi-globe text-success me-1" title="Public Group"></i>' : 
+      '<i class="bi bi-lock text-muted me-1" title="Private Group"></i>';
+    
     groupInfo.innerHTML = `
       <div class="avatar bg-light rounded-circle d-flex 
                   align-items-center justify-content-center me-3">
         <i class="bi bi-people fs-5 text-secondary"></i>
       </div>
       <div>
-        <span class="group-name">${name}</span>
+        <div class="d-flex align-items-center">
+          ${privacyIcon}
+          <span class="group-name">${name}</span>
+        </div>
         <div class="group-badges"></div>
       </div>
     `;
@@ -462,6 +480,8 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleMainPopup(false);   // Close the main popup
     // Reset the create form to empty state
     newGroupNameInput.value = '';
+    groupDescInput.value = '';              // NEW: Reset description
+    makePublicCheckbox.checked = false;     // NEW: Default to private
     memberListDiv.querySelectorAll('input').forEach(cb => cb.checked = false);
     toggleCreateModal(true);  // Open the create modal
   }
@@ -474,11 +494,16 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Submit button handler for creating a new group
    * Validates input, sends data to server, and updates UI
+   * NOW INCLUDES: description and public/private setting
    */
   submitCreateBtn.addEventListener('click', async () => {
     // Validate that user entered a group name
     const name = newGroupNameInput.value.trim();
     if (!name) return alert('Please enter a group name.');
+
+    // Get all form values
+    const description = groupDescInput.value.trim();
+    const isPublic = makePublicCheckbox.checked;
 
     // Collect all selected member IDs from checkboxes
     const memberIds = Array.from(
@@ -486,11 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ).map(cb => cb.value);
 
     try {
-      // Send group creation request to server
+      // Send group creation request to server with new fields
       const res = await fetch('/api/group', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name, members: memberIds })
+        body:    JSON.stringify({ 
+          name, 
+          description,    // NEW FIELD
+          isPublic,       // NEW FIELD
+          members: memberIds 
+        })
       });
       
       // Validate JSON response (standard error handling pattern)
@@ -511,7 +541,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Add the new group to the UI immediately (optimistic update)
       await addGroupListItem(group._id, group.name, group);
       toggleCreateModal(false); // Close the create modal
-      alert('Group created successfully!');
+      
+      // Show success message with privacy status
+      const privacyStatus = isPublic ? 'public' : 'private';
+      alert(`Group "${name}" created successfully as a ${privacyStatus} group!`);
+      
     } catch (err) {
       // Handle any errors in group creation
       console.error('Error creating group:', err);
