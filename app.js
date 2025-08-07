@@ -84,9 +84,6 @@ app.use('/auth', authRoutes);
 
 const postController = require("./Controllers/postController");
 app.get("/api/gifs/search", postController.searchGifs);
-app.get("/post/:id/comments", postController.getPostComments);
-app.post("/post/:id/comment", postController.addComment);
-app.delete("/post/:postId/comments/:commentId", postController.deleteComment);
 
 // API routes (with authentication)
 const groupRouter = require('./routes/group');  
