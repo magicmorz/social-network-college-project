@@ -1,6 +1,6 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
-const Group = require('../models/Group'); // Add this import
+const Group = require('../models/Group');
 const Place = require('../models/Place');
 const multer = require('multer');
 const path = require('path');

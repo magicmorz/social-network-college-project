@@ -43,11 +43,17 @@
     <link rel="stylesheet" href="/styles/feed_responsivness.css" />
     <link rel="stylesheet" href="/styles/post_options_menu.css" />
     <link rel="stylesheet" href="/styles/share.css" />
+
     <link rel="stylesheet" href="/styles/group_popup.css" />
     <link rel="stylesheet" href="/styles/group_admin.css" />
+    <link rel="stylesheet" href="/styles/group_search.css" /> 
 
     <link rel="stylesheet" href="/styles/upload_post.css" />
     <link rel="stylesheet" href="/styles/location_autocomplete.css" />
+
+    <link rel="stylesheet" href="/styles/group_feed.css">
+
+     <link rel="stylesheet" href="/styles/group_feed.css">
     <link rel="stylesheet" href="/styles/twitter_integration.css" />
   </head>
 
@@ -470,11 +476,6 @@
               <i class="bi bi-bookmark"></i>Saved
             </button>
 
-            <!-- Twitter Account Settings -->
-            <button id="twitterSettingsBtn" class="menu-item">
-              <i class="bi bi-twitter-x"></i>Twitter Account
-            </button>
-
             <!-- Toggle dark/light -->
             <button id="themeSwitch" class="menu-item">
               <i class="bi bi-brightness-high"></i>Switch appearance
@@ -504,198 +505,198 @@
               <span class="slider"></span>
             </label>
           </div>
-
-          <!-- Twitter Settings Menu -->
-          <div id="twitterSettingsMenu" class="more-menu" style="display: none">
-            <div class="menu-header">
-              <button id="twitterBackBtn" class="icon-btn">
-                <i class="bi bi-chevron-left"></i>
-              </button>
-              <span class="title">Twitter Account</span>
-              <i class="bi bi-twitter-x"></i>
-            </div>
-            <div class="twitter-settings-content">
-              <div id="twitterConnectionInfo" class="twitter-info" style="display: none;">
-                <div class="twitter-profile">
-                  <img id="twitterProfileImage" src="" alt="Twitter Profile" class="twitter-avatar">
-                  <div class="twitter-details">
-                    <span id="twitterUsername" class="twitter-name"></span>
-                    <span id="twitterHandle" class="twitter-handle"></span>
-                  </div>
-                </div>
-                <button id="disconnectTwitterBtn" class="menu-item disconnect-btn">
-                  <i class="bi bi-unlink"></i>Disconnect Account
-                </button>
-              </div>
-              <div id="twitterNotConnected" class="twitter-not-connected">
-                <p class="text-muted">No Twitter account connected</p>
-                <button id="connectTwitterFromSettings" class="menu-item connect-btn">
-                  <i class="bi bi-twitter-x"></i>Connect Twitter Account
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </nav>
-      <!-- Search slide-out panel -->
-      <div id="searchPanel" class="search-panel">
-        <!-- header row -->
-        <div class="search-header d-flex align-items-center p-3">
-          <h6 class="m-0 flex-grow-1 fw-semibold">Search</h6>
-          <button id="searchCloseBtn" class="icon-btn">&times;</button>
-        </div>
+            <!-- Search slide-out panel -->
+        <div id="searchPanel" class="search-panel">
+          <!-- header row -->
+          <div class="search-header d-flex align-items-center p-3">
+            <h6 class="m-0 flex-grow-1 fw-semibold">Search</h6>
+            <button id="searchCloseBtn" class="icon-btn">&times;</button>
+          </div>
 
-        <!-- Search Tabs -->
-        <div class="search-tabs">
-          <button class="search-tab active" data-tab="users">Users</button>
-          <button class="search-tab" data-tab="posts">Posts</button>
-        </div>
+          <!-- Search Tabs -->
+          <div class="search-tabs">
+            <button class="search-tab active" data-tab="users">Users</button>
+            <button class="search-tab" data-tab="posts">Posts</button>
+            <button class="search-tab" data-tab="groups">Groups</button>
+          </div>
 
-        <!-- Users Search Tab -->
-        <div id="usersTab" class="search-tab-content active">
-          <div class="search-body p-3">
-            <!-- Basic search input -->
-            <div class="input-group mb-3">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input
-                id="userSearchField"
-                type="text"
-                class="form-control"
-                placeholder="Search users..."
-                autocomplete="off"
-              />
-            </div>
-
-            <!-- Advanced Search Button -->
-            <button
-              id="userAdvancedBtn"
-              class="btn btn-outline-primary btn-sm mb-3 w-100"
-            >
-              Advanced Search
-            </button>
-
-            <!-- Advanced Search Form (hidden by default) -->
-            <div
-              id="userAdvancedForm"
-              class="advanced-search-form"
-              style="display: none"
-            >
-              <div class="mb-3">
-                <label class="form-label small">Joined After</label>
-                <input type="date" id="userJoinedAfter" class="form-control" />
+          <!-- Users Search Tab -->
+          <div id="usersTab" class="search-tab-content active">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="userSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search users..."
+                  autocomplete="off"
+                />
               </div>
-              <div class="mb-3">
-                <div class="form-check">
+
+              <!-- Advanced Search Button -->
+              <button
+                id="userAdvancedBtn"
+                class="btn btn-outline-primary btn-sm mb-3 w-100"
+              >
+                Advanced Search
+              </button>
+
+              <!-- Advanced Search Form (hidden by default) -->
+              <div
+                id="userAdvancedForm"
+                class="advanced-search-form"
+                style="display: none"
+              >
+                <div class="mb-3">
+                  <label class="form-label small">Joined After</label>
+                  <input type="date" id="userJoinedAfter" class="form-control" />
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="userIsVerified"
+                    />
+                    <label class="form-check-label small" for="userIsVerified">
+                      Verified users only
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Group</label>
                   <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="userIsVerified"
+                    type="text"
+                    id="userGroup"
+                    class="form-control"
+                    placeholder="Enter group name"
                   />
-                  <label class="form-check-label small" for="userIsVerified">
-                    Verified users only
-                  </label>
                 </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label small">Group</label>
-                <input
-                  type="text"
-                  id="userGroup"
-                  class="form-control"
-                  placeholder="Enter group name"
-                />
+
+              <!-- Search Results -->
+              <div id="userResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="userLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
               </div>
             </div>
+          </div>
 
-            <!-- Search Results -->
-            <div id="userResults" class="search-results mt-3"></div>
+          <!-- Posts Search Tab -->
+          <div id="postsTab" class="search-tab-content">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="postSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search posts..."
+                  autocomplete="off"
+                />
+              </div>
 
-            <!-- Loading indicator -->
-            <div
-              id="userLoading"
-              class="text-center mt-3"
-              style="display: none"
-            >
-              <div class="spinner-border spinner-border-sm" role="status"></div>
-              <span class="ms-2">Searching...</span>
+              <!-- Advanced Search Button -->
+              <button
+                id="postAdvancedBtn"
+                class="btn btn-outline-primary btn-sm mb-3 w-100"
+              >
+                Advanced Search
+              </button>
+
+              <!-- Advanced Search Form (hidden by default) -->
+              <div
+                id="postAdvancedForm"
+                class="advanced-search-form"
+                style="display: none"
+              >
+                <div class="mb-3">
+                  <label class="form-label small">Post Type</label>
+                  <select id="postType" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="text">Text</option>
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label class="form-label small">Date From</label>
+                    <input type="date" id="postDateFrom" class="form-control" />
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small">Date To</label>
+                    <input type="date" id="postDateTo" class="form-control" />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    id="postTags"
+                    class="form-control"
+                    placeholder="tag1, tag2, tag3"
+                  />
+                </div>
+              </div>
+
+              <!-- Search Results -->
+              <div id="postResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="postLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Groups Search Tab -->
+          <div id="groupsTab" class="search-tab-content">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="groupSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search groups..."
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- Search Results -->
+              <div id="groupResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="groupLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Posts Search Tab -->
-        <div id="postsTab" class="search-tab-content">
-          <div class="search-body p-3">
-            <!-- Basic search input -->
-            <div class="input-group mb-3">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input
-                id="postSearchField"
-                type="text"
-                class="form-control"
-                placeholder="Search posts..."
-                autocomplete="off"
-              />
-            </div>
-
-            <!-- Advanced Search Button -->
-            <button
-              id="postAdvancedBtn"
-              class="btn btn-outline-primary btn-sm mb-3 w-100"
-            >
-              Advanced Search
-            </button>
-
-            <!-- Advanced Search Form (hidden by default) -->
-            <div
-              id="postAdvancedForm"
-              class="advanced-search-form"
-              style="display: none"
-            >
-              <div class="mb-3">
-                <label class="form-label small">Post Type</label>
-                <select id="postType" class="form-select">
-                  <option value="">All Types</option>
-                  <option value="text">Text</option>
-                  <option value="image">Image</option>
-                  <option value="video">Video</option>
-                </select>
-              </div>
-              <div class="row mb-3">
-                <div class="col-6">
-                  <label class="form-label small">Date From</label>
-                  <input type="date" id="postDateFrom" class="form-control" />
-                </div>
-                <div class="col-6">
-                  <label class="form-label small">Date To</label>
-                  <input type="date" id="postDateTo" class="form-control" />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Tags (comma-separated)</label>
-                <input
-                  type="text"
-                  id="postTags"
-                  class="form-control"
-                  placeholder="tag1, tag2, tag3"
-                />
-              </div>
-            </div>
-
-            <!-- Search Results -->
-            <div id="postResults" class="search-results mt-3"></div>
-
-            <!-- Loading indicator -->
-            <div
-              id="postLoading"
-              class="text-center mt-3"
-              style="display: none"
-            >
-              <div class="spinner-border spinner-border-sm" role="status"></div>
-              <span class="ms-2">Searching...</span>
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- Main Content -->
       <main
         id="main-content-scrollable-container"
@@ -840,8 +841,8 @@
               class="instagram-post posts-container mb-4"
               id="post-<%= post._id %>"
               data-post-id="<%= post._id %>"
-              data-type="picture"
-              data-group="<%= post.group %>"
+              data-type="<%= post.type %>"
+              data-group="<%= post.group || '' %>"
               data-owner-id="<%= post.user._id %>"
             >
               <!-- Post Header -->
@@ -895,23 +896,31 @@
                   <i class="bi bi-three-dots"></i>
                 </button>
               </div>
-
-              <!-- Post Image -->
+              <!-- Post Media -->
               <div class="post-image">
+                <% if (post.type === 'image') { %>
                 <img
-                  src="<%= post.image %>"
+                  src="<%= post.media %>"
                   alt="Post image"
                   class="w-100"
                   style="max-height: 600px; object-fit: cover"
                 />
+                <% } else if (post.type === 'video') { %>
+                <video
+                  controls
+                  class="w-100"
+                  style="max-height: 600px; object-fit: cover"
+                >
+                  <source src="<%= post.media %>" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <% } %>
               </div>
-
               <!-- Post Actions -->
               <div class="post-actions py-3">
                 <div class="d-flex align-items-center mb-2">
                   <% const userLikedPost = post.likes.includes(currentUserId);
                   %>
-
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Like post"
@@ -929,9 +938,9 @@
                     >
                       <path
                         d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                   1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
-                   0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                          2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                          1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5
+                          0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                       />
                     </svg>
                     <% } else { %>
@@ -946,14 +955,12 @@
                     >
                       <path
                         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5
-                   0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
-                   1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                          1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
                       />
                     </svg>
                     <% } %>
                   </button>
-
-                  <!-- Comment and Share buttons -->
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Comment on post"
@@ -968,11 +975,10 @@
                     >
                       <path
                         d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2
-                 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                          0 0 1 2-2h14a2 2 0 0 1 2 2z"
                       ></path>
                     </svg>
                   </button>
-
                   <button
                     class="btn btn-link text-dark p-0 me-3"
                     aria-label="Share"
@@ -986,15 +992,13 @@
                       stroke-width="2"
                     >
                       <path
-                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2
-                 0 0 0 2-2v-8"
+                        d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
                       ></path>
                       <polyline points="16,6 12,2 8,6"></polyline>
                       <line x1="12" y1="2" x2="12" y2="15"></line>
                     </svg>
                   </button>
                 </div>
-
                 <!-- Likes -->
                 <div class="likes-simple mb-2">
                   <span class="likes-count fw-bold">
@@ -1002,7 +1006,6 @@
                   </span>
                   <span class="likes-text fw-bold"> likes</span>
                 </div>
-
                 <!-- Caption -->
                 <% if (post.caption) { %>
                 <div class="caption mb-2">
@@ -1017,7 +1020,6 @@
                   <span class="caption-text"> <%= post.caption %></span>
                 </div>
                 <% } %>
-
                 <!-- View Comments Button -->
                 <% if (post.comments && post.comments.length > 0) { %>
                 <div class="view-comments mb-2">
@@ -1033,12 +1035,24 @@
                   </button>
                 </div>
                 <% } %>
-
                 <!-- Comments Section -->
                 <div class="comments-section" style="display: none"></div>
-
+                <!-- GIF Picker -->
+                <div
+                  class="gif-picker bg-white border rounded shadow-sm p-2"
+                  style="display: none"
+                >
+                  <input
+                    type="text"
+                    class="form-control mb-2 gif-search-input"
+                    placeholder="Search GIFs..."
+                  />
+                  <div class="gif-container d-flex flex-wrap"></div>
+                </div>
                 <!-- Add Comment -->
-                <div class="add-comment d-flex align-items-center">
+                <div
+                  class="add-comment d-flex align-items-center position-relative"
+                >
                   <input
                     type="text"
                     class="form-control border-0"
@@ -1048,6 +1062,9 @@
                   <button class="btn btn-link text-muted p-0 ms-2 emoji-btn">
                     <i class="bi bi-emoji-smile"></i>
                   </button>
+                  <button class="btn btn-link text-muted p-0 ms-2 gif-btn">
+                    <i class="bi bi-image"></i>
+                  </button>
                   <button
                     class="btn btn-link fw-bold p-0 ms-2 post-comment-btn"
                     style="display: none; color: #0095f6"
@@ -1055,7 +1072,6 @@
                     Post
                   </button>
                 </div>
-
                 <!-- Typing indicator -->
                 <div
                   class="typing-indicator text-muted small"
@@ -1065,7 +1081,7 @@
                 </div>
               </div>
             </div>
-            <% }) %> <% } else { %>
+            <% }) %><% } else { %>
             <!-- No Posts Message -->
             <div class="text-center mt-5">
               <h5 class="text-muted">No posts to show</h5>
@@ -1616,7 +1632,12 @@
 
                   <!-- hidden input + label -->
                   <label class="ig-fileBtn">
-                    <input id="fileInput" type="file" accept="image/*" hidden />
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*,video/*"
+                      hidden
+                    />
                     Select from computer
                   </label>
                 </div>
@@ -1641,12 +1662,12 @@
                   class="ig-caption-header d-flex align-items-center p-3 border-bottom"
                 >
                   <img
-                    src="./user/user_profile_picture.jpg"
+                    src="/uploads/user_<%= user._id %>/profile_picture/profile.jpg"
                     alt="Your profile"
                     class="rounded-circle me-3"
                     style="width: 32px; height: 32px"
                   />
-                  <span class="fw-bold">the_miichael</span>
+                  <span class="fw-bold"><%= user.username %></span>
                 </div>
 
                 <div class="ig-caption-body p-3">
@@ -1737,8 +1758,7 @@
                       </label>
                     </div>
                   </div>
-
-                  <div class="mt-3" id="shareToTwitterSection" style="display: none;">
+                                    <div class="mt-3" id="shareToTwitterSection" style="display: none;">
                     <div class="form-check">
                       <input
                         class="form-check-input"
@@ -1762,15 +1782,14 @@
       <!-- ─────────────────────#uploadModal ───────────────────────────────────────── -->
       <!-- Global Options Menu -->
       <div id="global-options-menu" class="global-options-menu">
-        <button class="menu-btn red">Hide Post</button>
         <button class="menu-btn">Report</button>
         <button class="menu-btn">Go to Post</button>
         <button class="menu-btn">Share to...</button>
         <button class="menu-btn">About this account</button>
-        <button class="menu-btn cancel-btn">Cancel</button>
         <button class="menu-btn red delete-post-btn" style="display: none">
           Delete Post
         </button>
+        <button class="menu-btn cancel-btn">Cancel</button>
       </div>
       <!-- Backdrop -->
       <div id="menu-backdrop" class="menu-backdrop"></div>
@@ -1878,83 +1897,114 @@
           </button>
         </div>
       </div>
-      <
-      <!-- ────────── Groups Overlay & Popup ────────── -->
-      <div id="popupOverlay"></div>
-      <div id="groupsPopup" class="shadow">
-        <div
-          class="popup-header d-flex align-items-center px-3 py-2 border-bottom"
-        >
-          <button id="closeGroupsPopup" class="btn btn-link p-0 me-2">
-            <i class="bi bi-arrow-left fs-4"></i>
-          </button>
-          <h5 class="m-0 flex-grow-1 text-center">Groups</h5>
-        </div>
-        <div class="popup-body p-0">
-          <ul id="groupsList" class="list-group mb-0">
-            <!-- Create Group button -->
-            <li
-              id="createGroupBtn"
-              class="list-group-item create-group d-flex align-items-center"
-            >
-              <i class="bi bi-plus-lg text-primary fs-5 me-3"></i>
-              <span class="text-primary">Create Group</span>
-            </li>
-            <!-- existing groups get injected here -->
-          </ul>
-        </div>
-      </div>
-      <!-- ────────── Create Group Modal ────────── -->
-      <div id="createGroupModal" class="shadow">
-        <div
-          class="create-header d-flex align-items-center px-3 py-2 border-bottom"
-        >
-          <button id="cancelCreateGroup" class="btn btn-link p-0 me-2">
-            <i class="bi bi-x fs-4"></i>
-          </button>
-          <h5 class="m-0 flex-grow-1 text-center">New Group</h5>
-        </div>
-        <div class="create-body p-3">
-          <div class="mb-3">
-            <label for="newGroupName" class="form-label">Group Name</label>
-            <input
-              type="text"
-              id="newGroupName"
-              class="form-control"
-              placeholder="Enter group name"
-            />
+      
+            <!-- ────────── Groups Overlay & Popup ────────── -->
+        <div id="popupOverlay"></div>
+        <div id="groupsPopup" class="shadow">
+          <div class="popup-header d-flex align-items-center px-3 py-2 border-bottom">
+            <button id="closeGroupsPopup" class="btn btn-link p-0 me-2">
+              <i class="bi bi-arrow-left fs-4"></i>
+            </button>
+            <h5 class="m-0 flex-grow-1 text-center">Groups</h5>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Add Members</label>
-            <div id="memberList" class="member-list">
-              <!-- checkboxes injected by JS -->
+          <div class="popup-body p-0">
+            <ul id="groupsList" class="list-group mb-0">
+              <!-- Create Group button -->
+              <li id="createGroupBtn" class="list-group-item create-group d-flex align-items-center">
+                <i class="bi bi-plus-lg text-primary fs-5 me-3"></i>
+                <span class="text-primary">Create Group</span>
+              </li>
+              <!-- existing groups get injected here -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- ────────── Create Group Modal ────────── -->
+        <div id="createGroupModal" class="shadow">
+          <div class="create-header d-flex align-items-center px-3 py-2 border-bottom">
+            <button id="cancelCreateGroup" class="btn btn-link p-0 me-2">
+              <i class="bi bi-x fs-4"></i>
+            </button>
+            <h5 class="m-0 flex-grow-1 text-center">New Group</h5>
+          </div>
+          <div class="create-body p-3">
+            <!-- Group Name -->
+            <div class="mb-3">
+              <label for="newGroupName" class="form-label">Group Name *</label>
+              <input
+                type="text"
+                id="newGroupName"
+                class="form-control"
+                placeholder="Enter group name"
+                required
+              />
             </div>
+
+            <!-- Group Description -->
+            <div class="mb-3">
+              <label for="groupDescription" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="groupDescription"
+                rows="2"
+                placeholder="Describe your group (optional)"
+              ></textarea>
+            </div>
+
+            <!-- Public/Private Setting -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="makeGroupPublic">
+                <label class="form-check-label" for="makeGroupPublic">
+                  <div class="d-flex align-items-start">
+                    <i class="bi bi-globe text-success me-2 mt-1"></i>
+                    <div>
+                      <strong>Make group public</strong>
+                      <small class="text-muted d-block">
+                        Public groups can be discovered and joined by anyone. 
+                        Private groups are invite-only.
+                      </small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Add Members -->
+            <div class="mb-3">
+              <label class="form-label">Add Members</label>
+              <small class="text-muted d-block mb-2">Select users to invite to your group</small>
+              <div id="memberList" class="member-list">
+                <!-- checkboxes injected by JS -->
+              </div>
+            </div>
+
+            <button id="submitCreateGroup" class="btn btn-primary w-100">
+              <i class="bi bi-plus-lg me-1"></i>Create Group
+            </button>
           </div>
-          <button id="submitCreateGroup" class="btn btn-primary w-100">
-            Create
-          </button>
         </div>
-      </div>
-      <!-- Group Admin Menu -->
-      <div id="group-admin-menu" class="group-admin-menu">
-        <button class="menu-btn">Report Group</button>
-        <button class="menu-btn">Share Group</button>
-        <button class="menu-btn">Copy Group Link</button>
-        <button class="menu-btn edit-group-btn" style="display: none">
-          Edit Group
-        </button>
-        <button class="menu-btn manage-members-btn" style="display: none">
-          Manage Members
-        </button>
-        <button class="menu-btn manage-admins-btn" style="display: none">
-          Manage Admins
-        </button>
-        <button class="menu-btn red delete-group-btn" style="display: none">
-          Delete Group
-        </button>
-        <button class="menu-btn cancel-group-btn">Cancel</button>
-      </div>
-      <div id="menu-backdrop" class="menu-backdrop"></div>
+
+        <!-- Group Admin Menu -->
+        <div id="group-admin-menu" class="group-admin-menu">
+          <button class="menu-btn">Report Group</button>
+          <button class="menu-btn">Share Group</button>
+          <button class="menu-btn">Copy Group Link</button>
+          <button class="menu-btn edit-group-btn" style="display: none">
+            Edit Group
+          </button>
+          <button class="menu-btn manage-members-btn" style="display: none">
+            Manage Members
+          </button>
+          <button class="menu-btn manage-admins-btn" style="display: none">
+            Manage Admins
+          </button>
+          <button class="menu-btn red delete-group-btn" style="display: none">
+            Delete Group
+          </button>
+          <button class="menu-btn cancel-group-btn">Cancel</button>
+        </div>
+        <div id="menu-backdrop" class="menu-backdrop"></div>
       <!-- Google Maps Places API -->
       <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&libraries=places"></script>
       <!-- Bootstrap JS -->
@@ -1968,6 +2018,7 @@
       <script src="/scripts/func_like/like-toggle.js"></script>
       <script src="/scripts/func_filter/search_head.js"></script>
       <script src="/scripts/func_filter/search_panel.js"></script>
+      <script src="/scripts/func_filter/search_group.js"></script>
       <script src="/scripts/func_share/share.js"></script>
       <script src="/scripts/func_comment/comment_system.js"></script>
       <script src="/scripts/func_post_options_menu/post_options_menu.js"></script>
@@ -1976,9 +2027,9 @@
       <script src="/scripts/func_groups/group_popout.js"></script>
       <script src="/scripts/func_groups/group_feed.js"></script>
       <script src="/scripts/func_groups/group_admin.js"></script>
-      <script src="/scripts/func_twitter/twitter_integration.js"></script>
       <!-- Location autocomplete must load after Google Maps API -->
       <script src="/scripts/func_create_new_post/location_autocomplete.js"></script>
+       <script src="/scripts/func_twitter/twitter_integration.js"></script>
     </div>
   </body>
 </html>

@@ -9,4 +9,7 @@ router.get('/users', isLoggedIn, searchController.searchUsers);
 // GET post search route  
 router.get('/posts', isLoggedIn, searchController.searchPosts);
 
-module.exports = router; 
+// GET group search route - now using searchController instead of groupController
+router.get('/groups', isLoggedIn, searchController.searchGroups);
+
+module.exports = router;
