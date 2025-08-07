@@ -393,23 +393,24 @@ exports.getPost = async (req, res) => {
       .populate('comments.user', 'username avatar');
 
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).render('error', { message: 'Post not found' });
     }
 
     // Check if post is in a group and user has access
     if (post.group) {
       const group = await Group.findById(post.group);
       if (!group || !group.members.includes(req.user._id)) {
-        return res.status(403).json({ error: "Not authorized to view this post" });
+        return res.status(403).render('error', { message: 'Not authorized to view this post' });
       }
     }
 
-    res.json({ success: true, post });
+    res.render('post', { post, user: req.user });
   } catch (error) {
-    console.error("Error fetching post:", error);
-    res.status(500).json({ error: "Failed to load post" });
+    console.error('Error fetching post:', error);
+    res.status(500).render('error', { message: 'Failed to load post' });
   }
 };
+
 // Get user's posts
 exports.getUserPosts = async (req, res) => {
   try {
