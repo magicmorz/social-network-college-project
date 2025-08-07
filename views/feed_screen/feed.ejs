@@ -1624,12 +1624,12 @@
                   class="ig-caption-header d-flex align-items-center p-3 border-bottom"
                 >
                   <img
-                    src="./user/user_profile_picture.jpg"
+                    src="/uploads/user_<%= user._id %>/profile_picture/profile.jpg"
                     alt="Your profile"
                     class="rounded-circle me-3"
                     style="width: 32px; height: 32px"
                   />
-                  <span class="fw-bold">the_miichael</span>
+                  <span class="fw-bold"><%= user.username %></span>
                 </div>
 
                 <div class="ig-caption-body p-3">
