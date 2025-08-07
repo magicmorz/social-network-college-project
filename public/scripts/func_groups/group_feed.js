@@ -57,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // This is more reliable than trying to reload content via AJAX
     window.location.href = '/home';
   }
+  
+
+  
 
   // ═══════════════════════════════════════════════════════════════════
   // GROUP FEED LOADING AND DISPLAY

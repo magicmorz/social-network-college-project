@@ -43,11 +43,15 @@
     <link rel="stylesheet" href="/styles/feed_responsivness.css" />
     <link rel="stylesheet" href="/styles/post_options_menu.css" />
     <link rel="stylesheet" href="/styles/share.css" />
+
     <link rel="stylesheet" href="/styles/group_popup.css" />
     <link rel="stylesheet" href="/styles/group_admin.css" />
+    <link rel="stylesheet" href="/styles/group_search.css" /> 
 
     <link rel="stylesheet" href="/styles/upload_post.css" />
     <link rel="stylesheet" href="/styles/location_autocomplete.css" />
+
+    <link rel="stylesheet" href="/styles/group_feed.css">
   </head>
 
   <body>
@@ -500,165 +504,196 @@
           </div>
         </div>
       </nav>
-      <!-- Search slide-out panel -->
-      <div id="searchPanel" class="search-panel">
-        <!-- header row -->
-        <div class="search-header d-flex align-items-center p-3">
-          <h6 class="m-0 flex-grow-1 fw-semibold">Search</h6>
-          <button id="searchCloseBtn" class="icon-btn">&times;</button>
-        </div>
+            <!-- Search slide-out panel -->
+        <div id="searchPanel" class="search-panel">
+          <!-- header row -->
+          <div class="search-header d-flex align-items-center p-3">
+            <h6 class="m-0 flex-grow-1 fw-semibold">Search</h6>
+            <button id="searchCloseBtn" class="icon-btn">&times;</button>
+          </div>
 
-        <!-- Search Tabs -->
-        <div class="search-tabs">
-          <button class="search-tab active" data-tab="users">Users</button>
-          <button class="search-tab" data-tab="posts">Posts</button>
-        </div>
+          <!-- Search Tabs -->
+          <div class="search-tabs">
+            <button class="search-tab active" data-tab="users">Users</button>
+            <button class="search-tab" data-tab="posts">Posts</button>
+            <button class="search-tab" data-tab="groups">Groups</button>
+          </div>
 
-        <!-- Users Search Tab -->
-        <div id="usersTab" class="search-tab-content active">
-          <div class="search-body p-3">
-            <!-- Basic search input -->
-            <div class="input-group mb-3">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input
-                id="userSearchField"
-                type="text"
-                class="form-control"
-                placeholder="Search users..."
-                autocomplete="off"
-              />
-            </div>
-
-            <!-- Advanced Search Button -->
-            <button
-              id="userAdvancedBtn"
-              class="btn btn-outline-primary btn-sm mb-3 w-100"
-            >
-              Advanced Search
-            </button>
-
-            <!-- Advanced Search Form (hidden by default) -->
-            <div
-              id="userAdvancedForm"
-              class="advanced-search-form"
-              style="display: none"
-            >
-              <div class="mb-3">
-                <label class="form-label small">Joined After</label>
-                <input type="date" id="userJoinedAfter" class="form-control" />
+          <!-- Users Search Tab -->
+          <div id="usersTab" class="search-tab-content active">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="userSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search users..."
+                  autocomplete="off"
+                />
               </div>
-              <div class="mb-3">
-                <div class="form-check">
+
+              <!-- Advanced Search Button -->
+              <button
+                id="userAdvancedBtn"
+                class="btn btn-outline-primary btn-sm mb-3 w-100"
+              >
+                Advanced Search
+              </button>
+
+              <!-- Advanced Search Form (hidden by default) -->
+              <div
+                id="userAdvancedForm"
+                class="advanced-search-form"
+                style="display: none"
+              >
+                <div class="mb-3">
+                  <label class="form-label small">Joined After</label>
+                  <input type="date" id="userJoinedAfter" class="form-control" />
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="userIsVerified"
+                    />
+                    <label class="form-check-label small" for="userIsVerified">
+                      Verified users only
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Group</label>
                   <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="userIsVerified"
+                    type="text"
+                    id="userGroup"
+                    class="form-control"
+                    placeholder="Enter group name"
                   />
-                  <label class="form-check-label small" for="userIsVerified">
-                    Verified users only
-                  </label>
                 </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label small">Group</label>
-                <input
-                  type="text"
-                  id="userGroup"
-                  class="form-control"
-                  placeholder="Enter group name"
-                />
+
+              <!-- Search Results -->
+              <div id="userResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="userLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
               </div>
             </div>
+          </div>
 
-            <!-- Search Results -->
-            <div id="userResults" class="search-results mt-3"></div>
+          <!-- Posts Search Tab -->
+          <div id="postsTab" class="search-tab-content">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="postSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search posts..."
+                  autocomplete="off"
+                />
+              </div>
 
-            <!-- Loading indicator -->
-            <div
-              id="userLoading"
-              class="text-center mt-3"
-              style="display: none"
-            >
-              <div class="spinner-border spinner-border-sm" role="status"></div>
-              <span class="ms-2">Searching...</span>
+              <!-- Advanced Search Button -->
+              <button
+                id="postAdvancedBtn"
+                class="btn btn-outline-primary btn-sm mb-3 w-100"
+              >
+                Advanced Search
+              </button>
+
+              <!-- Advanced Search Form (hidden by default) -->
+              <div
+                id="postAdvancedForm"
+                class="advanced-search-form"
+                style="display: none"
+              >
+                <div class="mb-3">
+                  <label class="form-label small">Post Type</label>
+                  <select id="postType" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="text">Text</option>
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label class="form-label small">Date From</label>
+                    <input type="date" id="postDateFrom" class="form-control" />
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small">Date To</label>
+                    <input type="date" id="postDateTo" class="form-control" />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small">Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    id="postTags"
+                    class="form-control"
+                    placeholder="tag1, tag2, tag3"
+                  />
+                </div>
+              </div>
+
+              <!-- Search Results -->
+              <div id="postResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="postLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Groups Search Tab -->
+          <div id="groupsTab" class="search-tab-content">
+            <div class="search-body p-3">
+              <!-- Basic search input -->
+              <div class="input-group mb-3">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                  id="groupSearchField"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search groups..."
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- Search Results -->
+              <div id="groupResults" class="search-results mt-3"></div>
+
+              <!-- Loading indicator -->
+              <div
+                id="groupLoading"
+                class="text-center mt-3"
+                style="display: none"
+              >
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                <span class="ms-2">Searching...</span>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Posts Search Tab -->
-        <div id="postsTab" class="search-tab-content">
-          <div class="search-body p-3">
-            <!-- Basic search input -->
-            <div class="input-group mb-3">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input
-                id="postSearchField"
-                type="text"
-                class="form-control"
-                placeholder="Search posts..."
-                autocomplete="off"
-              />
-            </div>
-
-            <!-- Advanced Search Button -->
-            <button
-              id="postAdvancedBtn"
-              class="btn btn-outline-primary btn-sm mb-3 w-100"
-            >
-              Advanced Search
-            </button>
-
-            <!-- Advanced Search Form (hidden by default) -->
-            <div
-              id="postAdvancedForm"
-              class="advanced-search-form"
-              style="display: none"
-            >
-              <div class="mb-3">
-                <label class="form-label small">Post Type</label>
-                <select id="postType" class="form-select">
-                  <option value="">All Types</option>
-                  <option value="text">Text</option>
-                  <option value="image">Image</option>
-                  <option value="video">Video</option>
-                </select>
-              </div>
-              <div class="row mb-3">
-                <div class="col-6">
-                  <label class="form-label small">Date From</label>
-                  <input type="date" id="postDateFrom" class="form-control" />
-                </div>
-                <div class="col-6">
-                  <label class="form-label small">Date To</label>
-                  <input type="date" id="postDateTo" class="form-control" />
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label small">Tags (comma-separated)</label>
-                <input
-                  type="text"
-                  id="postTags"
-                  class="form-control"
-                  placeholder="tag1, tag2, tag3"
-                />
-              </div>
-            </div>
-
-            <!-- Search Results -->
-            <div id="postResults" class="search-results mt-3"></div>
-
-            <!-- Loading indicator -->
-            <div
-              id="postLoading"
-              class="text-center mt-3"
-              style="display: none"
-            >
-              <div class="spinner-border spinner-border-sm" role="status"></div>
-              <span class="ms-2">Searching...</span>
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- Main Content -->
       <main
         id="main-content-scrollable-container"
@@ -1844,83 +1879,114 @@
           </button>
         </div>
       </div>
-      <
-      <!-- ────────── Groups Overlay & Popup ────────── -->
-      <div id="popupOverlay"></div>
-      <div id="groupsPopup" class="shadow">
-        <div
-          class="popup-header d-flex align-items-center px-3 py-2 border-bottom"
-        >
-          <button id="closeGroupsPopup" class="btn btn-link p-0 me-2">
-            <i class="bi bi-arrow-left fs-4"></i>
-          </button>
-          <h5 class="m-0 flex-grow-1 text-center">Groups</h5>
-        </div>
-        <div class="popup-body p-0">
-          <ul id="groupsList" class="list-group mb-0">
-            <!-- Create Group button -->
-            <li
-              id="createGroupBtn"
-              class="list-group-item create-group d-flex align-items-center"
-            >
-              <i class="bi bi-plus-lg text-primary fs-5 me-3"></i>
-              <span class="text-primary">Create Group</span>
-            </li>
-            <!-- existing groups get injected here -->
-          </ul>
-        </div>
-      </div>
-      <!-- ────────── Create Group Modal ────────── -->
-      <div id="createGroupModal" class="shadow">
-        <div
-          class="create-header d-flex align-items-center px-3 py-2 border-bottom"
-        >
-          <button id="cancelCreateGroup" class="btn btn-link p-0 me-2">
-            <i class="bi bi-x fs-4"></i>
-          </button>
-          <h5 class="m-0 flex-grow-1 text-center">New Group</h5>
-        </div>
-        <div class="create-body p-3">
-          <div class="mb-3">
-            <label for="newGroupName" class="form-label">Group Name</label>
-            <input
-              type="text"
-              id="newGroupName"
-              class="form-control"
-              placeholder="Enter group name"
-            />
+      
+            <!-- ────────── Groups Overlay & Popup ────────── -->
+        <div id="popupOverlay"></div>
+        <div id="groupsPopup" class="shadow">
+          <div class="popup-header d-flex align-items-center px-3 py-2 border-bottom">
+            <button id="closeGroupsPopup" class="btn btn-link p-0 me-2">
+              <i class="bi bi-arrow-left fs-4"></i>
+            </button>
+            <h5 class="m-0 flex-grow-1 text-center">Groups</h5>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Add Members</label>
-            <div id="memberList" class="member-list">
-              <!-- checkboxes injected by JS -->
+          <div class="popup-body p-0">
+            <ul id="groupsList" class="list-group mb-0">
+              <!-- Create Group button -->
+              <li id="createGroupBtn" class="list-group-item create-group d-flex align-items-center">
+                <i class="bi bi-plus-lg text-primary fs-5 me-3"></i>
+                <span class="text-primary">Create Group</span>
+              </li>
+              <!-- existing groups get injected here -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- ────────── Create Group Modal ────────── -->
+        <div id="createGroupModal" class="shadow">
+          <div class="create-header d-flex align-items-center px-3 py-2 border-bottom">
+            <button id="cancelCreateGroup" class="btn btn-link p-0 me-2">
+              <i class="bi bi-x fs-4"></i>
+            </button>
+            <h5 class="m-0 flex-grow-1 text-center">New Group</h5>
+          </div>
+          <div class="create-body p-3">
+            <!-- Group Name -->
+            <div class="mb-3">
+              <label for="newGroupName" class="form-label">Group Name *</label>
+              <input
+                type="text"
+                id="newGroupName"
+                class="form-control"
+                placeholder="Enter group name"
+                required
+              />
             </div>
+
+            <!-- Group Description -->
+            <div class="mb-3">
+              <label for="groupDescription" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="groupDescription"
+                rows="2"
+                placeholder="Describe your group (optional)"
+              ></textarea>
+            </div>
+
+            <!-- Public/Private Setting -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="makeGroupPublic">
+                <label class="form-check-label" for="makeGroupPublic">
+                  <div class="d-flex align-items-start">
+                    <i class="bi bi-globe text-success me-2 mt-1"></i>
+                    <div>
+                      <strong>Make group public</strong>
+                      <small class="text-muted d-block">
+                        Public groups can be discovered and joined by anyone. 
+                        Private groups are invite-only.
+                      </small>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Add Members -->
+            <div class="mb-3">
+              <label class="form-label">Add Members</label>
+              <small class="text-muted d-block mb-2">Select users to invite to your group</small>
+              <div id="memberList" class="member-list">
+                <!-- checkboxes injected by JS -->
+              </div>
+            </div>
+
+            <button id="submitCreateGroup" class="btn btn-primary w-100">
+              <i class="bi bi-plus-lg me-1"></i>Create Group
+            </button>
           </div>
-          <button id="submitCreateGroup" class="btn btn-primary w-100">
-            Create
-          </button>
         </div>
-      </div>
-      <!-- Group Admin Menu -->
-      <div id="group-admin-menu" class="group-admin-menu">
-        <button class="menu-btn">Report Group</button>
-        <button class="menu-btn">Share Group</button>
-        <button class="menu-btn">Copy Group Link</button>
-        <button class="menu-btn edit-group-btn" style="display: none">
-          Edit Group
-        </button>
-        <button class="menu-btn manage-members-btn" style="display: none">
-          Manage Members
-        </button>
-        <button class="menu-btn manage-admins-btn" style="display: none">
-          Manage Admins
-        </button>
-        <button class="menu-btn red delete-group-btn" style="display: none">
-          Delete Group
-        </button>
-        <button class="menu-btn cancel-group-btn">Cancel</button>
-      </div>
-      <div id="menu-backdrop" class="menu-backdrop"></div>
+
+        <!-- Group Admin Menu -->
+        <div id="group-admin-menu" class="group-admin-menu">
+          <button class="menu-btn">Report Group</button>
+          <button class="menu-btn">Share Group</button>
+          <button class="menu-btn">Copy Group Link</button>
+          <button class="menu-btn edit-group-btn" style="display: none">
+            Edit Group
+          </button>
+          <button class="menu-btn manage-members-btn" style="display: none">
+            Manage Members
+          </button>
+          <button class="menu-btn manage-admins-btn" style="display: none">
+            Manage Admins
+          </button>
+          <button class="menu-btn red delete-group-btn" style="display: none">
+            Delete Group
+          </button>
+          <button class="menu-btn cancel-group-btn">Cancel</button>
+        </div>
+        <div id="menu-backdrop" class="menu-backdrop"></div>
       <!-- Google Maps Places API -->
       <script src="https://maps.googleapis.com/maps/api/js?key=<%= googleMapsApiKey %>&libraries=places"></script>
       <!-- Bootstrap JS -->
@@ -1934,6 +2000,7 @@
       <script src="/scripts/func_like/like-toggle.js"></script>
       <script src="/scripts/func_filter/search_head.js"></script>
       <script src="/scripts/func_filter/search_panel.js"></script>
+      <script src="/scripts/func_filter/search_group.js"></script>
       <script src="/scripts/func_share/share.js"></script>
       <script src="/scripts/func_comment/comment_system.js"></script>
       <script src="/scripts/func_post_options_menu/post_options_menu.js"></script>
