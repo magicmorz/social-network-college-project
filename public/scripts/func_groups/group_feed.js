@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reload the page to show all posts
     window.location.href = '/home';
   }
+  
+
+  
 
   // === Load and display group posts ===
   async function loadGroupPosts(groupId, groupName) {
