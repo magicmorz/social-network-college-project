@@ -448,13 +448,13 @@
             >
           </a>
         </div>
-        <!-- Threads-->
-        <a href="#threads" class="nav-link position-relative" id="threadsBtn">
+        <!-- Connect to X -->
+        <button class="nav-link position-relative" id="connectXBtn">
           <span class="nav-icon">
-            <i class="bi bi-threads"></i>
+            <i class="bi bi-twitter-x"></i>
           </span>
-          <span class="d-none d-lg-inline nav-label">Threads</span>
-        </a>
+          <span class="d-none d-lg-inline nav-label" id="connectXLabel">Connect to X</span>
+        </button>
         <!-- More -->
         <div>
           <button id="moreBtn" class="nav-link more-btn" aria-label="More">
@@ -1758,6 +1758,21 @@
                       </label>
                     </div>
                   </div>
+                                    <div class="mt-3" id="shareToTwitterSection" style="display: none;">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="shareToTwitter"
+                      />
+                      <label
+                        class="form-check-label small text-muted"
+                        for="shareToTwitter"
+                      >
+                        Share to X (Twitter)
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2014,6 +2029,7 @@
       <script src="/scripts/func_groups/group_admin.js"></script>
       <!-- Location autocomplete must load after Google Maps API -->
       <script src="/scripts/func_create_new_post/location_autocomplete.js"></script>
+       <script src="/scripts/func_twitter/twitter_integration.js"></script>
     </div>
   </body>
 </html>
