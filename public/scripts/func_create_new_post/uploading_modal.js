@@ -139,12 +139,39 @@ document.addEventListener("DOMContentLoaded", function () {
         const result = await response.json();
         console.log("Post created successfully:", result);
 
+        // Check if user wants to share to Twitter
+        const shareToTwitterCheckbox = document.getElementById('shareToTwitter');
+        let twitterShareSuccess = true;
+        
+        if (shareToTwitterCheckbox && shareToTwitterCheckbox.checked) {
+          console.log('Attempting to share to Twitter...');
+          try {
+            // Share to Twitter using the global function from twitter_integration.js
+            if (typeof window.sharePostToTwitter === 'function') {
+              twitterShareSuccess = await window.sharePostToTwitter(result.post._id, caption);
+            }
+          } catch (twitterError) {
+            console.error('Twitter sharing failed:', twitterError);
+            twitterShareSuccess = false;
+          }
+        }
+
         closeModal();
 
+        // Show appropriate success message
         const postLocation = groupId
           ? userGroups.find((g) => g._id === groupId)?.name || "group"
           : "your feed";
-        alert(`Post shared to ${postLocation} successfully!`);
+        
+        let successMessage = `Post shared to ${postLocation} successfully!`;
+        
+        if (shareToTwitterCheckbox && shareToTwitterCheckbox.checked) {
+          if (!twitterShareSuccess) {
+            successMessage += ' Post saved, but sharing to Twitter didn\'t work this time.';
+          }
+        }
+        
+        alert(successMessage);
 
         window.location.href = "/home";
       } else {
@@ -175,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const captionInput = document.getElementById("postCaption");
     const locationInput = document.getElementById("postLocation");
     const groupSelector = document.getElementById("postGroupSelector");
+    const shareToTwitterCheckbox = document.getElementById("shareToTwitter");
 
     if (captionInput) captionInput.value = "";
     if (locationInput) {
@@ -187,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
     if (groupSelector) groupSelector.value = "";
+    if (shareToTwitterCheckbox) shareToTwitterCheckbox.checked = false;
 
     if (fileSelectArea) fileSelectArea.style.display = "block";
     if (cropCanvas) cropCanvas.style.display = "none";

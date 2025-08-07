@@ -170,6 +170,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const response = await fetch('/twitter/auth', {
         credentials: 'same-origin' // Include cookies with the request
       });
+      
+      // Check if we got redirected to login (means not authenticated)
+      if (response.redirected && response.url.includes('/auth/login')) {
+        throw new Error('Please log in first before connecting to Twitter');
+      }
+      
       const data = await response.json();
       
       if (data.success) {
