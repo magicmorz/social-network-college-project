@@ -84,6 +84,9 @@ app.get("/", (req, res) => {
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
+const postController = require("./Controllers/postController");
+app.get("/api/gifs/search", postController.searchGifs);
+
 // API routes (with authentication)
 const groupRouter = require('./routes/group');  
 const usersRouter = require('./routes/users');
