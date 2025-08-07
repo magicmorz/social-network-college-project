@@ -363,7 +363,9 @@ exports.disconnectAccount = async (req, res) => {
 // Share post to Twitter
 exports.sharePostToTwitter = async (req, res) => {
   try {
+    console.log('=== TWITTER SHARE DEBUG ===');
     const { postId, caption } = req.body;
+    console.log('Share request:', { postId, caption, userId: req.user._id });
     
     // Get user's Twitter account
     const twitterAccount = await TwitterAccount.findOne({ 
@@ -371,7 +373,10 @@ exports.sharePostToTwitter = async (req, res) => {
       isActive: true 
     });
     
+    console.log('Twitter account found:', !!twitterAccount);
+    
     if (!twitterAccount) {
+      console.log('ERROR: No Twitter account connected for user', req.user._id);
       return res.status(400).json({ 
         success: false, 
         error: 'No Twitter account connected' 
@@ -390,7 +395,11 @@ exports.sharePostToTwitter = async (req, res) => {
     const Post = require('../models/Post');
     const post = await Post.findById(postId);
     
+    console.log('Post found:', !!post);
+    console.log('Post media path:', post?.media);
+    
     if (!post || post.user.toString() !== req.user._id.toString()) {
+      console.log('ERROR: Post not found or not owned by user');
       return res.status(404).json({ 
         success: false, 
         error: 'Post not found' 
@@ -403,13 +412,18 @@ exports.sharePostToTwitter = async (req, res) => {
       tweetText = tweetText.substring(0, 277) + '...';
     }
     
+    console.log('Tweet text:', tweetText);
+    
     // Get image path
     const imagePath = path.join(__dirname, '..', post.media);
+    console.log('Image path:', imagePath);
+    console.log('Image exists:', fs.existsSync(imagePath));
     
     let tweetResult;
     
     // Tweet with image if it exists
     if (fs.existsSync(imagePath)) {
+      console.log('Tweeting with image...');
       tweetResult = await tweetWithImage(
         twitterAccount.accessToken,
         twitterAccount.accessTokenSecret,
@@ -417,13 +431,15 @@ exports.sharePostToTwitter = async (req, res) => {
         imagePath
       );
     } else {
-      // Tweet text only if image doesn't exist
+      console.log('Tweeting text only...');
       tweetResult = await tweet(
         twitterAccount.accessToken,
         twitterAccount.accessTokenSecret,
         tweetText
       );
     }
+    
+    console.log('Tweet result:', tweetResult);
     
     // Update Twitter account stats
     await twitterAccount.recordTweet();

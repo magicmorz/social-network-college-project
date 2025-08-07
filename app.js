@@ -21,7 +21,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(session({
   secret: process.env.SESSION_SECRET || "devsecret",
   resave: false,
-  saveUninitialized: true, // Changed to true to ensure sessions are created for OAuth flow
+  saveUninitialized: true, // Changed to true to ensure sessions are created for OAuth flowasd
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
