@@ -1,0 +1,139 @@
+.story-bar {
+  width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  display: flex;
+  gap: 1rem; /* adjust this as needed */
+}
+
+/* Story ring with conic-gradient ring */
+.story-ring {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    padding: 3px;
+    background: conic-gradient(
+        #9360f7,
+        #d62976,
+        #f3425f,
+        #fa7e1e,
+        #feda75,
+        #feda75,
+        #feda75,
+        #f3425f,
+        #d62976,
+        #9360f7
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.25rem auto;
+}
+
+/* Story image inside ring */
+.story-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.story-img:hover {
+    cursor: pointer;
+}
+
+/* Story bar container styles */
+.story-bar {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for cleaner look */
+.story-bar::-webkit-scrollbar {
+    display: none;
+}
+.story-bar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Carousel control buttons styling */
+.story-chevron-btn {
+   width: 25px;  /* Smaller button size */
+    height: 25px; /* Smaller button size */
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6); /* transparent white */
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.story-chevron-btn:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+.story-control-prev.story-chevron-btn {
+    left: 18rem;
+    top: 35%; /* Move a tiny bit up from center */
+}
+.story-control-next.story-chevron-btn {
+    right: 18rem;
+    top: 35%; /* Move a tiny bit up from center */
+}
+
+/* Chevron font size and color */
+.story-chevron {
+    font-size: 2rem;
+    color: inherit;
+    position: relative;
+    top: -4px; /* Move chevron a tiny bit up */
+}
+
+.story-wrapper {
+    max-width: 770px;      /* Centered fixed width */
+    margin: 0 auto;        /* Center the wrapper */
+    position: relative;    /* Position reference for chevrons */
+    padding: 0 2rem;       /* Space on the sides for chevrons */
+}
+
+.story-bar {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    padding: 1rem 0;
+}
+
+/* Chevron buttons */
+.story-chevron-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.story-control-prev {
+    left: 40px !important;
+    top: 55px !important;
+}
+
+.story-control-next {
+    right: 40px !important;
+    top: 55px !important;
+}
+
+.story-container{
+    cursor: pointer;
+}

@@ -1,0 +1,1022 @@
+:root {
+  --sidebar-width-desktop: 280px;  /* full layout */
+  --sidebar-width-mobile:  72px;   /* collapsed (≤ 992 px) */
+  --sidebar-icon:          20px;   /* SAME size for logo, items & hamburger */
+  --sidebar-spacing-y:     20px;   /* vertical gap between items */
+}
+
+.sidebar {
+    width: 280px;                      /* Set fixed sidebar width */
+    transition: width 0.3s ease;      /* Smoothly animate width changes over 0.3 seconds */
+    border-right: 0.5px solid var(--border);     /* Add a light grey right border to separate sidebar from content */
+    /* Always show border */
+    padding: 1.25rem 0;                    /* Add 1rem padding inside the sidebar for spacing */
+    overflow: visible!important;
+   
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/*  changing the side for blocks*/
+.sidebar .nav-link{
+    gap: 12px;  
+    justify-content: flex-start;
+    padding-left: 15px;   
+    margin-bottom: 6px;   
+    font-size: 15px;
+    font-weight: -100;   
+    height: 40px;   
+}
+
+/* Icon and text */
+.sidebar .nav-link .nav-icon svg,
+#moreBtn::before,
+.bi-threads{
+    width: var(--sidebar-icon);
+    height: var(--sidebar-icon);
+    flex: 0 0 var(--sidebar-icon);
+    font-size: var(--sidebar-icon);
+    
+}
+
+
+
+[data-theme="dark"] .sidebar .nav-link:hover .nav-icon::before{
+    background: var(--hover-pill);
+}
+
+
+
+.sidebar .menu-item .text {
+    display: inline;                   /* Display text inline with other elements */
+    transition: opacity 0.3s ease;    /* Smoothly animate opacity changes over 0.3 seconds */
+}
+
+.nav-link {
+    display: flex;                         /* Use flexbox for layout inside the link */
+    align-items: center;                   /* Vertically center items within the link */
+    gap: 12px;                            /* Add 12px space between child elements */
+    padding: 0.75rem 40px 0.75rem 1rem;  /* Padding: top/bottom 0.75rem, right 40px, left 1rem */
+    color: #212529;                      /* Set text color to dark gray */
+    text-decoration: none;               /* Remove underline from the link */
+    margin-left: -15px;                  /* Shift the link 15px to the left */
+    margin-bottom: 15px;                 /* Add 15px space below the link */
+}
+
+
+
+
+/* dark-mode uses the same --hover-pill you already defined in theme.css */
+
+
+/* 6. MOBILE (≤ 992 px) : icons-only bar */
+@media (max-width: 991.98px) {
+  .sidebar { width: var(--sidebar-width-mobile); }
+  .sidebar .nav-link {
+    justify-content: center;
+    gap: 0;
+  }
+  .sidebar .nav-label,
+  .sidebar .logo-text { display: none; }      /* hide all text */
+}
+
+
+/* convert hamburger from small SVG → Bootstrap icon */
+#moreBtn .nav-icon { display: none; }        /* hide old lines-svg */
+#moreBtn::before {                           /* show bootstrap list */
+  content: "\f479";                          /* bi-list unicode */
+  font-family: "bootstrap-icons";
+  line-height: 1;
+}
+
+.main-content {
+    flex-grow: 1; /* Allow this section to expand and fill available space */
+    overflow-y: auto;  /* Enable vertical scrolling if content overflows */
+    /* space for mobile nav */ 
+    padding: 1rem 1rem 3.5rem;
+}
+
+.profile-pic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover; /*   object-fit: cover;  - Scales the content to cover its container while maintaining aspect ratio, cropping if necessary */
+    display: block;
+}
+
+.top-logo-icon {
+    display: none;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 16px;
+    margin-left: -16px;
+
+}
+
+.top-logo-icon:hover {
+    background-color:var(--link2);
+    border-radius: 15px;
+    cursor: pointer;
+
+}
+
+/* slide-out panel is fixed on the left, hidden by default */
+.search-panel {
+  position:fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 360px;           /* tweak for your design */
+  background: var(--bg) !important;
+  border-right: 1px solid #ddd;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  z-index: 1050;          /* above sidebar */
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 6px var(--border);
+}
+
+.search-panel .input-group-text,
+.search-panel .form-control{
+  background: var(--pill-bg) !important;
+}
+
+.search-panel .input-group:hover  .input-group-text,
+.search-panel .input-group:hover  .form-control,
+.search-panel .input-group:focus-within .input-group-text,
+.search-panel .input-group:focus-within .form-control{
+  background: var(--pill-bg) !important;     /* stays identical on hover/focus */
+}
+.search-panel .form-control:focus{
+  outline:none;
+  box-shadow:none;
+  background: var(--pill-bg) !important;   /* same tone as idle */
+}
+
+
+.search-header h6{
+    margin-bottom:  .75rem;
+    font-size: 1.5rem;
+}
+
+
+.input-group-text,
+.form-control{
+  background: var(--link2);
+  border: none;
+}
+
+.input-group{
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.input-group::after{
+  content:'';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.75rem;                   
+  height: 1px;
+                /* same light grey you use elsewhere */
+}
+
+.input-group-text{
+  border-radius: 12px 0 0 12px;
+  
+     
+}
+
+.form-control{
+  border-radius: 0 12px 12px 0;          /* flat in middle */
+  font-size: .9rem;
+  
+  
+}
+
+[data-theme="dark"] .search-panel .form-control:focus{
+  background: var(--pill-bg) !important;   
+}
+.input-group:hover .input-group-text,
+.input-group:hover .form-control{
+  background:var(--link2);
+}
+[date-them="dark"].input-group:hover .input-group-text,
+.input-group:hover .form-control{
+  background:none;
+}
+
+[data-theme="dark"] .form-control:hover{
+    background: none;
+}
+
+.search-panel .icon-btn:hover{
+  background: none !important;      /* light theme */
+}
+
+[data-theme="dark"] .search-panel .icon-btn:hover{
+  background: none !important;      /* dark theme */
+}
+
+.icon-btn i{ pointer-events:none; }         /* keep click on button */
+
+/* recent title */
+.recent-title{ font-size: .85rem; }
+
+/* allow list scroll if many items later */
+.search-body{ overflow-y:auto; max-height:calc(100vh - 70px); }
+
+.recent-title{
+  font-size: 1rem;        
+  font-weight: 600;       
+  color:var(--text) !important;            
+}
+
+.icon-btn{
+    background: none;
+    border: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: .25rem .5rem;
+}
+.search-panel.open {
+  transform: translateX(var(--sidebar-width-mobile));
+}
+
+.btn-close {
+  background: none;
+  border: 0;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
+
+/*  ── collapsed-sidebar helper ───────────────────────────── */
+.sidebar.collapsed{
+  width: var(--sidebar-width-mobile);        
+}
+
+.sidebar.collapsed .nav-link{
+  justify-content:center;
+  gap:0;
+  padding-left: 0;
+  margin-left: 0;
+  
+}
+
+.sidebar.collapsed .nav-label,
+.sidebar.collapsed .logo-full{ display:none !important }   /* hide texts + full logo */
+.sidebar.collapsed .top-logo-icon{ display:block !important }  
+
+
+
+/* ─── Dark-theme overrides for the search drawer ───────────────── */
+
+[data-theme="dark"] .search-panel{
+  background:var(--bg);          /* deep grey card */
+  box-shadow: 0 2px 6px rgba(0,0,0,.75);
+}
+
+[data-theme="dark"] .search-header{
+  border-bottom:1px solid #333;
+  color: var(--text);
+}
+
+[data-theme="dark"] .icon-btn{
+  color:#e0e0e0;
+}
+
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] .form-control{
+  background:var(--border) !important;
+  color:var(--text);
+}
+
+[data-theme="dark"] .form-control::placeholder{
+  color:#8e8e8e;
+}
+
+[data-theme="dark"] .recent-title{
+  color:#aaa;
+}
+
+[data-theme="dark"] .recent-list li{
+  color:#8e8e8e;
+}
+
+/* optional hover / active tint for icons */
+[data-theme="dark"] .icon-btn:hover{
+  background:#2e2e2e;
+}
+
+/* tweak scrollbar (WebKit) so the body list feels native in dark mode */
+[data-theme="dark"] .search-body::-webkit-scrollbar{
+  width:8px;
+}
+[data-theme="dark"] .search-body::-webkit-scrollbar-thumb{
+  background:#444;
+  border-radius:4px;
+}
+
+[data-theme="dark"] .input-group::after{
+  background:#333;                    /* dark-mode version                */
+}
+
+/* ===== New Advanced Search Styles ===== */
+
+/* Search Tabs */
+.search-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.search-tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.search-tab:hover {
+  background: var(--link2);
+}
+
+.search-tab.active {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Tab Content */
+.search-tab-content {
+  display: none;
+}
+
+.search-tab-content.active {
+  display: block;
+}
+
+/* Advanced Search Form */
+.advanced-search-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.advanced-search-form .form-label {
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.advanced-search-form .form-control,
+.advanced-search-form .form-select {
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.advanced-search-form .form-control:focus,
+.advanced-search-form .form-select:focus {
+  background: var(--pill-bg);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+}
+
+.advanced-search-form .form-check-input {
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  width: 16px;
+  height: 16px;
+}
+
+.advanced-search-form .form-check-input:checked {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+.advanced-search-form .form-check-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Search Results */
+.search-results {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.search-result-item:hover {
+  background: var(--link2);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-result-user .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 2px solid var(--border, #dbdbdb);
+  transition: opacity 0.2s ease;
+}
+
+.avatar-link {
+  text-decoration: none;
+}
+
+.avatar-link:hover .user-avatar {
+  opacity: 0.8;
+}
+
+.search-result-user .user-info {
+  flex: 1;
+}
+
+.search-result-user .username {
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  font-size: 14px;
+}
+
+.username-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.username-link:hover {
+  color: var(--primary-blue, #0095f6);
+  text-decoration: none;
+}
+
+.search-result-user .user-details {
+  color: var(--link);
+  font-size: 12px;
+  margin: 2px 0 0 0;
+}
+
+.search-result-post {
+  display: flex;
+  gap: 12px;
+}
+
+.search-result-post .post-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.search-result-post .post-info {
+  flex: 1;
+}
+
+.search-result-post .post-caption {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0 0 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.search-result-post .post-meta {
+  color: var(--link);
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Verified Badge */
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  color: #1d9bf0;
+  font-size: 16px;
+}
+
+.verified-badge::before {
+  content: "✓";
+  background: #1d9bf0;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Infinite scroll indicator */
+.search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--link);
+  font-size: 14px;
+}
+
+/* adjustments for Dark mode */
+[data-theme="dark"] .search-tab {
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-tab.active {
+  color: var(--primary);
+}
+
+[data-theme="dark"] .advanced-search-form {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .advanced-search-form .form-control,
+[data-theme="dark"] .advanced-search-form .form-select {
+  background: var(--pill-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-result-item {
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .search-result-item:hover {
+  background: var(--link2);
+}
+
+[data-theme="dark"] .search-result-user .username {
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-result-user .user-details {
+  color: var(--link);
+}
+
+[data-theme="dark"] .search-result-post .post-caption {
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-result-post .post-meta {
+  color: var(--link);
+}
+
+/* ================================================================
+   GROUP SEARCH AND PUBLIC/PRIVATE STYLING - Integrated
+   Add this to your existing CSS file
+   ================================================================ */
+
+/* Groups search result styling */
+.search-result-group {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+}
+
+.search-result-group .group-info {
+  flex: 1;
+}
+
+.search-result-group .group-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.search-result-group .group-description {
+  color: var(--link);
+  font-size: 12px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.search-result-group .group-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--link);
+}
+
+.member-count, .created-by {
+  white-space: nowrap;
+}
+
+.join-group-btn {
+  padding: 6px 12px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s;
+  min-width: 80px;
+}
+
+.join-group-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.join-group-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.join-group-btn.joined {
+  background: #007bff;
+}
+
+.join-group-btn.joined:hover {
+  background: #0056b3;
+}
+
+/* Message notifications - integrated with your theme */
+.search-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  animation: slideInMessage 0.3s ease-out;
+}
+
+.search-message.success {
+  background: #28a745;
+}
+
+.search-message.error {
+  background: #dc3545;
+}
+
+@keyframes slideInMessage {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ================================================================
+   PUBLIC/PRIVATE GROUP INDICATORS - Integrated with your icons
+   ================================================================ */
+
+/* Public/Private Group Icons - using your existing icon sizing */
+.bi-globe {
+  color: #198754 !important;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+.bi-lock {
+  color: var(--link) !important;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}
+
+/* Group list public/private styling */
+.list-group-item .bi-globe,
+.list-group-item .bi-lock {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   CREATE GROUP FORM ENHANCEMENTS - Using your form styles
+   ================================================================ */
+
+/* Group Description Field - consistent with your form controls */
+#groupDescription {
+  resize: vertical;
+  min-height: 60px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#groupDescription:focus {
+  background: var(--pill-bg);
+  border-color: var(--primary, #0d6efd);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.1);
+  outline: none;
+}
+
+/* Public/Private checkbox styling - integrated with your theme */
+#makeGroupPublic + label {
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: block;
+  margin-bottom: 0;
+  background: var(--card);
+  color: var(--text);
+}
+
+#makeGroupPublic:checked + label {
+  border-color: #198754;
+  background: rgba(25, 135, 84, 0.1);
+}
+
+#makeGroupPublic + label:hover {
+  border-color: #198754;
+  background: rgba(25, 135, 84, 0.05);
+}
+
+/* Member list styling - consistent with your design */
+.member-list {
+  max-height: 140px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--pill-bg);
+}
+
+.member-list .form-check {
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.member-list .form-check:hover {
+  background: var(--link2);
+}
+
+.member-list .form-check:last-child {
+  margin-bottom: 0;
+}
+
+.member-list .form-check-input {
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  width: 14px;
+  height: 14px;
+}
+
+.member-list .form-check-input:checked {
+  background: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.member-list .form-check-label {
+  color: var(--text);
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+/* Form labels - consistent with your existing styles */
+.create-body .form-label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Submit button enhancements */
+#submitCreateGroup {
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+#submitCreateGroup:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+}
+
+/* Small text improvements */
+small.text-muted {
+  font-size: 0.8em;
+  line-height: 1.3;
+  color: var(--link);
+}
+
+/* ================================================================
+   GROUP LIST IMPROVEMENTS - Integrated with your sidebar styles
+   ================================================================ */
+
+/* Group info hover effect */
+.group-info-clickable:hover .group-name {
+  color: var(--primary, #0d6efd);
+}
+
+/* Create group modal body */
+.create-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* ================================================================
+   DARK MODE SUPPORT - Using your existing dark theme variables
+   ================================================================ */
+
+[data-theme="dark"] .search-message {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+[data-theme="dark"] #groupDescription {
+  background: var(--pill-bg);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] #groupDescription:focus {
+  background: var(--pill-bg);
+  border-color: var(--primary, #0d6efd);
+}
+
+[data-theme="dark"] #makeGroupPublic + label {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] #makeGroupPublic:checked + label {
+  background: rgba(25, 135, 84, 0.2);
+  border-color: #198754;
+}
+
+[data-theme="dark"] #makeGroupPublic + label:hover {
+  background: rgba(25, 135, 84, 0.1);
+}
+
+[data-theme="dark"] .member-list {
+  background: var(--pill-bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .member-list .form-check:hover {
+  background: var(--link2);
+}
+
+[data-theme="dark"] .member-list .form-check-input {
+  background: var(--pill-bg);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .member-list .form-check-label {
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-result-group .group-name {
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-result-group .group-description,
+[data-theme="dark"] .search-result-group .group-meta {
+  color: var(--link);
+}
+
+/* ================================================================
+   RESPONSIVE IMPROVEMENTS - Following your mobile patterns
+   ================================================================ */
+
+@media (max-width: 991.98px) {
+  .search-result-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .join-group-btn {
+    align-self: flex-start;
+    min-width: auto;
+    padding: 6px 12px;
+  }
+  
+  .search-result-group .group-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .search-message {
+    right: 10px;
+    left: 10px;
+    text-align: center;
+    font-size: 12px;
+  }
+  
+  #makeGroupPublic + label {
+    padding: 10px;
+  }
+  
+  .member-list {
+    max-height: 120px;
+  }
+}
+
+/* ================================================================
+   INTEGRATION WITH YOUR EXISTING SEARCH STYLES
+   ================================================================ */
+
+/* Ensure group search results integrate with your existing search result styles */
+.search-result-item .search-result-group {
+  width: 100%;
+}
+
+/* Loading states - consistent with your theme */
+.loading-indicator {
+  text-align: center;
+  padding: 16px;
+  color: var(--link);
+  font-size: 13px;
+}
+
+/* Scrollbar styling for member list - consistent with your dark mode scrollbar */
+[data-theme="dark"] .member-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-track {
+  background: transparent;
+}

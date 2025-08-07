@@ -1,0 +1,169 @@
+
+/* Top Mobile Nav (base hidden) */
+.top-mobile-nav {
+  display: none;
+  align-items: center;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);      /* Light gray bottom border for separation */
+  height: 56px;                       /* Fixed height of 56 pixels */
+  position: fixed;                    /* Fix element relative to viewport (stays visible on scroll) */
+  top: 0;                            /* Position at the top of the viewport */
+  left: 0;                           /* Align to the left edge */
+  right: 0;                          /* Align to the right edge (full width) */
+  z-index: 1040;                     /* Layer above most other elements */
+  align-items: center;               /* Vertically center items in flex container */
+  justify-content: space-between;   /* Place items at both ends with space in between */
+  padding: 0 12px; 
+  color: var(--text) ;
+  
+                  /* Horizontal padding of 12 pixels on left and right */
+}
+
+/* ─────────────────────────  DESKTOP  ────────────────────────── */
+@media (min-width: 992px) {
+
+/* keep the desktop sidebar; force mobile navs OFF */
+.top-mobile-nav,
+.bottom-mobile-nav  { display:none !important; }
+}
+
+/* ─────────────────────────  MOBILE  ─────────────────────────── */
+@media (max-width: 991.98px) {
+
+/* hide the sidebar; force both mobile navs ON */
+.sidebar            { display:none !important; }
+
+.top-mobile-nav,
+.bottom-mobile-nav  { display:flex !important; }
+
+.story-bar,
+.posts-container {
+  margin-top: 56px;
+}
+}
+
+.top-logo-mobile-and-chevron{ flex:0 0 auto; }
+
+.logo-full:hover {
+  cursor: pointer;
+}
+
+.search-container {
+  background: var(--card);
+  border-radius: 8px;           /* Rounded corners with 8px radius */
+  padding: 6px 12px;            /* Vertical padding 6px, horizontal padding 12px */
+  display: flex;                /* Use flexbox layout */
+  align-items: center;          /* Vertically center flex items */
+  width: 270px;                 /* Fixed width of 300 pixels */
+  margin-left: 0; /* Move it to the right */
+  border: 1px solid var(--border);
+  gap: 8px;
+  flex-shrink: 0;
+  margin: 0 16px;
+  max-width: 600px;
+  min-width: 200px;
+  flex: 1 1 260px;
+  transition: all .15s ease;
+  background: var(--link2);
+}
+
+.search-container.hasText .seach-icon{display: none;}
+.search-container.hasText .search-input{padding-left: 0;}
+
+.search-container:focus-within .search-icon { opacity: 0 !important;
+width: 0;
+margin: 0;  }
+.search-container:focus-within .search-input { padding-left: 0 !important; }
+.search-container:focus-within {padding-left: 8px;
+  gap:0;}
+
+.search-container input{
+  padding-left: 0;
+}
+
+.mobile-notifications{
+  margin-left: 10px;
+}
+.search-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  color: var(--link);
+    flex-shrink: 0;
+
+ 
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: var(--text);
+}
+
+.search-input::placeholder {
+  color: var(--link);
+  opacity: 1;
+}
+
+.mobile-notifications:hover {
+  cursor: pointer;
+}
+
+.bottom-mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  justify-content: space-around;  /* Evenly distributes flex items with space before, between, and after */
+  padding: 0.5rem 0;              /* Vertical padding of 0.5rem, no horizontal padding */
+  z-index: 1000;    
+  color: var(--text);             /* Places element above others with lower z-index */
+}
+
+.bottom-mobile-nav a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.4rem;
+}
+
+/* Logo */
+.top-logo-mobile {
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.top-logo-mobile:hover {
+  cursor: pointer;
+  background-color: none;
+}
+
+.mobile-top-logo-down-chevron-icon:hover {
+  cursor: pointer;
+}
+
+/* top-bar search pill in dark-mode */
+[data-theme="dark"] .search-container{
+background: var(--link2) !important;
+border-color: var(--border);
+}
+[data-theme="dark"] .search-icon,
+[data-theme="dark"] .search-input{
+color: var(--text);
+}
+[data-theme="dark"] .search-input::placeholder{
+color: var(--link);
+}
+
+.search-container {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+
+

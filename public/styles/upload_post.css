@@ -1,0 +1,288 @@
+/* ===== UPLOAD_POST.CSS - Create Post Modal Styles ===== */
+
+/* ─────────── "Create new post" modal ─────────── */
+.ig-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+}
+
+.ig-modal.open {
+    display: block;
+}
+
+.ig-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(2px);
+}
+
+.ig-modal__dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: min(90vw, 650px);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 32px 24px 40px;
+    text-align: center;
+}
+
+.ig-modal__title {
+    font-weight: 600;
+    margin-bottom: 28px;
+}
+
+.ig-modal__close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: none;
+    border: 0;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    color: var(--text);
+}
+
+/* File Drop Zone */
+.ig-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.ig-dropzone svg {
+    width: 72px;
+    height: 72px;
+    color: var(--icon);
+}
+
+.ig-dropzone p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.ig-fileBtn {
+    background: var(--blue-btn);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+[data-theme="dark"] .ig-fileBtn {
+    background: #1877f2;
+}
+
+/* Step Navigation */
+.ig-step__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem .75rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+}
+
+.ig-step__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.ig-navBtn {
+    background: none;
+    border: 0;
+    color: #0095f6;
+    cursor: pointer;
+    font-size: .9rem;
+}
+
+.ig-navBtn:disabled {
+    opacity: .3;
+    cursor: default;
+}
+
+/* Main Content Layout */
+.ig-step__content {
+    display: flex;
+    min-height: 400px;
+}
+
+/* Left Section - Image Preview/Upload */
+.ig-preview-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    min-height: 400px;
+    position: relative;
+}
+
+/* Right Section - Caption and Options */
+.ig-caption-section {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+}
+
+/* Image Crop Zone */
+.ig-cropZone {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+}
+
+.ig-preview-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.ig-change-image-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.ig-change-image-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+/* Caption Section Header */
+.ig-caption-header {
+    border-bottom: 1px solid var(--border) !important;
+}
+
+/* Caption Section Body */
+.ig-caption-body {
+    flex: 1;
+}
+
+.ig-caption-body textarea {
+    background: transparent !important;
+    color: var(--text) !important;
+    resize: none;
+    border: none !important;
+}
+
+.ig-caption-body textarea::placeholder {
+    color: var(--link);
+}
+
+.ig-caption-body input[type="text"] {
+    background: transparent !important;
+    color: var(--text) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.ig-caption-body select {
+    background: var(--card) !important;
+    color: var(--text) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+/* Character Count */
+.character-count {
+    color: var(--link) !important;
+}
+
+/* Form Elements for Dark Mode */
+[data-theme="dark"] .form-check-input {
+    background-color: var(--card);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .form-check-input:checked {
+    background-color: var(--blue-btn);
+    border-color: var(--blue-btn);
+}
+
+[data-theme="dark"] .form-check-label {
+    color: var(--link) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--link) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ig-modal__dialog {
+        width: 95vw;
+        height: 90vh;
+        padding: 0;
+    }
+    
+    .ig-step__content {
+        flex-direction: column;
+    }
+    
+    .ig-preview-section {
+        height: 300px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .ig-caption-section {
+        width: 100%;
+        flex: 1;
+    }
+}
+
+/* Additional Mobile Optimizations */
+@media (max-width: 480px) {
+    .ig-modal__dialog {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+    }
+    
+    .ig-step__bar {
+        padding: 1rem;
+    }
+    
+    .ig-preview-section {
+        height: 250px;
+    }
+    
+    .ig-dropzone svg {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .ig-dropzone p {
+        font-size: 12px;
+    }
+    
+    .ig-fileBtn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,212 @@
+/* Twitter Integration Styles */
+
+/* Connected Twitter button styling */
+#connectXBtn.twitter-connected {
+  background-color: #1d9bf0;
+  color: white;
+  border-radius: 20px;
+}
+
+#connectXBtn.twitter-connected:hover {
+  background-color: #1a8cd8;
+}
+
+#connectXBtn.twitter-connected .nav-icon {
+  color: white;
+}
+
+#connectXBtn.twitter-connected .nav-label {
+  color: white;
+  font-weight: 600;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] #connectXBtn.twitter-connected {
+  background-color: #1d9bf0;
+}
+
+[data-theme="dark"] #connectXBtn.twitter-connected:hover {
+  background-color: #1a8cd8;
+}
+
+/* Twitter toast notifications */
+.twitter-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 9999;
+  transform: translateX(400px);
+  transition: transform 0.3s ease-in-out;
+  max-width: 350px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.twitter-toast.show {
+  transform: translateX(0);
+}
+
+.twitter-toast-success {
+  background-color: #10b981;
+}
+
+.twitter-toast-error {
+  background-color: #ef4444;
+}
+
+.twitter-toast-warning {
+  background-color: #f59e0b;
+}
+
+.twitter-toast-info {
+  background-color: #3b82f6;
+}
+
+/* Share to Twitter checkbox styling */
+#shareToTwitterSection {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+#shareToTwitterSection .form-check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#shareToTwitterSection .form-check-label::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231d9bf0'%3e%3cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3e%3c/svg%3e");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .twitter-toast {
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    transform: translateY(-100px);
+  }
+  
+  .twitter-toast.show {
+    transform: translateY(0);
+  }
+}
+
+/* Loading state for connect button */
+#connectXBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#connectXBtn:disabled .nav-label {
+  opacity: 0.8;
+}
+
+/* Twitter Settings Menu */
+.twitter-settings-content {
+  padding: 16px;
+}
+
+.twitter-info {
+  text-align: center;
+}
+
+.twitter-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.twitter-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.twitter-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.twitter-name {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.twitter-handle {
+  color: var(--muted-text);
+  font-size: 14px;
+}
+
+.disconnect-btn {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.connect-btn {
+  color: #1d9bf0 !important;
+  background: rgba(29, 155, 240, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.connect-btn:hover {
+  background: rgba(29, 155, 240, 0.2);
+}
+
+.twitter-not-connected {
+  text-align: center;
+  padding: 20px;
+}
+
+.twitter-not-connected p {
+  margin-bottom: 16px;
+}
+
+/* Dark theme adjustments for settings */
+[data-theme="dark"] .twitter-profile {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .disconnect-btn {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+[data-theme="dark"] .disconnect-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+[data-theme="dark"] .connect-btn {
+  background: rgba(29, 155, 240, 0.15);
+}
+
+[data-theme="dark"] .connect-btn:hover {
+  background: rgba(29, 155, 240, 0.25);
+}

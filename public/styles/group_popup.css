@@ -1,0 +1,543 @@
+/* ================================================================
+   GROUP POPUP CSS - Complete with Public/Private Features
+   ================================================================ */
+
+/* overlay for both popups */
+#popupOverlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 1000;
+}
+
+/* Dark mode overlay */
+[data-theme="dark"] #popupOverlay {
+  background: rgba(0,0,0,0.7);
+}
+
+/* base styles for any fixed popup */
+#groupsPopup,
+#createGroupModal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  width: 320px; /* Slightly wider for better form layout */
+  max-width: 90vw; /* Responsive on mobile */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  display: none;
+  z-index: 1001;
+  max-height: 90vh; /* Prevent overflow on small screens */
+  overflow: hidden;
+}
+
+/* Dark mode popups */
+[data-theme="dark"] #groupsPopup,
+[data-theme="dark"] #createGroupModal {
+  background: #262626;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  color: #ffffff;
+}
+
+/* show when active */
+#popupOverlay.active,
+#groupsPopup.active,
+#createGroupModal.active {
+  display: block;
+}
+
+/* Headers */
+.popup-header,
+.create-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Dark mode headers */
+[data-theme="dark"] .popup-header,
+[data-theme="dark"] .create-header {
+  border-bottom: 1px solid #404040;
+}
+
+.popup-header h5,
+.create-header h5 {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* Dark mode header text */
+[data-theme="dark"] .popup-header h5,
+[data-theme="dark"] .create-header h5 {
+  color: #ffffff;
+}
+
+/* ================================================================
+   GROUP LIST STYLING WITH PUBLIC/PRIVATE INDICATORS
+   ================================================================ */
+
+/* Group list */
+#groupsList .list-group-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Dark mode group list items */
+[data-theme="dark"] #groupsList .list-group-item {
+  border-bottom: 1px solid #404040;
+  background: transparent;
+  color: #ffffff;
+}
+
+#groupsList .list-group-item:last-child {
+  border-bottom: none;
+}
+
+#createGroupBtn:hover {
+  background: #f8f9fa;
+}
+
+/* Dark mode create group button hover */
+[data-theme="dark"] #createGroupBtn:hover {
+  background: #3a3a3a;
+}
+
+/* Dark mode group item hover */
+[data-theme="dark"] #groupsList .list-group-item:hover {
+  background: #3a3a3a;
+}
+
+/* Public/Private indicators in group list */
+.bi-globe {
+  color: #198754 !important;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.bi-lock {
+  color: #6c757d !important;
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Dark mode icon adjustments */
+[data-theme="dark"] .bi-lock {
+  color: #adb5bd !important;
+}
+
+/* Group name styling with privacy icon */
+.group-info-clickable .group-name {
+  transition: color 0.2s;
+}
+
+.group-info-clickable:hover .group-name {
+  color: #0d6efd;
+}
+
+[data-theme="dark"] .group-info-clickable:hover .group-name {
+  color: #4dabf7;
+}
+
+/* ================================================================
+   CREATE GROUP FORM ENHANCEMENTS
+   ================================================================ */
+
+/* Create Group form */
+.create-body {
+  padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Dark mode create body */
+[data-theme="dark"] .create-body {
+  background: #262626;
+}
+
+/* Form labels */
+.create-body .form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Group name input */
+#newGroupName {
+  margin-bottom: 1rem;
+}
+
+/* Group description textarea */
+#groupDescription {
+  resize: vertical;
+  min-height: 60px;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#groupDescription:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* ================================================================
+   PUBLIC/PRIVATE CHECKBOX STYLING
+   ================================================================ */
+
+/* Public/Private checkbox container */
+#makeGroupPublic + label {
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: block;
+  margin-bottom: 1rem;
+  background: #f8f9fa;
+}
+
+#makeGroupPublic:checked + label {
+  border-color: #198754;
+  background: rgba(25, 135, 84, 0.1);
+}
+
+#makeGroupPublic + label:hover {
+  border-color: #198754;
+  background: rgba(25, 135, 84, 0.05);
+}
+
+/* Dark mode public/private checkbox */
+[data-theme="dark"] #makeGroupPublic + label {
+  background: #1a1a1a;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] #makeGroupPublic:checked + label {
+  background: rgba(25, 135, 84, 0.2);
+  border-color: #198754;
+}
+
+[data-theme="dark"] #makeGroupPublic + label:hover {
+  background: rgba(25, 135, 84, 0.1);
+}
+
+/* Globe icon in checkbox label */
+#makeGroupPublic + label .bi-globe {
+  color: #198754;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+/* ================================================================
+   MEMBER LIST STYLING - Enhanced for Better Usability
+   ================================================================ */
+
+.member-list {
+  max-height: 140px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  margin-bottom: 1rem;
+}
+
+/* Dark mode member list */
+[data-theme="dark"] .member-list {
+  border: 1px solid #404040;
+  background: #1a1a1a;
+}
+
+.member-list .form-check {
+  margin-bottom: 0.25rem;
+  padding: 8px 12px; /* Increased padding for larger click area */
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  cursor: pointer; /* Make entire area clickable */
+  display: flex;
+  align-items: center;
+}
+
+.member-list .form-check:hover {
+  background: rgba(13, 110, 253, 0.1);
+}
+
+.member-list .form-check:last-child {
+  margin-bottom: 0;
+}
+
+/* Dark mode member list items */
+[data-theme="dark"] .member-list .form-check:hover {
+  background: rgba(77, 171, 247, 0.1);
+}
+
+.member-list .form-check-input {
+  width: 16px; /* Larger checkbox */
+  height: 16px;
+  margin-right: 10px; /* More space between checkbox and label */
+  margin-top: 0; /* Remove default margin */
+  flex-shrink: 0; /* Prevent shrinking */
+  cursor: pointer;
+}
+
+.member-list .form-check-label {
+  font-size: 0.95rem; /* Slightly larger text */
+  cursor: pointer;
+  margin-bottom: 0;
+  flex: 1; /* Take remaining space */
+  line-height: 1.3;
+  padding: 2px 0; /* Vertical padding for better click area */
+}
+
+/* Make the entire form-check area clickable */
+.member-list .form-check {
+  position: relative;
+}
+
+/* Selected state styling */
+.member-list .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.member-list .form-check:has(.form-check-input:checked) {
+  background: rgba(13, 110, 253, 0.1);
+  border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+[data-theme="dark"] .member-list .form-check:has(.form-check-input:checked) {
+  background: rgba(77, 171, 247, 0.15);
+  border: 1px solid rgba(77, 171, 247, 0.3);
+}
+
+/* ================================================================
+   FORM ELEMENTS - DARK MODE SUPPORT
+   ================================================================ */
+
+/* Dark mode form elements */
+[data-theme="dark"] .form-control {
+  background: #1a1a1a;
+  border: 1px solid #404040;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background: #1a1a1a;
+  border-color: #0d6efd;
+  color: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: #6c757d;
+}
+
+/* Dark mode form labels */
+[data-theme="dark"] .form-label {
+  color: #ffffff;
+}
+
+/* Dark mode form check labels */
+[data-theme="dark"] .form-check-label {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .form-check-input {
+  background: #1a1a1a;
+  border-color: #404040;
+}
+
+[data-theme="dark"] .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* ================================================================
+   BUTTON STYLING
+   ================================================================ */
+
+/* Submit button enhancements */
+#submitCreateGroup {
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+#submitCreateGroup:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+}
+
+/* Dark mode buttons */
+[data-theme="dark"] .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Dark mode button links */
+[data-theme="dark"] .btn-link {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-link:hover {
+  color: #cccccc;
+}
+
+/* Action buttons in group list */
+.btn-sm {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* ================================================================
+   BADGES AND INDICATORS
+   ================================================================ */
+
+/* Permission badges */
+.badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  margin-left: 0.25rem;
+}
+
+/* Dark mode badges */
+[data-theme="dark"] .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+[data-theme="dark"] .badge.bg-primary {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+/* ================================================================
+   ICONS AND TEXT COLORS
+   ================================================================ */
+
+/* Dark mode icons */
+[data-theme="dark"] .text-primary {
+  color: #4dabf7 !important;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: #6c757d !important;
+}
+
+[data-theme="dark"] .text-success {
+  color: #20c997 !important;
+}
+
+/* ================================================================
+   SCROLLBAR STYLING
+   ================================================================ */
+
+/* Dark mode scrollbar for member list */
+[data-theme="dark"] .member-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+
+[data-theme="dark"] .member-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Dark mode scrollbar for create body */
+[data-theme="dark"] .create-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="dark"] .create-body::-webkit-scrollbar-track {
+  background: #262626;
+}
+
+[data-theme="dark"] .create-body::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 3px;
+}
+
+/* ================================================================
+   RESPONSIVE DESIGN
+   ================================================================ */
+
+@media (max-width: 576px) {
+  #groupsPopup,
+  #createGroupModal {
+    width: 95vw;
+    max-height: 85vh;
+  }
+  
+  .create-body {
+    padding: 0.75rem;
+  }
+  
+  #makeGroupPublic + label {
+    padding: 10px;
+  }
+  
+  .member-list {
+    max-height: 120px;
+  }
+}
+
+/* ================================================================
+   SUCCESS MESSAGES AND NOTIFICATIONS
+   ================================================================ */
+
+/* Success message styling (for group creation confirmations) */
+.success-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #d1edff;
+  color: #0c63e4;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1100;
+  animation: slideInFromRight 0.3s ease;
+}
+
+[data-theme="dark"] .success-message {
+  background: #1e3a5f;
+  color: #4dabf7;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

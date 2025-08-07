@@ -1,0 +1,351 @@
+/* styles/register.css */
+.register_page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.register_page_box {
+  font-size: 20px;
+  border: 1px solid rgb(219, 219, 219);
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  background-color: #fff;
+  padding: 20px;
+}
+
+.register_page_title {
+  width: 75%;
+  color: gray;
+  text-align: center;
+}
+
+.register_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register_form_text {
+  margin-top: 8px;
+  color: gray;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.register_form_input {
+  width: 100%;
+  height: 36px;
+  padding: 8px 12px;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  background-color: #fafafa;
+  font-size: 14px;
+  color: #262626;
+  box-sizing: border-box;
+}
+
+.register_form_input.input-error {
+  border-color: #d32f2f;
+  background-color: #fff6f6;
+}
+
+#signatureCanvas {
+  border: 1px solid #ccc;
+  cursor: crosshair;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#signatureCanvas.input-error {
+  border-color: #d32f2f;
+}
+
+#clear_canvas_button {
+  width: 50%;
+  height: 30px;
+  background-color: grey;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.register_form_button {
+  width: 75%;
+  height: 30px;
+  background-color: rgb(65, 80, 247);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 0;
+  align-self: center;
+}
+
+@media (max-width: 450px) {
+  .register_page_box {
+    border: none !important;
+  }
+}
+
+.instagram_full_logo_register_page {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  margin-bottom: 0;
+}
+
+.instagram_full_logo_register_page_svg {
+  width: 175px;
+  height: 51px;
+  margin-top: 20px;
+}
+
+#register_page_box_login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  border: 1px solid rgb(219, 219, 219);
+  background-color: #fff;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+#register_page_box_login a {
+  text-decoration: none;
+}
+
+#register_page_facebook_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  height: 30px;
+  background-color: rgb(65, 80, 247);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+#register_page_box_get_app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  padding: 20px;
+  padding-top: 0;
+  width: 350px;
+}
+
+.register_page_app_links {
+  display: flex;
+  justify-content: center;
+  width: 75%;
+  gap: 10px;
+}
+
+.register_page_app_link:hover {
+  cursor: pointer;
+}
+
+.register_page_app_link {
+  width: 40%;
+  height: 40px;
+}
+
+#register_page_footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  color: gray;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: gray;
+}
+
+.footer-links a {
+  color: gray;
+}
+
+.OR-line-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+  margin-bottom: 0;
+}
+
+.OR-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.OR-text {
+  font-size: 16px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.register_form_link {
+  text-decoration: none;
+  color: #0095f6;
+}
+
+.register_form_link:hover {
+  text-decoration: underline;
+}
+
+.testimonial-aside {
+  max-width: 300px;
+  min-width: 250px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.testimonial-aside h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 12px rgba(100, 100, 255, 0.4);
+}
+
+.testimonial-aside p {
+  font-size: 14px;
+  color: #8e8e8e;
+  line-height: 1.5;
+}
+
+.testimonial-container {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  overflow: hidden;
+}
+
+.testimonial {
+  position: absolute;
+  width: 100%;
+  font-size: 14px;
+  color: #8e8e8e;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.testimonial:nth-child(1) {
+  animation: cycle 20s infinite;
+}
+
+.testimonial:nth-child(2) {
+  animation: cycle 20s infinite 5s;
+}
+
+.testimonial:nth-child(3) {
+  animation: cycle 20s infinite 10s;
+}
+
+.testimonial:nth-child(4) {
+  animation: cycle 20s infinite 15s;
+}
+
+@keyframes cycle {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  20% { opacity: 1; }
+  25% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.error-alert {
+  background-color: #ffebee;
+  border: 1px solid #d32f2f;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
+  position: relative;
+  font-size: 14px;
+}
+
+.error-alert ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.error-alert li {
+  margin-bottom: 5px;
+}
+
+.error-alert p {
+  margin: 0;
+}
+
+.error-alert-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #d32f2f;
+  cursor: pointer;
+}
+
+.error-message {
+  display: none;
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 5px;
+  text-align: left;
+  width: 100%;
+  max-width: 300px;
+}
