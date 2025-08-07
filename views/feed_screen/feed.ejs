@@ -1624,12 +1624,12 @@
                   class="ig-caption-header d-flex align-items-center p-3 border-bottom"
                 >
                   <img
-                    src="./user/user_profile_picture.jpg"
+                    src="/uploads/user_<%= user._id %>/profile_picture/profile.jpg"
                     alt="Your profile"
                     class="rounded-circle me-3"
                     style="width: 32px; height: 32px"
                   />
-                  <span class="fw-bold">the_miichael</span>
+                  <span class="fw-bold"><%= user.username %></span>
                 </div>
 
                 <div class="ig-caption-body p-3">
@@ -1729,15 +1729,14 @@
       <!-- ─────────────────────#uploadModal ───────────────────────────────────────── -->
       <!-- Global Options Menu -->
       <div id="global-options-menu" class="global-options-menu">
-        <button class="menu-btn red">Hide Post</button>
         <button class="menu-btn">Report</button>
         <button class="menu-btn">Go to Post</button>
         <button class="menu-btn">Share to...</button>
         <button class="menu-btn">About this account</button>
-        <button class="menu-btn cancel-btn">Cancel</button>
         <button class="menu-btn red delete-post-btn" style="display: none">
           Delete Post
         </button>
+        <button class="menu-btn cancel-btn">Cancel</button>
       </div>
       <!-- Backdrop -->
       <div id="menu-backdrop" class="menu-backdrop"></div>
@@ -1938,13 +1937,13 @@
       <script src="/scripts/func_share/share.js"></script>
       <script src="/scripts/func_comment/comment_system.js"></script>
       <script src="/scripts/func_post_options_menu/post_options_menu.js"></script>
-      <script src="/scripts/func_post/enhanced_modal.js"></script>
+      <script src="/scripts/func_create_new_post/uploading_modal.js"></script>
       <script src="/scripts/func_post_delete/func_post_delete.js"></script>
       <script src="/scripts/func_groups/group_popout.js"></script>
       <script src="/scripts/func_groups/group_feed.js"></script>
       <script src="/scripts/func_groups/group_admin.js"></script>
       <!-- Location autocomplete must load after Google Maps API -->
-      <script src="/scripts/func_post/location_autocomplete.js"></script>
+      <script src="/scripts/func_create_new_post/location_autocomplete.js"></script>
     </div>
   </body>
 </html>

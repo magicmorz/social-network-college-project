@@ -16,18 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Event delegation for "Hide post" button
-  document.addEventListener("click", (e) => {
-    const hideBtn = e.target.closest(".menu-btn.red");
-    if (hideBtn) {
-      if (currentPostId) {
-        const post = document.getElementById(currentPostId);
-        if (post) post.style.display = "none";
-      }
-      closeMenu();
-    }
-  });
-
   // Close menu on cancel or backdrop click
   if (cancelBtn) {
     cancelBtn.addEventListener("click", closeMenu);
