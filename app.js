@@ -92,7 +92,7 @@ app.use('/api/group', isAuthenticated, groupRouter);
 
 // Other protected routes
 const postRoutes = require('./routes/post');
-app.use('/posts', postRoutes);
+app.use('/post', postRoutes);
 
 const searchRoutes = require('./routes/search');
 app.use('/search', searchRoutes);

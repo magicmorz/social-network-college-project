@@ -38,7 +38,8 @@ async function toggleComments(postId) {
     commentsSection.style.display = "block";
 
     try {
-      const response = await fetch(`/posts/${postId}/comments`);
+      // Fixed: Use singular 'post' instead of 'posts'
+      const response = await fetch(`/post/${postId}/comments`);
       if (!response.ok) throw new Error("Failed to load comments");
 
       const data = await response.json();
@@ -70,7 +71,11 @@ async function toggleComments(postId) {
                     }" class="fw-bold text-decoration-none">
                       ${comment.user.username}
                     </a>
-                    <span>${comment.text}</span>
+                    ${
+                      comment.text
+                        ? `<span class="ms-1">${comment.text}</span>`
+                        : ""
+                    }
                   </div>
                   ${
                     isOwner
@@ -101,8 +106,9 @@ async function toggleComments(postId) {
             const commentId = btn.getAttribute("data-comment-id");
             if (confirm("Are you sure you want to delete this comment?")) {
               try {
+                // Fixed: Use singular 'post' instead of 'posts'
                 const res = await fetch(
-                  `/posts/${postId}/comments/${commentId}`,
+                  `/post/${postId}/comments/${commentId}`,
                   {
                     method: "DELETE",
                     headers: {
@@ -140,7 +146,9 @@ async function addComment(postId, text) {
   if (!text.trim()) return;
 
   try {
-    const response = await fetch(`/posts/${postId}/comment`, {
+    console.log("Posting comment:", { postId, text, gifUrl });
+    const response = await fetch(`/post/${postId}/comment`, {
+
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -186,8 +194,7 @@ function updateCommentCount(postId) {
 
   const commentCount = post.querySelector(".view-comments button");
   if (commentCount) {
-    // Get current count from the post data or fetch from server
-    fetch(`/posts/${postId}/comments`)
+    fetch(`/post/${postId}/comments`)
       .then((response) => response.json())
       .then((data) => {
         const count = data.comments ? data.comments.length : 0;
@@ -206,6 +213,101 @@ function updateCommentCount(postId) {
         commentCount.textContent = "View comments";
       });
   }
+}
+
+// Initialize GIPHY picker
+function initializeGiphyPicker(postId) {
+  const post = document.getElementById(`post-${postId}`);
+  const gifButton = post.querySelector(".gif-btn");
+  const gifPicker = post.querySelector(".gif-picker");
+
+  if (!gifButton || !gifPicker) return;
+
+  gifButton.addEventListener("click", () => {
+    gifPicker.style.display =
+      gifPicker.style.display === "none" ? "block" : "none";
+  });
+
+  const searchInput = post.querySelector(".gif-search-input");
+  const gifContainer = post.querySelector(".gif-container");
+
+  searchInput.addEventListener(
+    "input",
+    debounce(async () => {
+      const query = searchInput.value.trim();
+      if (!query) {
+        gifContainer.innerHTML = "";
+        return;
+      }
+
+      try {
+        // This route might also need to be checked - ensure it matches your backend routes
+        const response = await fetch(
+          `/api/gifs/search?query=${encodeURIComponent(query)}`
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to load GIFs");
+        }
+
+        const data = await response.json();
+        gifContainer.innerHTML = "";
+
+        if (data.data && data.data.length > 0) {
+          data.data.forEach((gif) => {
+            const img = document.createElement("img");
+            img.src = gif.images.fixed_height.url;
+            img.alt = gif.title;
+            img.className = "gif-option m-1";
+            img.style.cursor = "pointer";
+            img.style.maxWidth = "100px";
+            img.style.maxHeight = "100px";
+            img.addEventListener("click", async () => {
+              const commentInput = post.querySelector(".add-comment input");
+              commentInput.disabled = true;
+              const postCommentBtn = post.querySelector(".post-comment-btn");
+              if (postCommentBtn) {
+                postCommentBtn.disabled = true;
+                postCommentBtn.textContent = "Posting...";
+              }
+
+              await addComment(postId, "", gif.images.fixed_height.url);
+              gifPicker.style.display = "none";
+              searchInput.value = "";
+              gifContainer.innerHTML = "";
+              commentInput.disabled = false;
+              if (postCommentBtn) {
+                postCommentBtn.disabled = false;
+                postCommentBtn.textContent = "Post";
+                postCommentBtn.style.display = "none";
+              }
+              commentInput.placeholder = "Add a comment...";
+            });
+            gifContainer.appendChild(img);
+          });
+        } else {
+          gifContainer.innerHTML =
+            '<div class="text-muted p-2">No GIFs found</div>';
+        }
+      } catch (error) {
+        console.error("Error fetching GIFs:", error.message);
+        gifContainer.innerHTML = `<div class="text-danger p-2">Failed to load GIFs: ${error.message}</div>`;
+      }
+    }, 300)
+  );
+}
+
+// Debounce function to limit API calls
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
 
 // Initialize everything
