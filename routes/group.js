@@ -61,4 +61,20 @@ router.post("/:id/member/remove", requireAuth, groupController.removeMember);
 // Group settings
 router.put("/:id", requireAuth, groupController.updateGroup);
 
+router.get("/debug-groups", requireAuth, async (req, res) => {
+  try {
+    const allGroups = await Group.find({});
+    const publicGroups = await Group.find({ isPublic: true });
+    
+    res.json({
+      totalGroups: allGroups.length,
+      publicGroups: publicGroups.length,
+      allGroupsDetails: allGroups,
+      publicGroupsDetails: publicGroups
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
