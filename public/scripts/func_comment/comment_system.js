@@ -32,7 +32,8 @@ async function toggleComments(postId) {
     commentsSection.style.display = "block";
 
     try {
-      const response = await fetch(`/posts/${postId}/comments`);
+      // Fixed: Use singular 'post' instead of 'posts'
+      const response = await fetch(`/post/${postId}/comments`);
       if (!response.ok) throw new Error("Failed to load comments");
 
       const data = await response.json();
@@ -64,7 +65,11 @@ async function toggleComments(postId) {
                     }" class="fw-bold text-decoration-none">
                       ${comment.user.username}
                     </a>
-                    ${comment.text ? `<span class="ms-1">${comment.text}</span>` : ""}
+                    ${
+                      comment.text
+                        ? `<span class="ms-1">${comment.text}</span>`
+                        : ""
+                    }
                   </div>
                   ${
                     isOwner
@@ -100,8 +105,9 @@ async function toggleComments(postId) {
             const commentId = btn.getAttribute("data-comment-id");
             if (confirm("Are you sure you want to delete this comment?")) {
               try {
+                // Fixed: Use singular 'post' instead of 'posts'
                 const res = await fetch(
-                  `/posts/${postId}/comments/${commentId}`,
+                  `/post/${postId}/comments/${commentId}`,
                   {
                     method: "DELETE",
                     headers: {
@@ -139,7 +145,8 @@ async function addComment(postId, text = "", gifUrl = "") {
 
   try {
     console.log("Posting comment:", { postId, text, gifUrl });
-    const response = await fetch(`/posts/${postId}/comment`, {
+    // Fixed: Use singular 'post' instead of 'posts'
+    const response = await fetch(`/post/${postId}/comment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -186,7 +193,8 @@ function updateCommentCount(postId) {
 
   const commentCount = post.querySelector(".view-comments button");
   if (commentCount) {
-    fetch(`/posts/${postId}/comments`)
+    // Fixed: Use singular 'post' instead of 'posts'
+    fetch(`/post/${postId}/comments`)
       .then((response) => response.json())
       .then((data) => {
         const count = data.comments ? data.comments.length : 0;
@@ -233,6 +241,7 @@ function initializeGiphyPicker(postId) {
       }
 
       try {
+        // This route might also need to be checked - ensure it matches your backend routes
         const response = await fetch(
           `/api/gifs/search?query=${encodeURIComponent(query)}`
         );
